@@ -1,7 +1,6 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
+export const AUTHOR = 'Roma Komarov';
+export const MAIN_URL = 'https://kizu.dev';
+export const MASTODON_URL = 'https://front-end.social/@kizu';
 
-export const AUTHOR = 'Roman Komarov';
-
-export const SITE_TITLE = 'Blog';
-export const SITE_DESCRIPTION = 'Welcome to my blog!';
+export const SITE_TITLE = 'Random Notes';
+export const SITE_DESCRIPTION = 'Roma’s personal blog';

@@ -1,9 +1,11 @@
 ---
-import { AUTHOR } from '../consts';
+import { AUTHOR, MAIN_URL, MASTODON_URL } from '../consts';
 
 const today = new Date();
 ---
 
+<hr />
 <footer>
-	&copy; {today.getFullYear()} {AUTHOR}. All rights reserved.
+	<p>Let me know what you think about this <a href={MASTODON_URL}>on Mastodon</a>!</p>
+	<p>&copy; {today.getFullYear()} <a href={MAIN_URL}>{AUTHOR}</a>. All rights reserved.</p>
 </footer>

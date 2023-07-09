@@ -1,0 +1,83 @@
+---
+title: 'Not an Ideal Start'
+description: 'The first entry in my new blog: initial struggles and future plans.'
+pubDate: '2023-07-09'
+
+current:
+	tea: 'Sencha'
+	music: 'Daughter — Shallows'
+---
+
+Hey hey! This is the first entry in my new blog.
+
+I did write an [introduction to it on my site](https://kizu.dev/new-blog/) — you can read it there for my reasoning about why I did create it and what would be different from the articles on [the main site](https://kizu.dev).
+
+In short: to have a more personal place, where I could share random things, experiment with new tech, and separate all of this from my regular polished articles about CSS and Frontend.
+
+Though, at least initially, this blog still would be rather technical, but we’ll see how things would progress!
+
+## The Stack
+
+1. [Netlify](https://www.netlify.com/) — my main site is hosted there, the domain is registered with it, making it very easy to just continue using it. Almost no complains.
+2. [Astro](https://astro.build/) — wanted to try for a while, and while it works, I’m not entirely sure I would stick with it. But at least for a while I’ll stick with it — would be unwise to dismiss it right away.
+3. [TypeScript](https://www.typescriptlang.org/) — first time I’ll be using it outside of my work. I sincerely think that once you have it set up, it can help tremendously. I cannot imagine writing JS without relying on types — either with a proper setup or at least via a `@ts-check` in a `.js` file.
+4. [MDX](https://mdxjs.com/) — in all my previous blog iterations, I always pushed markdown to the maximum, inventing new syntax for the things I wanted to have in it and so on — the ability to rely on components and remark plugins would make the things I want to do with content much more convenient.
+
+### Everything Else — From Scratch
+
+I decided to opt out of any built-in CSS from the Astro starter and not take anything from my existing site’s CSS. Having a blank canvas would allow me to experiment with CSS in any way I want, and I have some ideas of what I want to do here.
+
+So, for now, you might notice the absence of almost any styles — things will change a lot in the future!
+
+## Bumps on the Road
+
+I was a bit naive, thinking that starting from scratch with a modern stack would go smoothly. It didn’t!
+
+1. Right away, I had a bunch of TS issues in VS Code, getting the “Cannot find module 'astro:content'…” issue and others. Restarting the TS server did not help, and running `astro sync` did not help. Updating VS Code and restarting it a few times did help though. Things are overcomplicated in the modern front-end for sure.
+2. When I was hooking up Netlify for my repo via `netlify-cli`, I had a few hiccups due to it using the same `3000` port for the thing it was doing as my Astro dev server that was running at the same time. Lesson learned: next time I’d like to set up a new Netlify site, I will stop the dev server right away.
+3. The RSS experience in the Astro blog starter was not ideal:
+	- While I did choose to use TS, it came with the `rss.xml.js` from the box, so I had to rename it to `rss.xml.ts` and adjust a few type-related things inside (import `APIContext` from `astro` to use as the `context`'s type and fix the type issue for the value passed into `site` field).
+	- The `BaseHead.astro` template did not come with a `<link rel="alternate" type="application/rss+xml" … />`, so I had to add it manually.
+	- Not a big deal, but the generated RSS was not using Atom and did not have a `language` field, so I had to use the `xmlns` and `customData` to provide these.
+4. I did not like how the content collections work in Astro: no good way to control the slug, provide default values for metadata based on the files, and some other issues. I think I would have to explore the [integration API](https://docs.astro.build/en/reference/integrations-reference/) and remark [plugins](https://github.com/unifiedjs/unified#plugin) as a way to augment it to do what I want from it, but so far the experience was subpar.
+
+But hey! Things work for now, and I will see how things would scale. Astro islands is also a thing that I really hope to delve into as a very convenient way to add dynamic content to my articles — and if that part would go smoothly, to see if I could somehow integrate it onto my main site.
+
+- - -
+
+That’s it for now! There are a lot of things I already want to write here, but I’ll try not to throw everything into one post.
+
+Until later!
+
+- - -
+
+Oh, wait!
+
+## CSS Snapshot
+
+Just for fun — not sure how long I could keep it up — I’ll try writing about which changes and additions I’m adding to the blog alongside every article.
+
+With this article, here is the complete CSS I have in this blog:
+
+```CSS
+body {
+	box-sizing: border-box;
+	max-width: 42rem;
+	min-height: 100vh;
+	padding: 1rem;
+	margin: 0 auto;
+
+	font-size: 1.25rem;
+	/* “Transitional” font stack from https://modernfontstacks.com/ */
+	font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+}
+
+code {
+	white-space: pre-wrap;
+	tab-size: 2;
+}
+```
+
+And that’s it. For now.
+
+Other than the basic styles making things slightly more readable, I’m adding one thing I wanted to try for a while — relying on the built-in system fonts instead of any custom ones. I did choose the “Transitional” stack from a very helpful [“Modern Font Stacks”](https://modernfontstacks.com/) project by [Dan Klammer](https://danklammer.com/) for now, but I’ll pay more attention to everything around typography at a later point.

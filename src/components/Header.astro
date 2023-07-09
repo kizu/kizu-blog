@@ -1,14 +1,14 @@
 ---
-import HeaderLink from './HeaderLink.astro';
 import { SITE_TITLE } from '../consts';
 ---
 
 <header>
 	<h2>
-		{SITE_TITLE}
+		<a href="/">{SITE_TITLE}</a>
 	</h2>
-	<nav>
+	<!-- Skip for now, as not enough content -->
+	<!-- <nav>
 		<HeaderLink href="/">Home</HeaderLink>
 		<HeaderLink href="/about">About</HeaderLink>
-	</nav>
+	</nav> -->
 </header>

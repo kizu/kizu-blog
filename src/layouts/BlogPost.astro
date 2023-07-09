@@ -4,10 +4,13 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 type Props = Partial<CollectionEntry<'blog'>['data']>;
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, pubDate, updatedDate, heroImage } = Astro.props;
+const { pathname } = Astro.url;
+
 ---
 
 <html lang="en">
@@ -16,7 +19,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	</head>
 
 	<body>
-		<Header />
+		{pathname !== '/' ? <Header /> : null}
 		<main>
 			<article>
 				{heroImage && <img width={720} height={360} src={heroImage} alt="" />}
