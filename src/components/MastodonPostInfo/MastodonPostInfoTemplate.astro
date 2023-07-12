@@ -1,0 +1,22 @@
+<template id="mastodon-post-info-template">
+  <style>
+    aside {
+      display: grid;
+      grid-template-columns: 1fr max-content;
+    }
+    [data-field]:empty {
+      display: none;
+    }
+    ul {
+      font-style: italic;
+    }
+  </style>
+  <aside>
+    <Fragment set:html={'<slot></slot>'} />
+    <ul>
+      <li data-field="replies"></li>
+      <li data-field="reblogs"></li>
+      <li data-field="favourites"></li>
+    </ul>
+  </aside>
+</template>

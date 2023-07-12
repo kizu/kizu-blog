@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import { webcomponents } from '@astropub/web-components'
 
 import sitemap from '@astrojs/sitemap';
 
@@ -10,4 +11,5 @@ export default defineConfig({
     syntaxHighlight: 'prism',
   },
 	integrations: [mdx(), sitemap()],
+  vite: { plugins: [webcomponents()] },
 });

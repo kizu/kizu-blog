@@ -3,12 +3,21 @@ import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import MastodonPostInfo from '../components/MastodonPostInfo/MastodonPostInfo.astro';
+import MastodonPostInfoTemplate from '../components/MastodonPostInfo/MastodonPostInfoTemplate.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 type Props = Partial<CollectionEntry<'blog'>['data']>;
 
-const { title = SITE_TITLE, description = SITE_DESCRIPTION, pubDate, updatedDate, heroImage } = Astro.props;
+const {
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+	pubDate,
+	updatedDate,
+	heroImage,
+	mastodonPostId,
+} = Astro.props;
 const { pathname } = Astro.url;
 
 ---
@@ -19,6 +28,7 @@ const { pathname } = Astro.url;
 	</head>
 
 	<body>
+		<MastodonPostInfoTemplate />
 		{pathname !== '/' ? <Header /> : null}
 		<main>
 			<article>
@@ -36,6 +46,7 @@ const { pathname } = Astro.url;
 				<hr />
 				<slot />
 			</article>
+			<MastodonPostInfo mastodonPostId={mastodonPostId} />
 		</main>
 		<Footer />
 	</body>

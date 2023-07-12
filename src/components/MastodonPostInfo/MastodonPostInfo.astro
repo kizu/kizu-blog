@@ -1,0 +1,13 @@
+---
+import MastodonPostInfoComponent from './MastodonPostInfoComponent.web'
+import { MASTODON_URL } from '../../consts';
+const { mastodonPostId } = Astro.props;
+
+const href = `${MASTODON_URL}${mastodonPostId ? `/${mastodonPostId}` : ''}`;
+---
+
+<MastodonPostInfoComponent>
+  <p>
+    Let me know what you think about this <a rel="me" href={href}>on Mastodon</a>!
+  </p>
+</MastodonPostInfoComponent>
