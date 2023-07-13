@@ -23,3 +23,7 @@ code {
 	white-space: pre-wrap;
 	tab-size: 2;
 }
+
+iframe {
+	border: none;
+}
