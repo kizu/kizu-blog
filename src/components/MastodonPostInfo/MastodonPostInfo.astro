@@ -1,9 +1,9 @@
 ---
 import MastodonPostInfoComponent from './MastodonPostInfoComponent.web'
-import { MASTODON_URL } from '../../consts';
+import { getMastodonPostLink } from '@lib/getMastodonPostLink';
 const { mastodonPostId } = Astro.props;
 
-const href = `${MASTODON_URL}${mastodonPostId ? `/${mastodonPostId}` : ''}`;
+const href = getMastodonPostLink(mastodonPostId);
 ---
 
 <MastodonPostInfoComponent>

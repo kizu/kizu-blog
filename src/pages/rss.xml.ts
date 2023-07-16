@@ -1,18 +1,23 @@
 import type { APIContext } from 'astro';
 import rss, { RSSOptions } from '@astrojs/rss';
 import { getCollection } from 'astro:content';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { betterSlug } from '../lib/betterSlug';
-import { markdown } from '@astropub/md'
+import { SITE_TITLE, SITE_DESCRIPTION } from '@consts';
+import { betterSlug } from '@lib/betterSlug';
+import { markdown } from '@lib/markdown'
+import { getMastodonPostLink } from '@lib/getMastodonPostLink';
 
 export async function get(context: APIContext) {
 	const posts = await getCollection('blog');
 	const items: RSSOptions['items'] = [];
 	for (const post of posts) {
-		const content = (await markdown(post.body)).toString();
+		const link = `/${betterSlug(post.slug)}/`;
+		const fullLink = `${context.site}${betterSlug(post.slug)}/`;
+		const { mastodonPostId } = post.data;
+		const text = `${post.body}\n- - -\nLet me know what you think about this [on Mastodon](${getMastodonPostLink(mastodonPostId)})!`;
+		const content = (await markdown(text, fullLink)).toString();
 		items.push({
 			...post.data,
-			link: `/${betterSlug(post.slug)}/`,
+			link,
 			content,
 		});
 	}

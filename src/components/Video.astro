@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'video'> {
+  src: HTMLAttributes<'source'>['src'];
+}
+
+const { src, ...props } = Astro.props;
+---
+
+<video
+  controls
+  muted
+  playsinline
+  preload="none"
+  {...props}
+>
+  <source
+    src={src}
+    type="video/mp4"
+  />
+</video>

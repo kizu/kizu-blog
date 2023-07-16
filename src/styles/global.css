@@ -20,10 +20,24 @@ body {
 }
 
 code {
+	font: inherit;
 	white-space: pre-wrap;
 	tab-size: 2;
 }
 
+:not(pre) > code,
+blockquote {
+	font-style: italic;
+}
+
 iframe {
 	border: none;
+}
+
+video {
+	max-width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-wrap: balance;
 }

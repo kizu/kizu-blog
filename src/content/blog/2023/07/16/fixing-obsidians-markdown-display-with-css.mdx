@@ -1,0 +1,178 @@
+---
+title: 'Fixing Obsidian’s Markdown Display with CSS'
+description: 'I am sharing a CSS snippet I wrote for Obsidian, which makes the default Markdown display better for me by outputting the corresponding code symbols.'
+pubDate: '2023-07-16'
+
+current:
+	tea: 'Sencha'
+	music: 'The Album Leaf — Pinky’s Storage'
+---
+
+import Video from '@components/Video.astro';
+
+In my previous blog post — [“Apps with Presence on Mastodon”](/apps-with-presence-on-mastodon) — I did write about what ended up being the decisive feature leading to me starting to use [Obsidian](https://obsidian.md/):
+
+> I knew that it was possible to create plugins for Obsidian, but only now has it clicked for me that it is based on the web platform: plugins can be written with JS and everything can be styled with CSS, with CSS snippets being a thing that people actively share.
+
+In this post, I will describe how I managed to already start using this to fix the first problem I encountered.
+
+## The Problem
+
+The default Obsidian’s display mode is implemented in a way that hides the Markdown syntax unless you’re editing the corresponding lines.
+
+import badPoster from './obsidian-md-bad.jpg';
+import badVideo from './obsidian-md-bad.mp4';
+
+<Video src={badVideo} poster={badPoster} />
+
+In the video above, we can see how when we move the caret in this mode, things jump, like `em` becoming `_em_` when we focus on it. And the source code for the images or other embeds makes things jump vertically.
+
+Personally, I find this to be a poor experience, with this jumping getting in my way. Additionally, it can be very hard to edit the links, as the only clickable part of them is the actual link. If I used the “Source Mode” this won’t be a problem, but I like the expanded embeds, so I went to see if I could make things better.
+
+## The Solution
+
+I did not find any [community plugins](https://help.obsidian.md/Extending+Obsidian/Community+plugins) or pre-made [CSS snippets](https://help.obsidian.md/Extending+Obsidian/CSS+snippets) that would fix this (let me know if there is something like this already!), so I decided to throw some CSS at the problem.
+
+Obsidian’s ability to add CSS overrides is **the** feature that sold me on it, so it is time for me to start using it. With Obsidian being an electron app, it is very easy to develop for it: I just pressed <kbd>CMD+Shift+I</kbd> and got to the Chromium DevTools. Then, in the options, at the bottom of the “Appearance” tab, there is a “CSS Snippets” field, which allows us to add any CSS overrides there.
+
+Here is how it looks with my CSS snippet being applied:
+
+import goodPoster from './obsidian-md-good.jpg';
+import goodVideo from './obsidian-md-good.mp4';
+
+<Video src={goodVideo} poster={goodPoster} />
+
+I did end up leaving the full URL of a link hidden, resulting in a jump, but at least now, only the later part of it is changing, with the start part of the link code always being there.
+
+There are other benefits that I found due to this change:
+
+1. I can now easily edit the links by clicking on their code part; a click on it goes into editing them instead of going through the link. Very handy!
+
+2. It is now easier to distinguish between external and internal links; internal ones would get wrapped with `[[]]`, and there could be other cases where the more explicit, visible Markdown code would help.
+
+Here is the code that I ended up writing (for now):
+
+```
+:root {
+  --_fmd-opacity: 0.2;
+}
+
+.cm-link,
+.cm-hmd-internal-link,
+.cm-em,
+.cm-strong,
+.cm-inline-code,
+.cm-header {
+  &:not(.cm-formatting, &.cm-formatting + &) {
+    &::before {
+      content:
+        var(--_fmd-before, var(--_fmd-pseudo));
+      opacity: var(--_fmd-opacity);
+    }
+    &::after {
+      content: var(--_fmd-after, var(--_fmd-pseudo));
+      opacity: var(--_fmd-opacity);
+    }
+  }
+}
+
+.cm-header-1    { --_fmd-before: "# "      }
+.cm-header-2    { --_fmd-before: "## "     }
+.cm-header-3    { --_fmd-before: "### "    }
+.cm-header-4    { --_fmd-before: "#### "   }
+.cm-header-5    { --_fmd-before: "##### "  }
+.cm-header-6    { --_fmd-before: "###### " }
+.cm-em          { --_fmd-pseudo: "_"       }
+.cm-strong      { --_fmd-pseudo: "**"      }
+.cm-inline-code { --_fmd-pseudo: "`"       }
+
+.cm-link {
+  --_fmd-before: "[";
+  --_fmd-after: "](…)";
+}
+
+.cm-hmd-internal-link {
+  &:not(
+    .cm-hmd-embed,
+    .cm-link-alias-pipe,
+    .cm-link-alias-pipe + &,
+    .cm-formatting-link + &
+  ) {
+    --_fmd-before: "[[";
+    --_fmd-after: "]]";
+  }
+}
+
+.internal-embed {
+  &:not(
+    .cm-line:has(.cm-hmd-internal-link) + &,
+    .cm-formatting-link-end + * + &
+  )::before {
+    content: "![[" attr(src) "]]";
+    opacity: var(--_fmd-opacity);
+
+  }
+  .cm-line + &::before {
+    display: block;
+  }
+}
+```
+
+I probably have not covered all the cases yet. I’ll try to update this when I encounter other places that would require fixing, but I’m pretty happy with how it works.
+
+## How It Works
+
+A few notes on that CSS I did write:
+
+- Because Obsidian is using Chromium v112 at the moment, it comes with support for native [CSS nesting](https://www.w3.org/TR/css-nesting-1/), allowing me to just go and use it.
+
+    As I’m writing this CSS only for Obsidian, I don’t need to care about cross-browser compatibility: Obsidian can use anything present from Chrome v112 at the moment.
+
+- As I’m writing this CSS only for Obsidian, I don’t need to care about cross-browser compatibility. In one place, I used [`:has()`](https://drafts.csswg.org/selectors/#relational), which is not yet available in Firefox.
+
+    I expect Obsidian to be a very nice practical playground for some of my wild [CSS experiments](https://kizu.dev/tags/experiment/) (though I’ll need to wait until the newer features like [scroll-driven animations](https://kizu.dev/scroll-driven-animations/) and [anchor positioning](https://kizu.dev/anchor-positioning-experiments/) first land in Chrome, and then that version will land in Obsidian).
+
+- I’m using [CSS custom properties](https://drafts.csswg.org/css-variables/#defining-variables) to make the code leaner: defining them for all elements I would style at once and then assigning the variables I need for the specific elements. This allows me to not duplicate the complicated selector for each of the elements.
+
+    Important note: this relies on the way Obsidian renders Markdown, and the actual selector after expanding the nesting is not ideal in a lot of senses — I would not use it in a production site, but it works perfectly fine. For now.
+
+- Some features require a bit more complicated code, like the embeds, but otherwise, most of the things are handled similarly: we just “restore” the Markdown syntax by placing the `::before` and `::after` pseudo-elements in the correct places at the right conditions.
+
+## Limitations
+
+Sadly, with the way Markdown is rendered in Obsidian, some cases are not covered by my CSS snippet. Simple example:
+
+```md
+**_em inside bold_**
+_**bold inside em**_
+```
+
+In Obsidian, right now, the above Markdown renders into the same HTML, with the only difference being the text content inside:
+
+```
+<span class="cm-em cm-strong">…</span>
+```
+
+It is not possible to tell how this HTML was written in Markdown. Things are even worse in cases where some parts of a text are only inside the topmost tag and some are not.
+
+For example, the following Markdown:
+
+```md
+**strong _em `with code` inside_ strong**
+```
+
+Would display as this:
+
+```md
+**strong ****em** `with code` ** inside**** strong**
+```
+
+All of this is because Obsidian unwraps all elements one after another, making it impossible to tell if some inline element is nested into another.
+
+While it is not possible to fix with CSS, I wonder if it is possible to somehow hook up into the way Obsidian renders Markdown from its plugins API with JS, in which case it could be possible to just output the actual symbols right away, maybe even without touching CSS (or, as I did it with my snippet, fade these symbols, making them less noisy).
+
+## Conclusion
+
+This CSS snippet, while not ideal, was very quick to write, and I’m much happier now while editing Markdown in Obsidian.
+
+If I find time, I’ll try to investigate its plugin API to see if this problem could be solved from a different angle, but in the meantime, if you also struggle with this default Obsidian behavior, feel free to copy this CSS snippet!
