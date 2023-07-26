@@ -1,0 +1,42 @@
+---
+title: 'Scroll-Driven Animations in Stable Chrome'
+description: 'Scroll-driven animations did land in stable Chrome 115, which means that a lot of the techniques I wrote about are now possible to use there.'
+pubDate: '2023-07-26'
+mastodonPostId: ''
+
+current:
+	tea: 'White tea with litchi, pineapple, mango and papaya'
+	music: 'Mammal Hands — Floating World'
+---
+
+Before my first [experiments with anchor positioning](https://kizu.dev/anchor-positioning-experiments/), I had not previously written about non-production experimental things. I’m usually very practice-oriented and like to play with things that I can just go and put into production. However, a lot of new CSS developments sounded too tasty to leave aside, and when playing with things, I found out that I have a lot to say and contribute.
+
+While there is a long road ahead for anchor positioning itself, I did end up writing three articles about scroll-driven animations while they were being developed in Chrome Canary, describing a number of practical techniques:
+
+1. [“Future CSS: Wishes Granted by Scroll-driven Animations”](https://kizu.dev/scroll-driven-animations/)
+3. [“Fit-to-Width Text”](https://kizu.dev/fit-to-width-text/) 
+4. [“Position-Driven Styles”](https://kizu.dev/position-driven-styles/)
+
+I did start playing with them when they were under an experimental flag and continued when they were moved outside of it and planned for an eventual release. There were a lot of things I had to adapt to and change in my experiments through the implementation and specs changes — one of the aspects when you touch experimental stuff.
+
+But I’m very happy with what I managed to achieve in my experiments.
+
+Now, starting from Chrome 115, almost all of these experiments actually work in stable Chrome (outside one experiment using `timeline-scope`)!
+
+That is a bit of a weird feeling. I did come up with a number of experimental techniques that have now become _real_:
+
+- [`:stuck` implementation](https://kizu.dev/scroll-driven-animations/#stuck-states-for-the-sticky-headers), which, I’d argue, is even more powerful than the proposed state query version.
+- [Proper scrolling shadows](https://kizu.dev/scroll-driven-animations/#stuck-states-for-the-sticky-headers)
+- [Fit-to-width text](https://kizu.dev/fit-to-width-text/)
+- [Distributing values across a list of items](https://kizu.dev/position-driven-styles/#value-distribution)
+- [Staggered animations](https://kizu.dev/position-driven-styles/#staggered-animations)
+- [Reverse layer ordering](https://kizu.dev/position-driven-styles/#controlling-the-stacking)
+- [Edge detection](https://kizu.dev/position-driven-styles/#edge-detection) for elements on the edges of their flex or grid containers.
+- [Flex-wrap detection](https://kizu.dev/position-driven-styles/#flex-wrap-detection).
+- …and I have a number of experiments and techniques I have not yet published— stay tuned!
+
+How cool is it not only to get the new CSS spec’s implementation into the stable browser, but to already have a bunch of techniques to apply it to?
+
+Of course, there is still a need to wait until other browsers pick up scroll-driven animations, but things seem to be positive: WebKit [seems to be in support of it](https://github.com/WebKit/standards-positions/issues/152), and it sounds like Mozilla has already [started working on the implementation](https://github.com/mozilla/standards-positions/issues/347#issuecomment-1601630660). That means that, unless done with extreme care, we shouldn’t use these techniques in production.
+
+But there is one place where we could already start playing with the scroll-driven animations: CSS overrides for sites that you look at in Chrome. That sounds like a good place where the low browser support won’t matter much, so keep that in mind: we can now tweak styles with scroll-driven animations!
