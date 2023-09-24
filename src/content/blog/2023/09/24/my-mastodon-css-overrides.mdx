@@ -1,0 +1,499 @@
+---
+title: 'My Mastodon CSS Overrides'
+description: 'In this post I list and explain which CSS overrides I did add to my custom styles for Mastodon.'
+pubDate: '2023-09-24'
+mastodonPostId: ''
+
+current:
+	tea: 'Yunnan'
+	music: 'Daughter — Home'
+---
+
+import { SnippetMaker } from '@components/SnippetMaker.tsx';
+import Diff from '@components/Diff.astro';
+
+Mastodon 4.2 was [recently released](https://blog.joinmastodon.org/2023/09/mastodon-4.2/), and I was happy to find out that most of the CSS overrides I did write for it are still working.
+
+Now that a big update did land, I think it is a good time to write about what exactly did I change to make the experience of using Mastodon for myself better.
+
+import fullBefore from './full_before.png';
+import fullAfter from './full_after.png';
+
+Here are all the styles applied at the same time (including the automatic theme switcher).
+
+<Diff
+	caption="Comparing the original version vs. when all the overrides are applied"
+	isFullWidth
+	isLazy={false}
+	before={fullBefore}
+	beforeAlt=""
+	after={fullAfter}
+	afterAlt=""
+/>
+
+I'll provide screenshots for every modification. In all the screenshots I'll be using the [“<u>Flow Block</u>”](https://fonts.google.com/specimen/Flow+Block) font to mask all the content text, and `filter: invert(0.5)` to grey-out the images (plus a few more minor adjustments) to anonymyze the posts.
+
+
+## Disclaimer
+
+- At the time of writing, I did test these updates only in the Mastodon's advanced interface (its multicolumn interface). So, in my styles I nest everything inside a `.layout-multiple-columns {}`, thanks to [CSS nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting).
+- It is not guaranteed that I would update this post and maintain it compatible with any future Mastodon updates.
+- Feel free to grab any of the styles and apply them yourself.
+
+## Copy All The Snippets
+
+When compiling all the snippets I'm using and writing about them, I modified them in a lot of places. It was not very convenient to pass all the changes between the post and my style overrides in the browser.
+
+To make this easier — and to help a reader who could want, for some reason, steal some or all the snippets, I did create this tiny tool that allows to do just that:
+
+<SnippetMaker client:idle />
+
+## Overrides
+
+In all the screenshots below I'm using the version without any overrides as “before” and the version with only the applied override as “after”.
+
+### Automatic Color Scheme change
+
+While version 4.2 of Mastodon comes with a lot of nice improvements, one thing that is still missing is an ability to automatically switch between dark and light themes based on the system setting. The [corresponding issue](https://github.com/mastodon/mastodon/issues/10976) is open since 2019. There is [a PR](https://github.com/mastodon/mastodon/pull/20107) that would fix this, but it is uncertain when it would be merged.
+
+In the meantime, I recently embraced the automatic switching of the dark and light themes wherever I can. So, in order for Mastodon to be more pleasing for my eyes, I did add the following override (while choosing the default light theme as the foundation, but it is easy to change it by replacing both “dark” with “light” below).
+
+import darkAfter from './dark_after.png';
+
+<Diff
+	caption="Comparing the default light theme vs. the one using filter"
+	isFullWidth
+	before={fullBefore}
+	beforeAlt=""
+	after={darkAfter}
+	afterAlt=""
+/>
+
+```css
+@media (prefers-color-scheme: dark) {
+	:root {
+		filter: invert(1) hue-rotate(180deg);
+
+		color-scheme: dark;
+	}
+
+	img,
+	video,
+	picture,
+	.focal-point__preview > div,
+	.compose-form__upload-thumbnail,
+	.compose-form__upload-thumbnail > *,
+	.emoji-mart-emoji:not(.emoji-mart-emoji-custom),
+	.emoji-button {
+		filter: invert(1) hue-rotate(180deg);
+	}
+}
+```
+
+Here is what I do:
+
+1. I use a [`prefers-color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) media feature to apply the nested styles only for when the system would have a dark theme configured.
+
+2. I apply a CSS [`filter`](https://developer.mozilla.org/en-US/docs/Web/CSS/filter) to the root, in which I invert all the colors, and then rotate the hue of all the colors to be closer to their original values.
+
+3. I set the [`color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme) on the root as well — making the topmost scrollport's scrollbar adapt to the theme as well.
+
+4. I restore the original color of various images, videos and emojis, otherwise they might look weird.
+
+And that's it! One not very pleasant side-effect that I noticed is that when I open any image in a full screen, it can flash the inverted colors, otherwise these overrides work fine for me.
+
+
+### Titles in the Drawer Tabs
+
+I always forget what these icons mean. Why not to add the captions that are already present as title?
+
+import tabsBefore from './tabs_before.png';
+import tabsAfter from './tabs_after.png';
+
+<Diff
+	caption="Comparing the tabs on top of the drawer"
+	before={tabsBefore}
+	beforeAlt=""
+	after={tabsAfter}
+	afterAlt=""
+/>
+
+
+```css
+.drawer__tab {
+	position: relative;
+}
+
+.drawer__tab {
+	padding-top: 8px !important;
+	padding-bottom: 24px !important;
+}
+
+.drawer__tab::after {
+	content: attr(title);
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+	font-size: 0.6em;
+	line-height: 1em;
+	height: 2em;
+}
+```
+
+### Delay Before Starting Videos on Hover
+
+I have the option to play the gifs/videos on hover turned on (“Preferences” -> “Appearance” -> “Animations and Accessibility” -> “Auto-play animated GIFs”), but I dislike the fact that they play immediately. So when you just scroll through them, or move the cursor, they suddenly jump into action.
+
+First, I wanted to just complain about it, but then I though: why not just fix it for myself via custom CSS?
+
+```css
+.media-gallery__gifv:not(.autoplay) {
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		opacity: 0.2;
+		transition: visibility 0.6s, opacity 0.3s 0.3s;
+		background: currentColor;
+		cursor: not-allowed;
+	}
+	&:hover::after {
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+```
+
+This CSS creates a pseudo-element that is positioned over these videos, catching the pointer event, which disappears after a certain time. It only works with hover, and while there might be ways to support the keyboard, the “show on hover” feature itself does not work with keyboard. I did open [an issue about this](https://github.com/mastodon/mastodon/issues/27210).
+
+I do a few things to tell me that there is not just an image but a waiting period by adding an overlay that disappears with a transition, and a cursor, making it easier for me to get what's happening.
+
+### Preventing Posting Images Without Descriptions
+
+I initially contributed this to [our instance](https://front-end.social/about)'s custom CSS. Below is a copy of what is currently in this custom CSS regarding the post form so you could grab it as well.
+
+import formBefore from './form_before.png';
+import formAfter from './form_after.png';
+
+<Diff
+	caption="Comparing the “new post” form"
+	before={formBefore}
+	beforeAlt=""
+	after={formAfter}
+	afterAlt=""
+/>
+
+```css
+/* The edit button (for fixing the error) */
+.compose-form__upload__actions:not(:last-child) .icon-button:last-child {
+	background-color: darkgreen !important;
+}
+
+/* The warning itself */
+.compose-form__upload__warning button {
+	background-color: maroon !important;
+	text-align: left;
+	width: 100%;
+}
+
+/* The upload area */
+.compose-form__upload:has(.compose-form__upload__warning) {
+	outline: medium dashed red !important;
+}
+
+/* The form submission */
+.compose-form:has(.compose-form__upload__warning) .compose-form__publish [type=submit] {
+	border: medium solid red !important;
+}
+.compose-form:has(.compose-form__upload__warning) .compose-form__publish [type=submit]::before {
+	content: "⚠️ ";
+}
+```
+
+### Font Size
+
+This should be self-explanatory: just bumping the `font-size` and `line-height`:
+
+import fontBefore from './font_before.png';
+import fontAfter from './font_after.png';
+
+<Diff
+	caption="Comparing the text in a single mastodon post"
+	before={fontBefore}
+	beforeAlt=""
+	after={fontAfter}
+	afterAlt=""
+/>
+
+```css
+.column:not(:has(.notification__filter-bar)) .status__wrapper .status__content {
+	font-size: 1.4em !important;
+	line-height: 1.5 !important;
+}
+```
+
+The only slightly complicated part: where exactly I'm changing it — for the content of the posts, but not inside the notifications column, and not for the “detailed” post.
+
+### Adjusting the Columns
+
+I don't like the default behavior of the columns in the Mastodon's advanced web view, so I adjusted it slightly.
+
+import columnsAfter from './columns_after.png';
+
+<Diff
+	caption="Comparison of the mastodon advanced view mode"
+	isFullWidth
+	before={fullBefore}
+	beforeAlt=""
+	after={columnsAfter}
+	afterAlt=""
+/>
+
+```css
+.column, .drawer {
+	flex-grow: 1 !important;
+}
+
+.drawer,
+.column:has(.notification__filter-bar) {
+	max-width: 24em;
+}
+
+.column:has(.notification__filter-bar) {
+	order: 1;
+}
+```
+
+1. I don't have a lot of columns, so by default I have a lot of free space. Mastodon uses flex for them, allowing me to make the columns grow to fill the available space when possible.
+
+2. I don't want The “drawer” (the column with the “new post” form) and the notifications columns to grow as much, so I apply a `max-width` to them.
+
+3. To select the notifications column I'm using a `:has()` selector — otherwise I would have to rely on `[aria-label=Notifications]`, which won't be as reliable, or on the column order (which can change as we can swap the order of the “notifications” and “home” columns via their settings). If you'd want to adapt this style for a broswer that does not yet support `:has()`, you would need to modify it and either use `aria-label` attribute selector, or rely on the order.
+
+4. I'm moving the notifications column to the right. There are two reasons for this: I want to have the “Home” column right after the “drawer”, and I want the dynamic column that shows the posts that I open to be right next to it.
+
+That's it. I wish there was a way to configure the order of the dynamic column to go between the “home” and “notifications”, but alas. Note that with the change via `order` the order would change only visually.
+
+
+### Hiding the Action Bars
+
+I decided to embrace escaping the engagement trap that are replies-favorites-boosts, as well as to save some space and hide all the action bars unless they're in the column with the detailed view of the post and its comments.
+
+import actionbarBefore from './actionbar_before.png';
+import actionbarAfter from './actionbar_after.png';
+
+<Diff
+	caption="Comparing the mastodon posts"
+	before={actionbarBefore}
+	beforeAlt=""
+	after={actionbarAfter}
+	afterAlt=""
+/>
+
+```css
+.column:not(:has(.detailed-status)) .status__action-bar {
+	display: none !important;
+}
+```
+
+### Shorter Notifications
+
+Now that the action bars are removed from the posts in the notifications column things are better, but we can improve them even more:
+
+import notificationsBefore from './notifications_before.png';
+import notificationsAfter from './notifications_after.png';
+
+<Diff
+	caption="Comparing the notification bar"
+	before={notificationsBefore}
+	beforeAlt=""
+	after={notificationsAfter}
+	afterAlt=""
+/>
+
+```css
+.column:has(.notification__filter-bar) .status__content {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.column:has(.notification__filter-bar) .status-card {
+	display: none !important;
+}
+```
+
+1. We can use [line-clamp](https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-line-clamp) to limit the number of lines shown to 2. I'll need to go to the post's detailed view in order to see it completely, but that's ok.
+
+2. We don't need the card preview of whatever content there is when it is in a notification, so we hide those.
+
+### Adjusting Message Backgrounds (requires username)
+
+By default, Mastodon does not diffirentiate how posts look regarding if they are a regular post, a reply to you, mention you, or a post _by_ you. I decided to make things a bit easier to grasp for myself, and added some styles to add this differentiation.
+
+import backgroundsBefore from './backgrounds_before.png';
+import backgroundsAfter from './backgrounds_after.png';
+
+<Diff
+	caption="Comparing posts in a home timeline"
+	before={backgroundsBefore}
+	beforeAlt=""
+	after={backgroundsAfter}
+	afterAlt=""
+/>
+
+This is a set of more involved changes, and if you'd want to copy them, there are a few things to note:
+
+1. Obviously, you'd need to replace the username from the title/attribute selectors from `kizu` to yours.
+
+2. The colors are defined to work in a light theme. These colors are the only thing that changes, but it might be possible to add other types of adjustments. In the automatic dark theme they might have too little of a contrast for now, I'll maybe change this later.
+
+3. As I'm touching some focus styles: this might make your experience worse if you rely on the built-in ones.
+
+```css
+.column:not(:has(.notification__filter-bar)) .status__wrapper,
+.detailed-status {
+	background: var(--custom-message-bg) !important;
+}
+
+.column:not(:has(.notification__filter-bar)) .status__wrapper.focusable:focus-within,
+.detailed-status__wrapper.focusable:focus-within .detailed-status {
+	/* Same as in original styles */
+	background: var(--custom-message-bg--focused, #f5f5f5) !important;
+}
+
+.status__wrapper:has(.status__display-name[title='kizu']),
+.detailed-status:has(.detailed-status__display-name[href='/@kizu']) {
+	--custom-message-bg: rgba(121,189,154,.1);
+	--custom-message-bg--focused: rgba(74, 139, 106, 0.2);
+}
+
+.status__wrapper:has(.status__content__text > p > .h-card > a[title='@kizu']) {
+	--custom-message-bg: rgba(0, 157, 255, .06);
+	--custom-message-bg--focused: rgba(0, 157, 255, .22);
+}
+
+.status__wrapper:has(.status__content__text > p > .h-card:first-child > a[title='@kizu']) {
+	--custom-message-bg: rgba(0, 157, 255, .12);
+	--custom-message-bg--focused: rgba(0, 157, 255, .22);
+}
+
+.status__content__text .h-card > a[title='@kizu'] {
+	color: green !important;
+}
+```
+
+I won't go in details how this works, but what it does:
+
+1. I make the background of _my_ posts slightly green.
+2. I make the background of direct replies to me slightly blue.
+3. I make the background of posts that mention me also blue, but lighter.
+4. I make my username green when it is mentioned.
+
+### Hiding the “back” button from the “Getting Started” Column
+
+> From this point on, I'm omitting the screenshots: these changes are either too small, or can be visible on the full diff screenshot in the beginning of the post.
+
+Never find it useful there, as very often it just doesn't work.
+
+```css
+.column:has(.getting-started) .column-header__back-button {
+	display: none !important;
+}
+```
+
+### Making the “Follow”/“Unfollow” Button in Notifications Smaller
+
+It was too big.
+
+```css
+.account__relationship > .button {
+	font-size: 0.8em !important;
+	padding: 0.25em 1em !important;
+}
+```
+
+### Slightly Tighter Layout
+
+Just a slightly tighter layout, with less space around the columns.
+
+```css
+.columns-area {
+	gap: 2px;
+	padding: 2px !important;
+}
+
+.column, .drawer {
+	padding: 0 !important;
+}
+
+.drawer__header,
+.search {
+	margin-bottom: 2px !important;
+}
+
+```
+
+### Other Assorted Visual changes
+
+Mostly spacing, borders, webkit scrollbar background color, very opinionated.
+
+```css
+.status__prepend {
+	padding-top: 8px !important;
+}
+
+.status__action-bar {
+	margin-top: 8px !important;
+}
+
+.status {
+	padding: 8px 16px !important;
+	border-bottom-width: 2px !important;
+}
+
+.account {
+	border-bottom-width: 2px !important;
+}
+
+.status-card[class] {
+	border-width: 2px !important;
+}
+
+.account__section-headline a,
+.account__section-headline button,
+.notification__filter-bar a,
+.notification__filter-bar button {
+	padding-block: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+	background: #eff4f8 !important;
+}
+```
+
+### Change the Active Tab's Underline Color
+
+It is the same as the unread notification's border, so a bit confusing.
+
+```css
+.active:before {
+	filter: hue-rotate(-135deg);
+}
+```
+
+### Resizable Columns
+
+That's an easy one.
+
+```css
+.drawer,
+.column {
+	resize: horizontal !important;
+}
+```
+
+The UI won't remember it when you refresh, but can be very useful when you want to adjust things from time to time slightly.

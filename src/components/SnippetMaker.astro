@@ -1,0 +1,166 @@
+---
+const BLOCK = 'SnippetMaker';
+---
+<details>
+	<summary>Snippet Maker</summary>
+	<fieldset>
+		<legend>Copy all the overrides<noscript> (works only with JavaScript on, sorry)</noscript></legend>
+
+		<fieldset>
+			<legend>Options</legend>
+
+			<fieldset>
+				<legend>Select the snippets to include</legend>
+				<details>
+					<summary class={`${BLOCK}__options-label`} />
+					<p>
+						Select
+						<button type="button" class={`${BLOCK}__button-all`}>all</button>
+						<button type="button" class={`${BLOCK}__button-none`}>none</button>
+					</p>
+					<div class={`${BLOCK}__options`} />
+				</details>
+			</fieldset>
+
+			<fieldset class={`${BLOCK}__username-field`}>
+				<legend>Replace the username</legend>
+				<p>Some of the snippets target attributes that contain my username. You can replace it in the code automatically by changing this field (it should be local to your instance) (I do not collect any data written here)</p>
+				<p><input type="text" value="kizu" class={`${BLOCK}__username`} /></p>
+			</fieldset>
+
+			<p class={`${BLOCK}__theme-field`}>
+				Default theme:
+				<label><input type="radio" name="theme" value="light" checked /> light</label>
+				<label><input type="radio" name="theme" value="dark" /> dark</label>
+			</p>
+		</fieldset>
+
+		<textarea cols="46" rows="10" class={`${BLOCK}__output`} />
+
+		<p><button type="button" class={`${BLOCK}__button-copy`}>Copy all the code from the textarea above</button></p>
+	</fieldset>
+
+	<script define:vars={{ BLOCK }}>
+		document.addEventListener("DOMContentLoaded", () => {
+			const output = document.querySelector(`.${BLOCK}__output`);
+			const options = document.querySelector(`.${BLOCK}__options`);
+			const optionsLabel = document.querySelector(`.${BLOCK}__options-label`);
+			const username = document.querySelector(`.${BLOCK}__username`);
+			const usernameField = document.querySelector(`.${BLOCK}__username-field`);
+			const themeField = document.querySelector(`.${BLOCK}__theme-field`);
+			const buttonAll = document.querySelector(`.${BLOCK}__button-all`);
+			const buttonNone = document.querySelector(`.${BLOCK}__button-none`);
+			const buttonCopy = document.querySelector(`.${BLOCK}__button-copy`);
+
+			const headers = [...document.querySelectorAll('main h3')];
+			const codeBlocks = [...document.querySelectorAll('main pre')];
+			const inputs = [];
+			headers.forEach((header, index) => {
+				const headerText = header.textContent;
+
+				const input = document.createElement('input');
+				input.setAttribute('type', 'checkbox');
+				input.setAttribute('checked', 'checked');
+				input.setAttribute('value', index);
+				inputs.push(input);
+
+				const label = document.createElement('label');
+				label.append(input);
+				label.append(' ');
+				label.append(headerText);
+
+				const anchor = document.createElement('a');
+				anchor.setAttribute('href', `#${header.id}`);
+				anchor.append('(more)')
+
+				const p = document.createElement('p');
+				p.append(label);
+				p.append(' ');
+				p.append(anchor);
+				options.append(p);
+			});
+
+			const collectSnippets = () => {
+				const selectedOptions = [...options.querySelectorAll('input:checked')].map(({ value }) => Number(value));
+				optionsLabel.innerText = `${selectedOptions.length}/${headers.length} selected`;
+
+
+				let result = '/* Copied from https://blog.kizu.dev/my-mastodon-css-overrides/ */\n\n';
+
+				let atRules = '';
+				let regularRules = '';
+
+				selectedOptions.forEach((index) => {
+					const header = `/* ${headers[index].textContent} */\n`;
+					const content = `${codeBlocks[index].textContent}\n\n`
+					if (content[0] === '@') {
+						atRules += header;
+						atRules += content;
+					} else {
+						regularRules += header;
+						regularRules += content;
+					}
+				});
+				result += atRules;
+
+				// TODO: make configurable
+				const shouldOnlyApplyToDeck = regularRules !== '';
+
+				if (shouldOnlyApplyToDeck) {
+					result += '/* Only for the advanced interface */\n'
+					result += '.layout-multiple-columns {\n\n'
+				}
+
+				result += regularRules;
+
+				if (result.includes('kizu')) {
+					usernameField.classList.remove('is-hidden');
+					const name = username.value;
+					result = result.replaceAll('kizu', name);
+				} else {
+					usernameField.classList.add('is-hidden');
+				}
+
+				if (result.includes('scheme: dark')) {
+					themeField.classList.remove('is-hidden');
+					const checkedInput = themeField.querySelector('input:checked');
+					if (checkedInput.value === 'dark') {
+						result = result.replaceAll('scheme: dark', 'scheme: light');
+					}
+				} else {
+					themeField.classList.add('is-hidden');
+				}
+
+				if (shouldOnlyApplyToDeck) {
+					result += '}\n'
+				}
+
+				output.value = result;
+			}
+
+			collectSnippets();
+			username.addEventListener('input', collectSnippets);
+			inputs.forEach(input => {
+				input.addEventListener('change', collectSnippets);
+			})
+			themeField.querySelectorAll('input').forEach(input => {
+				input.addEventListener('change', collectSnippets);
+			});
+
+			buttonAll.addEventListener('click', () => {
+				inputs.forEach(input => { input.checked = true; });
+				collectSnippets();
+			});
+
+			buttonNone.addEventListener('click', () => {
+				inputs.forEach(input => { input.checked = false; });
+				collectSnippets();
+			});
+
+			buttonCopy.addEventListener('click', () => {
+				navigator.clipboard.writeText(output.value);
+			});
+
+		});
+	</script>
+</details>

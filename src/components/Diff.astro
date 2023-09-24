@@ -1,0 +1,112 @@
+---
+import type { ImageMetadata } from "astro";
+import { getImage } from "astro:assets";
+
+export interface Props {
+	caption?: string;
+	before: ImageMetadata;
+	after: ImageMetadata;
+	beforeAlt: string;
+	afterAlt: string;
+	isLazy?: boolean;
+	isFullWidth?: boolean;
+	isDarkInverted?: boolean;
+	hasSelfLinks?: boolean;
+}
+
+const {
+	caption,
+	before,
+	after,
+	beforeAlt,
+	afterAlt,
+	isLazy = true,
+	isFullWidth = false,
+	isDarkInverted = false,
+	hasSelfLinks = isFullWidth,
+} = Astro.props;
+
+const options = {
+	width: hasSelfLinks ? 1400 : undefined,
+};
+
+const {
+	src: beforeSrc,
+	attributes: beforeAttributes,
+ } = await getImage({ src: before, ...options });
+const {
+	src: afterSrc,
+	attributes: afterAttributes,
+} = await getImage({ src: after, ...options });
+
+const beforeFullSrc = hasSelfLinks ? (await getImage({ src: before })) : undefined;
+const afterFullSrc = hasSelfLinks ? (await getImage({ src: after })) : undefined;
+
+const lazyAttrs = isLazy ? `
+	loading="lazy"
+	decoding="async"
+` : '';
+
+const classAttr = isDarkInverted ? `
+	class="is-dark-inverted"
+`: '';
+
+const beforeDimensions = `
+	width="${beforeAttributes.width}"
+	height="${beforeAttributes.height}"
+`;
+
+const afterDimensions = `
+	width="${afterAttributes.width}"
+	height="${afterAttributes.height}"
+`;
+
+const beforeImage = `
+	<img
+		${beforeDimensions}
+		${lazyAttrs}
+		${classAttr}
+		src="${beforeSrc}"
+		alt="${beforeAlt}"
+	/>
+`.trim().replaceAll(/\s*(\n|\s)\s*/g, ' ');
+
+const afterImage = `
+	<img
+		${afterDimensions}
+		${lazyAttrs}
+		${classAttr}
+		src="${afterSrc}"
+		alt="${afterAlt}"
+	/>
+`.trim().replaceAll(/\s*(\n|\s)\s*/g, ' ');
+
+---
+
+<table class={isFullWidth ? 'is-full-width' : undefined}>
+	{caption ? (
+		<caption>{caption}</caption>
+	) : null}
+	<thead>
+		<tr>
+			<th><div class="is-shrunk">Original</div></th>
+			<th><div class="is-shrunk">With Overrides</div></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				{beforeFullSrc
+					? <a href={beforeFullSrc.src} set:html={beforeImage} target="_blank" />
+					: <Fragment set:html={beforeImage} />
+				}
+			</td>
+			<td>
+				{afterFullSrc
+					? <a href={afterFullSrc.src} set:html={afterImage} target="_blank" />
+					: <Fragment set:html={afterImage} />
+				}
+			</td>
+		</tr>
+	</tbody>
+</table>
