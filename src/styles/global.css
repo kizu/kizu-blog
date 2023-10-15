@@ -54,6 +54,7 @@ p, li {
 
 a[href] {
 	color: hsl(200deg 100% 35%);
+	padding-block: 0.1em;
 }
 
 a[href],
