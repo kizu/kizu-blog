@@ -11,7 +11,7 @@ const posts = (await getCollection('blog')).sort(
   {
     posts.map((post) => (
       <li>
-        <FormattedDate date={post.data.pubDate} />
+        <FormattedDate date={post.data.pubDate} />{' '}
         <a href={`/${betterSlug(post.slug)}/`}>{post.data.title}</a>
       </li>
     ))

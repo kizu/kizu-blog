@@ -9,6 +9,9 @@ current:
 	music: 'The Surrealist — Lux'
 ---
 
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
 How funny — in July I did start my blog but have not posted since then. Isn’t that the fate of most blogs?
 
 As an attempt to have _something_ to write about at least on a weekly basis, here is what I think I’ll do: gather some of the interesting stuff I noticed during the week and just post these with minimal comments. Some of it I shared in [my Mastodon](https://front-end.social/@kizu) already, but I think it could be useful, even if for myself, to have a compilation here as well.
@@ -18,31 +21,31 @@ Let’s go!
 
 ### CSS Techniques and News
 
-- [“<u>Emulate basic relative color syntax with `color-mix()` + the `none` keyword</u>”](https://codepen.io/leaverou/pen/gOZZQZb?editors=1100) by [Lea Verou](https://lea.verou.me/). Given `color-mix()` is already supported in all major browsers, this is a really important find: it brings some of the relative color syntax abilities closer to us — if you can use this with proper fallbacks in a progressive enhancement manner, you can already do it!
+- [“Emulate basic relative color syntax with `color-mix()` + the `none` keyword”](https://codepen.io/leaverou/pen/gOZZQZb?editors=1100) by [Lea Verou](https://lea.verou.me/). Given `color-mix()` is already supported in all major browsers, this is a really important find: it brings some of the relative color syntax abilities closer to us — if you can use this with proper fallbacks in a progressive enhancement manner, you can already do it!
 
-- [“<u>CSS Type Casting to Numeric: `tan(atan2())` Scalars</u>”](https://dev.to/janeori/css-type-casting-to-numeric-tanatan2-scalars-582j) by [Jane Ori](http://propjockey.io/). A very cool workaround for the absence of an ability to remove units from the lengths in CSS calculations. Works (with some hacks) in Chrome and Safari, not yet in Firefox (as it requires `@property`). Given the trick is very simple, I might try it in some of my experiments. If you want this natively — vote for [this interop 2024 focus area proposal](https://github.com/web-platform-tests/interop/issues/513) by [Scott Kellum](https://scottkellum.com/).
+- [“CSS Type Casting to Numeric: `tan(atan2())` Scalars”](https://dev.to/janeori/css-type-casting-to-numeric-tanatan2-scalars-582j) by [Jane Ori](http://propjockey.io/). A very cool workaround for the absence of an ability to remove units from the lengths in CSS calculations. Works (with some hacks) in Chrome and Safari, not yet in Firefox (as it requires `@property`). Given the trick is very simple, I might try it in some of my experiments. If you want this natively — vote for [this interop 2024 focus area proposal](https://github.com/web-platform-tests/interop/issues/513) by [Scott Kellum](https://scottkellum.com/).
 
-- [“<u>[css-backgrounds] background-clip: border-area</u>”](https://github.com/w3c/csswg-drafts/issues/9456) — a proposal in CSSWG issues by [Lea Verou](https://lea.verou.me/). I think it makes a lot of sense, though it might be a bit tricky to use correctly due to the necessity to make sure the fallbacks would work and would not result in unreadable text.
+- [“[css-backgrounds] background-clip: border-area”](https://github.com/w3c/csswg-drafts/issues/9456) — a proposal in CSSWG issues by [Lea Verou](https://lea.verou.me/). I think it makes a lot of sense, though it might be a bit tricky to use correctly due to the necessity to make sure the fallbacks would work and would not result in unreadable text.
 
-- [“<u>The Cascade is a newsletter about the past, present, and future of CSS</u>”](https://robinrendle.com/the-cascade/) by [Robin Rendle](https://robinrendle.com/). Two issues are already there and are also available on Robin’s website in a non-newsletter format if you prefer it this way.
+- [“The Cascade is a newsletter about the past, present, and future of CSS”](https://robinrendle.com/the-cascade/) by [Robin Rendle](https://robinrendle.com/). Two issues are already there and are also available on Robin’s website in a non-newsletter format if you prefer it this way.
 
 
 ### Not Exactly New, but Noteworthy
 
-- [“<u>Igalia Chats</u>”](https://www.igalia.com/24-7/chats) — a podcast by [Brian Kardell](https://bkardell.com/) and [Eric Meyer](https://meyerweb.com/) about the web, its history, browsers and standards. I just finished listening to all the currently available recordings, and I wish there were more in-depth discussions about the web of this kind.
+- [“Igalia Chats”](https://www.igalia.com/24-7/chats) — a podcast by [Brian Kardell](https://bkardell.com/) and [Eric Meyer](https://meyerweb.com/) about the web, its history, browsers and standards. I just finished listening to all the currently available recordings, and I wish there were more in-depth discussions about the web of this kind.
 
-- [“<u>ImageOptim 1.9.1</u>”](https://imageoptim.com/changelog.html#v1.9.1) by [Kornel Lesiński](https://kornel.ski/) — a very useful macOS app for image optimization, now native for Apple Silicon.
+- [“ImageOptim 1.9.1”](https://imageoptim.com/changelog.html#v1.9.1) by [Kornel Lesiński](https://kornel.ski/) — a very useful macOS app for image optimization, now native for Apple Silicon.
 
-- [“<u>Orion Browser</u>”](https://browser.kagi.com/) and [“<u>SigmaOS</u>”](https://sigmaos.com/) — interestingly, there are now new browsers that are based on WebKit, which is refreshing compared to most of them being based on Chromium recently. Similarly, the [“<u>DuckDuckGo</u>”](https://duckduckgo.com/duckduckgo-help-pages/get-duckduckgo/get-duckduckgo-browser-on-mac/) browser, which exists on different systems, just uses the built-in engine, so on macOS it also uses WebKit.
+- [“Orion Browser”](https://browser.kagi.com/) and [“SigmaOS”](https://sigmaos.com/) — interestingly, there are now new browsers that are based on WebKit, which is refreshing compared to most of them being based on Chromium recently. Similarly, the [“DuckDuckGo”](https://duckduckgo.com/duckduckgo-help-pages/get-duckduckgo/get-duckduckgo-browser-on-mac/) browser, which exists on different systems, just uses the built-in engine, so on macOS it also uses WebKit.
 
-- [“<u>`preact-custom-element`</u>”](https://github.com/preactjs/preact-custom-element) — a Preact helper that allows it to be used with web components. I tried it for a tiny thing I’m working on, and it works okay. There are a bunch of bugs here and there, but otherwise I’m pretty happy with how web components, [Preact](https://preactjs.com/) and [HTM](https://github.com/developit/htm) can work together. No transpiler needed, small footprint.
+- [“`preact-custom-element`”](https://github.com/preactjs/preact-custom-element) — a Preact helper that allows it to be used with web components. I tried it for a tiny thing I’m working on, and it works okay. There are a bunch of bugs here and there, but otherwise I’m pretty happy with how web components, [Preact](https://preactjs.com/) and [HTM](https://github.com/developit/htm) can work together. No transpiler needed, small footprint.
 
 
 ### My Bug Reports
 
-- [“<u>Scroll-margin does not work for an element with a parent that has a non-visible overflow</u>”](https://bugs.chromium.org/p/chromium/issues/detail?id=1492209) — a bug I reported in Chromium. There are actually so many more issues with `scroll-margin` and overflow… I’ll need to find time to extensively research it, as I think there is a very big gray area in both specs and implementations.
+- [“Scroll-margin does not work for an element with a parent that has a non-visible overflow”](https://bugs.chromium.org/p/chromium/issues/detail?id=1492209) — a bug I reported in Chromium. There are actually so many more issues with `scroll-margin` and overflow… I’ll need to find time to extensively research it, as I think there is a very big gray area in both specs and implementations.
 
-- [“<u>No transitions of inherited properties when the change is triggered by animations</u>”](https://bugzilla.mozilla.org/show_bug.cgi?id=1858786) — another bug I reported this week, this time for Firefox. Also, it is slightly in a gray area, where specs are not 100% clear about how it should behave, but the way Chrome and Safari handle it are much more useful for developers. This might be required for a lot of techniques based on scroll-driven animations to work in the future, but it could still be useful even without them.
+- [“No transitions of inherited properties when the change is triggered by animations”](https://bugzilla.mozilla.org/show_bug.cgi?id=1858786) — another bug I reported this week, this time for Firefox. Also, it is slightly in a gray area, where specs are not 100% clear about how it should behave, but the way Chrome and Safari handle it are much more useful for developers. This might be required for a lot of techniques based on scroll-driven animations to work in the future, but it could still be useful even without them.
 
 
 - - -
