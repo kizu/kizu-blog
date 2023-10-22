@@ -1,15 +1,14 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import { webcomponents } from '@astropub/web-components'
-
 import sitemap from '@astrojs/sitemap';
+
+import preact from "@astrojs/preact";
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://blog.kizu.dev',
-	markdown: {
-    syntaxHighlight: 'prism',
+  site: 'https://blog.kizu.dev',
+  markdown: {
+    syntaxHighlight: 'prism'
   },
-	integrations: [mdx(), sitemap()],
-  vite: { plugins: [webcomponents()] },
+  integrations: [mdx(), sitemap(), preact()],
 });

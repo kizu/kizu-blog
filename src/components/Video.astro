@@ -1,11 +1,14 @@
 ---
+import type { ImageMetadata } from "astro";
 import type { HTMLAttributes } from 'astro/types';
 
-interface Props extends HTMLAttributes<'video'> {
+interface Props extends Omit<HTMLAttributes<'video'>, 'poster'> {
   src: HTMLAttributes<'source'>['src'];
+  poster?: ImageMetadata;
 }
 
-const { src, ...props } = Astro.props;
+const { src, poster: { src: poster, width, height } = {}, ...props } = Astro.props;
+
 ---
 
 <video
@@ -13,6 +16,9 @@ const { src, ...props } = Astro.props;
   muted
   playsinline
   preload="none"
+  poster={poster}
+  width={width}
+  height={height}
   {...props}
 >
   <source

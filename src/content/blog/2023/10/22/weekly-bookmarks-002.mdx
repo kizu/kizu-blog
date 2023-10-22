@@ -9,65 +9,68 @@ current:
 	music: 'Haisuinonasa — Dynamics of the Subway'
 ---
 
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
 Hey hey! Oh wow, I did not forget to publish this weekly post. Though, I wish I had prepared some of the links in advance as a way to speed up the process.
 
 ### CSS Techniques and News
 
-- [“<u>When to use CSS `text-wrap: balance;` vs `text-wrap: pretty;`</u>”](https://blog.stephaniestimac.com/posts/2023/10/css-text-wrap/) by [Stephanie Stimac](https://stephaniestimac.com/) — a comparison of two different values of `text-wrap` currently available in Chrome, alongside their use cases.
+- [“When to use CSS `text-wrap: balance;` vs `text-wrap: pretty;`”](https://blog.stephaniestimac.com/posts/2023/10/css-text-wrap/) by [Stephanie Stimac](https://stephaniestimac.com/) — a comparison of two different values of `text-wrap` currently available in Chrome, alongside their use cases.
 
-- [“<u>CSS Text Level 4 Draft Updated</u>”](https://www.w3.org/blog/CSS/2023/10/20/css-text-level-4-draft-updated/) by [Florian Rivoal](https://florian.rivoal.net/) — an important thing to mention in addition to the previous article, as the `text-wrap` naming would change to `text-wrap-style` eventually. Unfortunate that it did ship with the current name, with people already adopting it, but the new naming is a bit more clear.
+- [“CSS Text Level 4 Draft Updated”](https://www.w3.org/blog/CSS/2023/10/20/css-text-level-4-draft-updated/) by [Florian Rivoal](https://florian.rivoal.net/) — an important thing to mention in addition to the previous article, as the `text-wrap` naming would change to `text-wrap-style` eventually. Unfortunate that it did ship with the current name, with people already adopting it, but the new naming is a bit more clear.
 
-- Gecko’s [“<u>Intent to ship: CSS `text-wrap: balance`</u>”](https://groups.google.com/a/mozilla.org/g/dev-platform/c/uAscf5sfEdc/m/0EQcFYqxAAAJ) — related to the previous two articles: it seems that Firefox wants to ship the `text-wrap: balance` anyway, and then later adjust to the new naming, making the situation slightly more weird, but also more interop?
+- Gecko’s [“Intent to ship: CSS `text-wrap: balance`”](https://groups.google.com/a/mozilla.org/g/dev-platform/c/uAscf5sfEdc/m/0EQcFYqxAAAJ) — related to the previous two articles: it seems that Firefox wants to ship the `text-wrap: balance` anyway, and then later adjust to the new naming, making the situation slightly more weird, but also more interop?
 
-- [“<u>A Couple of New CSS Functions I’d Never Heard Of</u>”](https://chriscoyier.net/2023/10/17/a-couple-of-new-css-functions-id-never-heard-of/) by [Chris Coyier](https://chriscoyier.net/) — a nice little _round_-up of new CSS functions. I actually never heard about `xywh()`, and I already like how its name describes its API. Maybe we could rename `border-image` property accordingly, eh?
+- [“A Couple of New CSS Functions I’d Never Heard Of”](https://chriscoyier.net/2023/10/17/a-couple-of-new-css-functions-id-never-heard-of/) by [Chris Coyier](https://chriscoyier.net/) — a nice little _round_-up of new CSS functions. I actually never heard about `xywh()`, and I already like how its name describes its API. Maybe we could rename `border-image` property accordingly, eh?
 
-- [“<u>@supports @property</u>”](https://codepen.io/propjockey/pen/OJdJmya?editors=1100) by [Jane Ori](http://propjockey.io/) — a CodePen showing how we can detect the support of `@property`. A bit hacky, as we don’t actually have a native way to detect this, it relies on detecting unrelated features that shipped in the exact same browser versions that `@property` did.
+- [“@supports @property”](https://codepen.io/propjockey/pen/OJdJmya?editors=1100) by [Jane Ori](http://propjockey.io/) — a CodePen showing how we can detect the support of `@property`. A bit hacky, as we don’t actually have a native way to detect this, it relies on detecting unrelated features that shipped in the exact same browser versions that `@property` did.
 
     The ability to test for this natively was resolved by CSSWG in the [“Feature detection for descriptors” issue](https://github.com/w3c/csswg-drafts/issues/2463#issuecomment-1016720310), though there are still unresolved issues like [testing for preludes](https://github.com/w3c/csswg-drafts/issues/6966). Browsers are yet to implement this, though, and hopefully when they do, we will be able to test for things like `@property` natively.
 
-- Chromiums’s [“<u>Intent to Ship: CSS Scrollbars: `scrollbar-color`, `scrollbar-width`</u>”](https://groups.google.com/a/chromium.org/g/blink-dev/c/PkEsMirl2zE/m/ArphSa39AAAJ) — I’m not sure yet what I think about these — I understand that it is unlikely we’d get the much more powerful WebKit’s pseudo-elements, so having at least _some_ standard way to control the scrollbars would be nice, _but_ I’d really want to see the `scrollbar-width` accepting `<length>` instead of its current `auto | thin | none`.
+- Chromiums’s [“Intent to Ship: CSS Scrollbars: `scrollbar-color`, `scrollbar-width`”](https://groups.google.com/a/chromium.org/g/blink-dev/c/PkEsMirl2zE/m/ArphSa39AAAJ) — I’m not sure yet what I think about these — I understand that it is unlikely we’d get the much more powerful WebKit’s pseudo-elements, so having at least _some_ standard way to control the scrollbars would be nice, _but_ I’d really want to see the `scrollbar-width` accepting `<length>` instead of its current `auto | thin | none`.
 
     I think one of the reasons not to have it was to prevent the scrollbars being too thin… But what if we’d just say “Treat any length value as something like `max(thin, my-value)`”? Basically, have the value that the scrollbar can get via `thin` be the lower bound, so we could still control the scrollbar width in a way that it would be consistent with other design elements.
 
-- Gecko’s [“<u>Intent to prototype & ship: CSS text-indent keywords `hanging` & `each-line`</u>”](https://groups.google.com/a/mozilla.org/g/dev-platform/c/z6PaiICBCRg/m/w171E3_DAAAJ) — can be very useful for wrapping `<code>` elements (not to be confused with [hanging punctuation](https://drafts.csswg.org/css-text/#hanging-punctuation-property)).
+- Gecko’s [“Intent to prototype & ship: CSS text-indent keywords `hanging` & `each-line`”](https://groups.google.com/a/mozilla.org/g/dev-platform/c/z6PaiICBCRg/m/w171E3_DAAAJ) — can be very useful for wrapping `<code>` elements (not to be confused with [hanging punctuation](https://drafts.csswg.org/css-text/#hanging-punctuation-property)).
 
-- Chromiums’s [“<u>Intent to Ship: CSS Exponential Functions</u>”](https://groups.google.com/a/chromium.org/g/blink-dev/c/oAu01pBscs8/m/JUaPY3KwAQAJ) — I always welcome more maths into CSS, even though I don’t use it very often. But I know a lot of others do, and sometimes maths can unlock some interesting effects!
+- Chromiums’s [“Intent to Ship: CSS Exponential Functions”](https://groups.google.com/a/chromium.org/g/blink-dev/c/oAu01pBscs8/m/JUaPY3KwAQAJ) — I always welcome more maths into CSS, even though I don’t use it very often. But I know a lot of others do, and sometimes maths can unlock some interesting effects!
 
-- [“<u>Scroll-Driven State Transfer</u>”](https://kizu.dev/scroll-driven-state-transfer/) — My fourth article about scroll-driven animations, where I explore how we can transfer the state of one element to a completely different place on a page by connecting them with a unique identifier in CSS via a timeline-scope.
+- [“Scroll-Driven State Transfer”](https://kizu.dev/scroll-driven-state-transfer/) — My fourth article about scroll-driven animations, where I explore how we can transfer the state of one element to a completely different place on a page by connecting them with a unique identifier in CSS via a timeline-scope.
 
 ### Non-CSS Web Platform Stuff
 
-- [“<u>The History of editing and publishing in web browsers</u>”](https://techno-barje.fr/post/2023/10/20/history-of-edition-and-publishing-in-web-browsers/) by [Alexandre Poirot](https://techno-barje.fr/) — a bit of web browser history that I did not really know of or remembered.
+- [“The History of editing and publishing in web browsers”](https://techno-barje.fr/post/2023/10/20/history-of-edition-and-publishing-in-web-browsers/) by [Alexandre Poirot](https://techno-barje.fr/) — a bit of web browser history that I did not really know of or remembered.
 
 ### Not Exactly New, but Noteworthy
 
 - Some links from [a short Mastodon Thread about multicol](https://front-end.social/@kizu/111258253160862526) by me:
 
-    - [“<u>CSS Multi-Column Layout block element breaking</u>”](https://github.com/web-platform-tests/interop/issues/520) by [Scott Kellum](https://scottkellum.com/) — a “focus area proposal” for Interop 2024. I recommend voting for this issue — any improvements to multicol would be really awesome, it is a highly overlooked area in CSS.
-    - [“<u>Things We Can’t (Yet) Do In CSS</u>”](https://www.smashingmagazine.com/2019/11/css-things-cant-yet-do/) by [Rachel Andrew](https://rachelandrew.co.uk/) — a 5 years old, but still actual article about various missing CSS multicol features. Curiously, some of them might be possible with the help of some of the newer CSS specs, though in a rather hacky way. I might write about this relatively soon.
-    - [“<u>Overflow in the block direction for continuous media</u>”](https://github.com/w3c/csswg-drafts/issues/2923) also by [Rachel Andrew](https://rachelandrew.co.uk/) — a CSSWG issue about one of these issues which is almost impossible to do without a native support for it. From what I can remember, there are a lot of issues with fragmentation in CSS, and I think there was some work going on to improve it in general? Hopefully, one day, this would be sorted.
+    - [“CSS Multi-Column Layout block element breaking”](https://github.com/web-platform-tests/interop/issues/520) by [Scott Kellum](https://scottkellum.com/) — a “focus area proposal” for Interop 2024. I recommend voting for this issue — any improvements to multicol would be really awesome, it is a highly overlooked area in CSS.
+    - [“Things We Can’t (Yet) Do In CSS”](https://www.smashingmagazine.com/2019/11/css-things-cant-yet-do/) by [Rachel Andrew](https://rachelandrew.co.uk/) — a 5 years old, but still actual article about various missing CSS multicol features. Curiously, some of them might be possible with the help of some of the newer CSS specs, though in a rather hacky way. I might write about this relatively soon.
+    - [“Overflow in the block direction for continuous media”](https://github.com/w3c/csswg-drafts/issues/2923) also by [Rachel Andrew](https://rachelandrew.co.uk/) — a CSSWG issue about one of these issues which is almost impossible to do without a native support for it. From what I can remember, there are a lot of issues with fragmentation in CSS, and I think there was some work going on to improve it in general? Hopefully, one day, this would be sorted.
 
-- [“<u>CSS 2</u>”](https://drafts.csswg.org/css2/) — if you can’t find something obvious in the specs, try looking in CSS2.
+- [“CSS 2”](https://drafts.csswg.org/css2/) — if you can’t find something obvious in the specs, try looking in CSS2.
 
     A lot of things did not move to the new levels of specs, so a lot of basics and their nuances are still only there in CSS2.
 
-- [“<u>CSS Indexes</u>”](https://drafts.csswg.org/indexes/) shared by [Amelia Bellamy-Royds](https://github.com/AmeliaBR/) as [a response](https://front-end.social/@AmeliaBR/111251112262899307) to me sharing the previous tip on mastodon — a listing of every term defined by CSS specs.
+- [“CSS Indexes”](https://drafts.csswg.org/indexes/) shared by [Amelia Bellamy-Royds](https://github.com/AmeliaBR/) as [a response](https://front-end.social/@AmeliaBR/111251112262899307) to me sharing the previous tip on mastodon — a listing of every term defined by CSS specs.
 
 ### My Bug Reports
 
-- [“<u>Tests for `round()`, `mod()`, and `rem()` that has a percentage only for one value</u>”](https://github.com/web-platform-tests/wpt/pull/42676) — my first PR to [Web-Platform Tests](https://web-platform-tests.org/). I wanted to try doing this for a while — write WPT tests as an alternative to just filling up the bugs in the browser bug trackers. I was told these, when merged, could automatically create these bug reports for the browsers that fail them? I’m very curious to see how the workflow would be with them.
+- [“Tests for `round()`, `mod()`, and `rem()` that has a percentage only for one value”](https://github.com/web-platform-tests/wpt/pull/42676) — my first PR to [Web-Platform Tests](https://web-platform-tests.org/). I wanted to try doing this for a while — write WPT tests as an alternative to just filling up the bugs in the browser bug trackers. I was told these, when merged, could automatically create these bug reports for the browsers that fail them? I’m very curious to see how the workflow would be with them.
 
-- [“<u>Regression: size value for box-shadows did stop working</u>”](https://bugs.chromium.org/p/chromium/issues/detail?id=1493339) — a rather weird issue in Chrome Canary which I can see on my work MacBook (and at least one of my colleague can as well), but I cannot reproduce it on my home MacBook. Maybe some weird environment issue? Hmm.
+- [“Regression: size value for box-shadows did stop working”](https://bugs.chromium.org/p/chromium/issues/detail?id=1493339) — a rather weird issue in Chrome Canary which I can see on my work MacBook (and at least one of my colleague can as well), but I cannot reproduce it on my home MacBook. Maybe some weird environment issue? Hmm.
 
 ### Upcoming Events
 
 Usually, I’m staying at home, slowly working on my CSS articles and experiments, but this time I’ve decided to travel a bit. I did plan to attend [Fronteers Conference](https://fronteersconf.org/) this year, but it was cancelled — so I decided to visit the `border: none` instead.
 
-- October 26–27, 2023, [“<u>`border: none` 2023</u>”](https://border-none.net/2023/) — a non-profit conference in Nuremberg, Germany. I’m planning to attend it in-person, so if you’d be there — say hi! Otherwise, they’re planning to stream the talks, with the ticket starting from €30.
+- October 26–27, 2023, [“`border: none` 2023”](https://border-none.net/2023/) — a non-profit conference in Nuremberg, Germany. I’m planning to attend it in-person, so if you’d be there — say hi! Otherwise, they’re planning to stream the talks, with the ticket starting from €30.
 
-- October 28–29, 2023 [“<u>IndieWebCamp Nuremberg 2023</u>”](https://indieweb.org/2023/Nuremberg) — will be my first IndieWebCamp. Right after the `border: none`, hopefully I won’t be too exhausted after the conference itself.
+- October 28–29, 2023 [“IndieWebCamp Nuremberg 2023”](https://indieweb.org/2023/Nuremberg) — will be my first IndieWebCamp. Right after the `border: none`, hopefully I won’t be too exhausted after the conference itself.
 
-- October 30, 2023, [“<u>Weird Things You Missed About CSS</u>”](https://www.meetup.com/css-cafe/events/296354512/) by [Stephanie Eckles](https://thinkdobecreate.com/) — a free online CSS Café event. I’ll be in a train back from `border: none` during it, but would try to attend if the Wi-Fi in the train will allow me!
+- October 30, 2023, [“Weird Things You Missed About CSS”](https://www.meetup.com/css-cafe/events/296354512/) by [Stephanie Eckles](https://thinkdobecreate.com/) — a free online CSS Café event. I’ll be in a train back from `border: none` during it, but would try to attend if the Wi-Fi in the train will allow me!
 
 - - -
 

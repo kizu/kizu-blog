@@ -14,6 +14,9 @@ export async function get(context: APIContext) {
 		const fullLink = `${context.site}${betterSlug(post.slug)}/`;
 		const { mastodonPostId } = post.data;
 		const text = `${post.body}\n- - -\nLet me know what you think about this [on Mastodon](${getMastodonPostLink(mastodonPostId)})!`;
+		// Could be improved in the future, see
+		// > Possibly unblock .mdx compiledContent/html output
+		// https://github.com/withastro/roadmap/issues/533
 		const content = (await markdown(text, fullLink)).toString();
 		items.push({
 			...post.data,
