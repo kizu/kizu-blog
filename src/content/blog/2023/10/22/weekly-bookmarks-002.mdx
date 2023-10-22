@@ -21,7 +21,7 @@ Hey hey! Oh wow, I did not forget to publish this weekly post. Though, I wi
 
 - [“<u>A Couple of New CSS Functions I’d Never Heard Of</u>”](https://chriscoyier.net/2023/10/17/a-couple-of-new-css-functions-id-never-heard-of/) by [Chris Coyier](https://chriscoyier.net/) — a nice little _round_-up of new CSS functions. I actually never heard about `xywh()`, and I already like how its name describes its API. Maybe we could rename `border-image` property accordingly, eh?
 
-- [“<u>@supports @property</u>”](https://codepen.io/propjockey/pen/OJdJmya?editors=1100) by [Jane Ori](http://propjockey.io/) — a CodePen showing how we can detect the support of `@property`. A bit hacky, as we don’t actually have a native way to detect this, so it relies on “related features” testing, when we test the existence of features that are approximately supported by similar browser versions.
+- [“<u>@supports @property</u>”](https://codepen.io/propjockey/pen/OJdJmya?editors=1100) by [Jane Ori](http://propjockey.io/) — a CodePen showing how we can detect the support of `@property`. A bit hacky, as we don’t actually have a native way to detect this, it relies on detecting unrelated features that shipped in the exact same browser versions that `@property` did.
 
     The ability to test for this natively was resolved by CSSWG in the [“Feature detection for descriptors” issue](https://github.com/w3c/csswg-drafts/issues/2463#issuecomment-1016720310), though there are still unresolved issues like [testing for preludes](https://github.com/w3c/csswg-drafts/issues/6966). Browsers are yet to implement this, though, and hopefully when they do, we will be able to test for things like `@property` natively.
 
