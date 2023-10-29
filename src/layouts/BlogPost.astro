@@ -17,6 +17,7 @@ const {
 	updatedDate,
 	heroImage,
 	mastodonPostId,
+	tags = [],
 } = Astro.props;
 const { pathname } = Astro.url;
 
@@ -27,22 +28,33 @@ const { pathname } = Astro.url;
 		<BaseHead title={title} description={description} />
 	</head>
 
-	<body>
+	<body class="h-entry">
 		<MastodonPostInfoTemplate />
 		{pathname !== '/' ? <Header /> : null}
 		<main>
-			<article>
+			<article class="e-content">
 				{heroImage && <img width={720} height={360} src={heroImage} alt="" />}
-				<h1>{title}</h1>
-				{pubDate ? <FormattedDate date={pubDate} /> : null}
+				<h1 class="p-name">{title}</h1>
+				<p>
+					{pubDate ? <>Published on <a class="u-url u-uid is-inherited" href={Astro.url}><FormattedDate class="dt-published" date={pubDate} /></a>.</> : null}
+					{
+						updatedDate ? (
+							<span>
+								Last updated on <FormattedDate class="dt-updated" date={updatedDate} />.
+							</span>
+						) : null
+					}
+					{
+						tags.length ?(<>
+							Categories:
+							{tags.map((tag, index) => <>
+								{index !== 0 ? ', ' : null}
+								<span class="p-category">{tag}</span>
+							</>)}.
+						</>) : null
+					}
+				</p>
 
-				{
-					updatedDate ? (
-						<div>
-							Last updated on <FormattedDate date={updatedDate} />
-						</div>
-					) : null
-				}
 				<hr />
 				<slot />
 			</article>
