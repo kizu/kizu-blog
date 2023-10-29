@@ -5,6 +5,17 @@ const today = new Date();
 ---
 
 <hr />
-<footer>
-	<p>&copy; {today.getFullYear()}{' '}<a rel="me" href={MAIN_URL}>{AUTHOR}</a>. All rights reserved. <a href="/rss.xml">RSS</a>.</p>
+<footer class="h-card p-author">
+	<p>
+		&copy;
+		{today.getFullYear()}
+		{' '}
+		<a class="u-url p-name" rel="me author" href={Astro.site}>{AUTHOR}</a>.
+		All rights reserved.
+		<a class="u-url" href={MAIN_URL}>Main site</a>.
+		<a href="/rss.xml">RSS</a>.
+		<a class="u-url" rel="me" href={MASTODON_URL}>Mastodon</a>.
+	</p>
+	<span class="p-note" hidden aria-hidden="true">I love CSS, and most of the things I do, write, or think about are CSS-related.</span>
+	<img class="u-photo" src="/photo.jpg" hidden aria-hidden="true" alt="A photo of me (rather outdated)" />
 </footer>
