@@ -1,0 +1,79 @@
+---
+title: 'IndieWebCamp Updates'
+description: 'I did participate in the IndieWebCamp Nuremberg 2023 and made a few updates to my main site and my less polished blog.'
+tags: ['IndieWebCamp', 'IndieWeb', 'microformats']
+pubDate: '2023-10-30'
+mastodonPostId: ''
+
+current:
+	coffee: 'Cappuccino'
+	location: 'Espressolab, Theresienstraße 14, 90403 Nürnberg, Germany'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+If you were waiting for my weekly list of links, I would publish it a bit later! As I did mention in the [previous weekly](/weekly-bookmarks-002/), I did attend the [“border: none”](https://border-none.net/2023/) conference, and right after it, I did participate in the [“IndieWebCamp Nuremberg 2023”](https://indieweb.org/2023/Nuremberg). So, I did not have too much time to work on the weekly post — but I did gather some links and would try to compile them eventually.
+
+I’ll omit most of what I learned during IWC’s first day; I think most of it would go into the weekly links post, and in this post I would just list things that I did add to my websites.
+
+## Microformats
+
+I did add [`h-card`](https://microformats.org/wiki/h-card) and [`h-entry`](https://microformats.org/wiki/h-entry) microformats to both [kizu.dev](https://kizu.dev) and [blog.kizu.dev](https://blog.kizu.dev).
+
+I remember having an older version of microformats years and years ago over at my core site, but I did lose them with one of the redesigns.
+
+Now was a good opportunity to add them back again.
+
+Here are both of my PRs that did add them to my sites:
+
+- https://github.com/kizu/kizu.ru/pull/239
+- https://github.com/kizu/kizu-blog/pull/5
+
+They contain a bit more stuff than just microformats, and the code inside is not that interesting, but you’re free to peek into them.
+
+You can also look at the microformats validator results:
+
+- [h-card at kizu.dev](https://indiewebify.me/validate-h-card/?url=https%3A%2F%2Fkizu.dev%2F)
+- [h-entry for a kizu.dev article](https://indiewebify.me/validate-h-entry/?url=https%3A%2F%2Fkizu.dev%2Fscroll-driven-state-transfer%2F)
+- [h-card at blog.kizu.dev](https://indiewebify.me/validate-h-card/?url=https%3A%2F%2Fblog.kizu.dev%2F)
+- [h-entry for a blog.kizu.dev article](https://indiewebify.me/validate-h-entry/?url=https%3A%2F%2Fblog.kizu.dev%2Fweekly-bookmarks-001%2F)
+
+There were a few notes I took while doing this:
+
+- When validating things via the validator on [indiewebify.me](https://indiewebify.me), I noticed a potential XSS issue and [reported it on their GitHub](https://github.com/indieweb/indiewebify-me/issues/115).
+- I decided against using the outdated formats like [hCard 1.0](https://microformats.org/wiki/hcard) (`vcard`, `fn`, etc), at least for now.
+- It is not always easy to add microformats _after the fact_:
+    - On my main site, I’m using a CSS grid for the article’s layout, and when I was implementing it, there were no subgrids (and even no good `display: contents` support), so everything inside my article is a flat list of elements. A bunch of microformats require wrappers, like the `e-content` for the `h-entry`. Maybe when I redesign or rewrite the site once again, I’ll take this into consideration.
+    - There seems to be no good way to provide data in microformats without actual elements in HTML. For example, I’ll be ok with providing my photo as a part of the consumed microformats but not as something visible on the site. Adding actual elements and _hiding_ them did not sound good. I wonder if there might be better solutions, like involving `<template>` tag or something similar. Or maybe there is one, but I don’t know about it.
+    - I think it could be nice to have some ways to “connect” elements via some id references, like I’d want to have my `h-card` outside an `h-entry`, but mention it for the author field. The pattern I have noticed (and ended up using) is that very often the whole page becomes a `h-card` or `h-entry`, allowing nesting everything inside them and creating a semantic connection. However, I think there are enough cases to be able to connect entities that are located in different parts of a page.
+
+## Syndicating My Blog to My site
+
+One of the ideas of the Indie Web is to own all your content and display it on your site in some form. I already publish my articles and my less polished posts on my own sites, but until now I did not have any connection between them.
+
+In the time I had to work on it, I did manage to implement fetching my blog posts into my main site and display the most recent five posts as a simple list. I did not spend too much time on this list’s design; I just wanted the content to be there. After all, I’ll be redesigning my home page eventually and will try to incorporate these links in a better way.
+
+How I ended up implementing this:
+
+- I output the metadata of the five latest articles on my blog in a `JSON`, creating it automatically when building the site.
+	- As I’m using [Astro](https://astro.build/), I did add a `src/pages/latest.json.ts` file.
+	- I struggled a bit looking at what this file should return for Astro to properly output the JSON. Basically, [it needs to export an async function](https://github.com/kizu/kizu-blog/commit/68c0c04f7ad75b4e344b0305e5ffbf53e610d965#diff-c751fd7139a0c3f7f968a9e557436bfa25257eab0db0708fe62cd38acb52a9df), which returns a `{ body: JSON.stringify(…) }` object.
+- Then, on my main site, I’m using the Hugo’s [getJSON](https://gohugo.io/functions/data/getjson/) to retrieve this data and use it for creating this list.
+
+That’s it!
+
+## Planned for the future
+
+I think there are still a lot of ways microformats could be added and improved, but until I stumble across a need for something to _consume_ them, I’ll leave them mostly be. Though, I think it could be a good idea to add some kind of test to my build pipeline that would parse the built pages and make sure microformats are present and result in the data I would expect. This way, any site refactoring won’t result in it breaking.
+
+For the “self-syndicating” articles, I’ll need to implement the reverse: show the latest articles from my core site over at my blog. A few things to note:
+
+- I think I don’t want to get every article, maybe only “featured”? Though maybe, with me now having this additional blog, there is no need to make anything featured.
+- I want to make the websites rebuild automatically when one of them changes. I did look into how I could set this up — the build hooks in Netlify where I’m hosting both sites seem like they could do the job, but I’m a bit afraid to set them up in a loop: I’ll need to somehow make it, so only a _commit_ would result in a rebuild, but not just any rebuild triggering an outside hook.
+
+## Final Thoughts
+
+I always love working on my websites, and I always wish I had more time to do so. Having this dedicated time at IndieWebCamp to do just that was very nice!
+
+I also met a bunch of new people and learned about a bunch of interesting things. I’ll try to compile them into the next weekly post, so stay tuned!

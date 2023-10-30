@@ -44,14 +44,15 @@ const { pathname } = Astro.url;
 							</span>
 						) : null
 					}
+					{' '}
 					{
-						tags.length ?(<>
+						tags.length ?(<span class="is-inline-block">
 							Categories:
 							{tags.map((tag, index) => <>
 								{index !== 0 ? ', ' : null}
 								<span class="p-category">{tag}</span>
 							</>)}.
-						</>) : null
+						</span>) : null
 					}
 				</p>
 
