@@ -1,0 +1,69 @@
+---
+title: 'Weekly Bookmarks 3: IndieWebCamp Edition'
+description: 'I learned a lot from IndieWebCamp and gathered a lot of links from the sessions I did participate in.'
+tags: ['IndieWebCamp', 'IndieWeb', 'weekly']
+pubDate: '2023-11-01'
+mastodonPostId: ''
+
+current:
+	drinking: 'Some plain water in the trains; Yunnan at home'
+	location: 'Started: Nuremberg → Paris; then finished at Home'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+As I shared in my [previous post about the things I did during IndieWebCamp](/indie-web-camp-updates), I did not have enough time to compile a list of bookmarks for the last week. I have some, but I was mostly paying attention to what was happening at the conference and the IndieWeb event. I’ll include these links in the next weekly bookmarks.
+
+However, IndieWebCamp, especially the sessions during the first day, was full of information, which I tried to distill into a list of links that I found interesting.
+
+## Building Block Icons
+
+I participated in [a session about having an imagery for the indie web “building blocks”](https://indieweb.org/2023/Nuremberg/block-icons), initiated by [Paul Robert Lloyd](https://paulrobertlloyd.com), in which we discussed if there should be a cohesive design language for various IndieWeb thingies.
+
+- [“A cohesive and unified identity for IndieWeb protocols”](https://paulrobertlloyd.com/2023/298/a1/indieweb_identity/) by Paul — the original post that did initiate the discussion, where he proposes a starting point for a cohesive design language for the IndieWeb.
+	- [“The poster’s guide to the internet of the future”](https://www.theverge.com/2023/10/23/23928550/posse-posting-activitypub-standard-twitter-tumblr-mastodon) by [David Pierce](https://www.theverge.com/authors/david-pierce) — an article mentioned in the post.
+	- He also links to a lot of pages for various IndieWeb and related technologies, visit his post to get them! (Seriously, there are _many_ interesting links in his post, I am myself planning to read a lot of them later.) I think both this post and the Verge article could be considered a good introduction to the IndieWeb.
+- [“Types of Posts”](https://indieweb.org/posts#Types_of_Posts) — a section of the “posts” page of the IndieWeb wiki that tries to gather and categorize different types of content that might be present on personal websites.
+- [“Building block icons”](https://indieweb.org/Building_block_icons) — a wiki page created by Paul after the session.
+    - [“Category:Branding”](https://indieweb.org/Category:Branding) — a wiki category page with some other interesting linked pages.
+
+Overall, I really like the Paul’s proposal, especially how the icons for specific microformats look.
+
+## Link Rot
+
+I participated in [a session about the “link rot”](https://indieweb.org/2023/Nuremberg/linkrot), initiated by [Jeremy Keith](https://adactio.com/), in which we did discuss various ways to check, fix or work around the broken links that could exist in various personal blog archives.
+
+I’m gathering the links to things mentioned in the session and outside of it into one list, providing some of my commentary:
+
+- [“No more 404”](https://remysharp.com/2023/09/26/no-more-404) by [Remy Sharp](https://remysharp.com/) — the original article that did initiate the discussion.
+- [“The Wayback Machine”](https://web.archive.org/) by [Internet Archive](https://archive.org) — the best way to get the content of a link that did disappear.
+- [“Stop the Linkrot”](https://www.jeremycherfas.net/blog/stop-the-linkrot) by [Jeremy Cherfas](https://www.jeremycherfas.net/) — a short post about the session we had, and how Jeremy did fix problems he had with inbound links via `.htaccess`.
+	- [“Broken Link Checker”](https://ahrefs.com/broken-link-checker) — mentioned by [Jeremy](https://www.jeremycherfas.net/). I found six broken links with it (it reported 7, but one of them was one I already fixed previously, so it seems to cache these in some way).
+- [“Link-rot and Schrödinger’s URL”](https://sebastiangreger.net/2023/10/link-rot-and-schrodingers-url) by [Sebastian Greger](https://sebastiangreger.net/) — a post about the session we had, where he looks at how he could approach this issue on his site (he uses Kirby CMS and PHP).
+	- [“LinkChecker”](https://linkchecker.github.io/linkchecker/) — a free GPL website validator (requires Python 3.8 or later) mentioned by Sebastian in his post.
+	- He also mentions a bunch of other links to various APIs he is using, if you’re interested, visit his post!
+- [Micro.blog](https://micro.blog/) — a blogging service that, as a part of its premium plan, includes achieving the bookmarks. [A YouTube video about this feature](https://www.youtube.com/watch?v=1uevgQYsR9g).
+- [“410 Gone - Thoughts on Mark ‘diveintomark’ Pilgrim’s and _why’s infosuicides”](https://www.hanselman.com/blog/410-gone-thoughts-on-mark-diveintomark-pilgrims-and-whys-infosuicides) by [Scott Hanselman](https://www.hanselman.com/) — a post about the `410 gone` HTTP status that we briefly discussed during the session.
+- [“0 KB Social Media Embeds”](https://chriscoyier.net/2023/11/01/0-kb-social-media-embeds/) by [Chris Coyier] — a short post about how it is a viable way to just “embed” any short-form posts as blockquotes, and thus both have a snapshot of the content in time and no chance it would disappear. We did mention this type of embed during the session, but, of course, it is only viable for anything short enough to not be annoying.
+
+Overall, this is a very interesting and multi-faceted topic. I’ve started thinking about how _I_ would want to implement something that helps with this on my site, and also about whether this is something that could be facilitated by the web browsers and/or browser extensions. It should be easy enough to do the “did we land on 404? Let’s look in the Internet Archive” as a feature, though this won’t work for the “zombies”.
+
+## How to stop rewriting your site and write more
+
+I participated in [a session about actually writing in your blogs](https://indieweb.org/2023/Nuremberg/write), initiated by [Sara Jakša](https://sarajaksa.eu/), where we did discuss what is stopping us from writing in our blogs, be it perfectionism or something else.
+
+- [“After session Additional Notes”](https://indieweb.org/2023/Nuremberg/write#After_session_Additional_Notes) by Sara — after the session, she did write down the summary and some ideas of what we were talking during the session, sharing some nice links as well.
+- [“Extended mind thesis”](https://en.wikipedia.org/wiki/Extended_mind_thesis) shared in these notes is something I’ve already been doing for years, though not publicly: putting every idea into some notes, removing them from my head, and “freeing” some space for new ideas.
+- [“digital garden”](https://indieweb.org/digital_garden) article stub over at IndieWeb wiki — a concept that I encounter more and more, though maybe not the one I’ll use for publishing my thoughts publicly. I’m using Obsidian for my notes now, and it is less like a garden and more like overgrown ruins. However, I think this might be a neat concept for gathering information about some topic, learning and so on.
+- There were some other thoughts and links in these additional notes; I highly recommend reading them, especially if you struggle with finding what to write in your blog or with the writing process in general.
+
+If I took one thing from this session, it was that I needed to worry less about how things would be received and try to fight my perfectionism, at least in some ways.
+
+## Other Sessions
+
+I was also present at two other sessions: [“Accessible web”](https://indieweb.org/2023/Nuremberg/a11y) and [“POSSE How To & Best Practices + Fediverse”](https://indieweb.org/2023/Nuremberg/posse), but I don’t think I want to add any links here, as I’m less familiar with these particular topics, and would need to read much more on them in order to share something reasonable.
+
+The “Accessible web” session was more of a free-form discussion without any specific topic; the [“POSSE”](https://indieweb.org/POSSE) is a concept that I’m not entirely sold on yet, though I really liked how [“Bridgy Fed”](https://fed.brid.gy/) sounds like — a way to easily connect Mastodon with your IndieWeb-powered website.
+
+I’ll keep an eye on the various IndieWeb concepts in the future, so it is likely my other weekly bookmarks will get more links from this area as well.
