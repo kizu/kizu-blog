@@ -2,6 +2,9 @@
 import { AUTHOR, MAIN_URL, MASTODON_URL } from '../consts';
 
 const today = new Date();
+
+const isHomePage = '/' === Astro.url.pathname;
+
 ---
 
 <hr />
@@ -10,11 +13,13 @@ const today = new Date();
 		&copy;
 		{today.getFullYear()}
 		{' '}
-		<a class="u-url p-name" rel="me author" href={Astro.site}>{AUTHOR}</a>.
-		All rights reserved.
-		<a class="u-url" href={MAIN_URL}>Main site</a>.
-		<a href="/rss.xml">RSS</a>.
-		<a class="u-url" rel="me" href={MASTODON_URL}>Mastodon</a>.
+		<a class={`u-url p-name${isHomePage ? ' is-inherited' : ''}`} rel="me author" href={Astro.site}>{AUTHOR}</a>
+		·
+		<a class="u-url" href={MAIN_URL}>Main site</a>
+		·
+		<a href="/rss.xml">RSS</a>
+		·
+		<a class="u-url" rel="me" href={MASTODON_URL}>Mastodon</a>
 	</p>
 	<span class="p-note" hidden aria-hidden="true">I love CSS, and most of the things I do, write, or think about are CSS-related.</span>
 	<img class="u-photo" src="/photo.jpg" hidden aria-hidden="true" alt="A photo of me (rather outdated)" />

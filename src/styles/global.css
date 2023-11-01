@@ -1,5 +1,16 @@
 html {
 	color-scheme: light dark;
+
+	/* Space toggles for the dark/light mode. */
+	--LIGHT: initial;
+	--DARK: ;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--DARK: initial;
+		--LIGHT: ;
+	}
 }
 
 body {
@@ -53,42 +64,44 @@ p, li {
 }
 
 a[href] {
-	color: hsl(200deg 100% 35%);
 	padding-block: 0.1em;
+	font-weight: 600; /* Slightly better contrast */
+
+	color:
+		var(--LIGHT, hsl(200deg 100% 35%))
+		var(--DARK, hsl(200deg 100% 55%));
+
+	&:visited:not(:hover, :focus-visible) {
+		color:
+			var(--LIGHT, hsl(270deg 35% 45%))
+			var(--DARK, hsl(270deg 95% 80%));
+	}
 }
 
 a[href],
 u {
-	text-decoration-thickness: 1px;
-	text-underline-offset: 0.05em;
+	text-decoration-thickness: max(1px, 0.075em);
+	text-underline-offset: max(1px, 0.075em);
+	/* TODO: Fill a Chrome bug */
+	/* text-decoration-color: var(--mix); */
+	--mix-alpha: 0.5;
 }
 
 a[href]:is(:hover, :focus-visible),
 a[href]:is(:hover, :focus-visible) > u {
-	text-decoration-thickness: 2px;
+	--mix-alpha: 1;
+	/* TODO: Fill a Safari bug: with code elements */
+	text-decoration-thickness: max(1.5px, 0.125em);
 }
 
 a:has(> u) {
 	text-decoration: none;
 }
 
-a[href]:visited {
-	color: hsl(270deg 35% 45%);
-}
-
-@media (prefers-color-scheme:dark) {
-	a[href] {
-		color: hsl(200deg 100% 55%);
-	}
-
-	a[href]:visited {
-		color: hsl(270deg 95% 80%);
-	}
-}
-
-a.is-inherited:not(:hover, :focus-visible) {
+a[href].is-inherited:not(:hover, :focus-visible) {
 	all: unset;
-	color: inherit
+	font-weight: 600;
+	color: inherit;
 }
 
 [hidden] {
@@ -98,6 +111,43 @@ a.is-inherited:not(:hover, :focus-visible) {
 .is-inline-block {
 	display: inline-block;
 	max-width: 100%;
+}
+
+ul, ol {
+	padding: 0;
+}
+
+:is(ul, ol) ul {
+	padding-block: 0.25em;
+	padding-inline-start: 1em;
+}
+
+/* Kinda a mixin */
+*,
+*::before,
+*::after,
+*::marker {
+	--mix-space: var(--oklch);
+	--oklch: var(--mix-space,);
+	--rgb: var(--mix-space,);
+	--mix-color: currentColor;
+	--mix-alpha: 100%;
+	--mix: color-mix(
+		in var(--oklch, oklch) var(--rgb, rgb),
+		var(--mix-color) 0%,
+		var(--oklch, oklch(none none none / var(--mix-alpha)))
+		var(--rgb, rgba(none none none / var(--mix-alpha)))
+	);
+}
+
+/* TODO: investigate a potential Chrome bug with the markers and currentColor */
+ul > li::marker {
+	color: var(--mix);
+	--mix-alpha: 75%;
+}
+
+ul ul > li::marker {
+	--mix-alpha: 100%;
 }
 
 pre{color:#657b83;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre-wrap;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;padding:1em;margin:.5em 0;overflow:auto;border-radius:.3em;background-color:#fdf6e3;& ::selection{background:#073642}}.token{&.cdata,&.comment,&.doctype,&.prolog{color:#93a1a1}&.punctuation{color:#586e75}&.namespace{opacity:.7}&.boolean,&.constant,&.deleted,&.number,&.property,&.symbol,&.tag{color:#268bd2}&.attr-name,&.builtin,&.char,&.inserted,&.selector,&.string,&.url{color:#2aa198}&.entity{color:#657b83;background:#eee8d5}&.atrule,&.attr-value,&.keyword{color:#859900}&.class-name,&.function{color:#b58900}&.important,&.regex,&.variable{color:#cb4b16}&.bold,&.important{font-weight:700}&.italic{font-style:italic}&.entity{cursor:help}}@media(prefers-color-scheme:dark){pre{color:#839496;background:#002b36;& ::selection{background:#073642}}.token{&.attr-name,&.cdata,&.comment,&.doctype,&.prolog{color:#93a1a1}&.punctuation{color:#657b83}&.boolean,&.constant,&.deleted,&.number,&.property,&.symbol{color:#d33682}&.attr-value,&.builtin,&.char,&.entity,&.inserted,&.selector,&.string,&.url{color:#2aa198}&.atrule,&.keyword{color:#859900}&.function,&.tag{color:#268bd2}&.important,&.regex,&.variable{color:#cb4b16}}}

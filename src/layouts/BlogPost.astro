@@ -36,7 +36,15 @@ const { pathname } = Astro.url;
 				{heroImage && <img width={720} height={360} src={heroImage} alt="" />}
 				<h1 class="p-name">{title}</h1>
 				<p>
-					{pubDate ? <>Published on <a class="u-url u-uid is-inherited" href={Astro.url}><FormattedDate class="dt-published" date={pubDate} /></a>.</> : null}
+					{pubDate ? <>
+						Published on
+						<a
+							class="u-url u-uid is-inherited"
+							href={Astro.url}
+							aria-description="This post’s permalink."
+						>
+							<FormattedDate class="dt-published" date={pubDate} />
+						</a>.</> : null}
 					{
 						updatedDate ? (
 							<span>
