@@ -1,4 +1,5 @@
 html {
+	scrollbar-gutter: stable;
 	color-scheme: light dark;
 
 	/* Space toggles for the dark/light mode. */
