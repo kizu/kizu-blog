@@ -1,0 +1,82 @@
+---
+title: 'Shadow DOM on Regular Elements'
+description: 'For some reason, I had this misconception that Shadow DOM could be used with regular elements, I only ever tried it with the custom ones.'
+tags: ['Shadow DOM', 'Custom Elements']
+pubDate: '2023-11-02'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan tea'
+	location: 'At Home'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+For some reason, I had this misconception that Shadow DOM could be used with regular elements, I only ever tried it with the custom ones. But — thanks to [Doug Parker](https://blog.dwac.dev/), [who did point it out to me on Mastodon](https://techhub.social/@develwithoutacause/111337559322080302), — now I know that we can actually do that.
+
+I knew that custom elements (or [Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_Components)) _without_ Shadow DOM were a thing (see also a related article [“Blinded By the Light DOM”](https://meyerweb.com/eric/thoughts/2023/11/01/blinded-by-the-light-dom/) by [Eric Meyer](https://meyerweb.com/) from yesterday), but it never occurred to me that in the same way we could attach a Shadow DOM to a web component, we could do it just for a regular element. Sometimes it is very easy to overlook simple things!
+
+Curiously, if only I had read the MDN docs about [“Using shadow DOM”](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) (the link Doug gave me), then I would’ve learned that.
+
+<aside>
+
+As a sidenote, my friend and ex-colleague [Vadim Makeev](https://pepelsbey.dev/) [did join MDN today as a technical writer](https://mastodon.social/@pepelsbey/111335222766787213)! Say congratulations to him!
+
+And another sidenote to myself, I need to implement sidenotes in this blog as well, so I can add sidenotes _properly_. **Sidenotes**. They’re neat.
+
+</aside>
+
+## Declarative Shadow DOM
+
+Even more, in another Mastodon post, Doug shows how the [Declarative Shadow DOM](https://developer.chrome.com/articles/declarative-shadow-dom/) can also be used with regular elements. If only Firefox would support it! (It actually will, rather soon — they [did state that the implementation will start soon](https://github.com/mozilla/standards-positions/issues/335#issuecomment-1714182997)! Follow [this bugzilla ticket](https://bugzilla.mozilla.org/show_bug.cgi?id=1712140) if you’d like to track this).
+
+## The Context
+
+Where would I want to use Shadow DOM on a regular element? The case that resulted in this post was me wishing for a particular thing in HTML. Let me quote [my own mastodon post](https://front-end.social/@kizu/111336793193155739):
+
+> What if we had an #HTML attribute that would make an element “invisible” for #CSS selectors?
+>
+> Like `display: contents`, but for DOM.
+>
+> Like,
+>
+> ```html
+> 	<div class="foo">
+> 		<div i-am-not-here>
+> 			<div class="bar">
+> 			</div>
+> 		</div>
+> 	</div>
+> ```
+>
+> And then `.foo > .bar` would actually select the inner `.bar`?
+>
+> I can see something like this being very useful for #WebComponents, among other things, as right now it is not possible to use them as generic wrappers without impact.
+
+Playing with Shadow DOM and custom elements, I found two ways to achieve what I wanted.
+
+Here are both CodePens:
+
+- [Custom Element Node Juggling](https://codepen.io/kizu/pen/XWOjdWa)
+- [Transparent Element vis Declarative Shadow DOM](https://codepen.io/kizu/pen/abXmNOq)
+
+The one using a custom element is a bit weird. But it works! But I probably won’t use it in production, as it looks very fragile, requires JavaScript, and is hard to make a fallback from.
+
+The second one, with the Declarative Shadow DOM, is much nicer. It is still a bit verbose — I think I would still prefer some way of doing this kind of “transparent” element just via an attribute — but it is much less weird. If only we had Firefox support… Maybe I’ll look into using [a ponyfill](https://www.npmjs.com/package/@webcomponents/template-shadowroot) for this?
+
+But what I did like is that the fallback is very gracious: the only difference outside the Shadow DOM applying is that the `template` stays in the DOM, impacting CSS selectors like `:nth-child()` etc. But any other selectors like the `.foo > .bar` from the CodePen would continue working.
+
+## Why Do I Want This
+
+In short: to be able to use Web Components as something like “Higher-Order Components”, where they could provide their functionality (JS or via custom CSS properties that would get inherited into the light DOM, as seen in the example) to the nested elements, but without any impact on layout (when using `display: contents`) or selectors (the thing that I wanted it to be originally).
+
+Here is [another CodePen with a bit more expanded use case](https://codepen.io/kizu/pen/LYqRRMQ?editors=1100), though I understand that it might still not be “practical”.
+
+But hey, this is just a quick article in which I wanted to share my observation — this is a thing that I want to start doing more of. Maybe when I play with this further, I will write another post with better examples!
+
+Or, maybe what I shared today would inspire you to do something interesting. Let me know!
+
+## By the Way
+
+So far, I have posted for every day in November! “Is this a [‘NaBloPoMo’](https://indieweb.org/National_Blog_Posting_Month)?” — He asks, pointing at a butterfly. We will see! I doubt I could keep it up through the whole month, but maybe? I just need to choose a tiny topic and not be a perfectionist about polishing it completely. “Just”. See you in the next post, be it tomorrow or later!
