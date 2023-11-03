@@ -87,7 +87,7 @@ a[href],
 u {
 	text-decoration-thickness: max(1px, 0.075em);
 	text-underline-offset: max(1px, 0.075em);
-	/* TODO: Fill a Chrome bug */
+	/* https://github.com/web-platform-tests/wpt/pull/42940 */
 	/* text-decoration-color: var(--mix); */
 	--mix-alpha: 0.5;
 }
@@ -134,18 +134,17 @@ ul, ol {
 *::marker {
 	--mix-space: var(--oklch);
 	--oklch: var(--mix-space,);
-	--rgb: var(--mix-space,);
+	--srgb: var(--mix-space,);
 	--mix-color: currentColor;
 	--mix-alpha: 100%;
 	--mix: color-mix(
-		in var(--oklch, oklch) var(--rgb, rgb),
+		in var(--oklch, oklch) var(--srgb, srgb),
 		var(--mix-color) 0%,
 		var(--oklch, oklch(none none none / var(--mix-alpha)))
-		var(--rgb, rgba(none none none / var(--mix-alpha)))
+		var(--srgb, rgba(none none none / var(--mix-alpha)))
 	);
 }
 
-/* TODO: investigate a potential Chrome bug with the markers and currentColor */
 ul > li::marker {
 	color: var(--mix);
 	--mix-alpha: 75%;

@@ -1,0 +1,142 @@
+---
+title: 'My First Web Platform Tests'
+description: 'I wanted to start contributing to the Web Platform Tests for a while, and a few weeks ago I finally got to read the documentation and push my first commit there, with another one following suit today.'
+tags: ['Web Platform Tests']
+pubDate: '2023-11-03'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan tea'
+	location: 'At Home'
+	music: 'Haisuinonasa — breath on one night'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+I wanted to start contributing to the Web Platform Tests for a while, and a few weeks ago I finally got to read [the documentation](https://web-platform-tests.org/) and push my [first commit](https://github.com/web-platform-tests/wpt/pull/42676) there, with [another one](https://github.com/web-platform-tests/wpt/pull/42940) following suit today.
+
+I found it easy in some ways and hard in others, so I decided to share what I had to do in order to contribute, along with some links you might find helpful.
+
+## Why Contribute to WPT?
+
+Like bug reporting itself, contributing to WPT might seem daunting and rather bothersome at first glance. However, the best thing: do it once, understand how things work, and the next time it will be much smoother.
+
+By following all the steps, like properly reducing the bug (this in itself is probably worth a separate post), understanding the issue, and reading the specs, you’ll learn so much! It is much better to understand what you’re doing and not just throw things at a wall, waiting until something sticks.
+
+By reporting the issues you find, you contribute to fixing the problems at their core. It is useful to find workarounds and share them, but it is even better to report the issues (and the actual bug reports are a good place to mention your workarounds as well!).
+
+And by writing the tests for the Web Platform, you make it even more likely that the issue will be fixed. If the problem is in the Interop initiative, it could get picked up much quicker. And some browsers monitor the new failures in WPT, for example, Firefox opens new bugs in its tracker automatically.
+
+## The Docs
+
+The place to start would be the official documentation site: https://web-platform-tests.org/
+
+There is _a lot_, but overall, I found most of the information I needed.
+
+As I’m mostly interested in writing CSS tests, I had no need to read all the documentation; I only needed to read the parts required for what I wanted to do. This is the approach I’d recommend for any docs— unless you’re really interested in _everything_, usually it makes sense to only go into sections that you need _now_ and try not to read anything that would not help you solve the problem at hand.
+
+For example, I only updated the tests using [testharness](https://web-platform-tests.org/writing-tests/testharness.html); for these, I have no need to use the `run` command, only the `serve` one.
+
+## My Contributions
+
+In this section, I’ll just put links to the WPT PRs I did open, so you could look at how I wrote them and the PR description:
+
+- [Tests for `round()`, `mod()`, and `rem()` that has a percentage only for one value](https://github.com/web-platform-tests/wpt/pull/42676)
+    - [Bug in the bug tracker](https://bugs.webkit.org/show_bug.cgi?id=263711) (open).
+- [Tests for `color-mix()` with a single component change](https://github.com/web-platform-tests/wpt/pull/42940)
+
+Note that neither adding tests nor opening bug reports guarantees that the problem will get fixed soon. But by doing this, you’re making the fix more likely, and this helps everyone in the long run.
+
+## My Workflow
+
+The way I contributed to the WPT was as an alternative to the first step of reporting the bugs. Usually I just went and reproduced the issue somewhere (like in CodePen) to understand the exact issue, then went into the browser’s bug tracker and tried to find the bug. Then I would create one if one was not found, post my use case into the existing one, or just star or cc myself for it.
+
+With WPT, there are a few extra steps.
+
+### Initial Investigation
+
+1. Make sure you can reproduce the issue in the latest version of the browser (s) you see the bug in. Very often, it might be something that is already known and already has a fix on its way. If you cannot see the issue in the latest version, then there is a big chance that it is already fixed. The latest versions I’m usually checking things in are (don’t forget to update them before checking):
+
+    - [Chrome Canary](https://www.google.com/chrome/canary/)
+
+    - [Safari Technology Preview](https://developer.apple.com/safari/technology-preview/)
+
+	- [Firefox Nightly](https://www.mozilla.org/en-US/firefox/nightly/notes/)
+
+2. Make sure there _is_ a bug: usually it is enough if there is a difference between browsers, and this difference is there because of the vagueness of the specs. Yes, you’ll probably need to read some specs to see what the intended effect is. After all, you might find out that the browser-outlier is actually the one rendering things correctly, and you’d need to file a bug against two other browsers.
+
+3. Check if this is a known issue. Before, I only checked the bug trackers, now this consists of two steps:
+
+    - Go to https://wpt.fyi/ and try to find the test suite for the feature you want to report the issue to. It is likely there is already a related test that fails — sometimes it might have a “bug” icon near it, leading to the browser’s bug tracker. If there is a failing test but no bug mentioned, you might want to check the bug tracker to see if there is a place you could put your use case or help prioritize the fix.
+
+	- Go to the browser’s bug tracker and try to find the issue you’re having. Usually, I’m looking only at the open bugs, but sometimes, if you do not find anything open that fits your case, it might make sense to look at the duplicates as well, as they could point towards more generic open bugs that you did not think fit your case. Links to the browser bug trackers:
+
+	    - [Safari/WebKit](https://bugs.webkit.org/)
+		- [Firefox/Gecko/Mozilla](https://bugzilla.mozilla.org/index.cgi)
+		- [Chrome/Chromium/Blink](https://bugs.chromium.org/p/chromium/issues/list)
+
+		    Note that in January 2024 Chromium tracking [will migrate](https://developer.chrome.com/blog/chromium-issue-tracker-migration/) to the [Google Issue tracker](https://developers.google.com/issue-tracker).
+
+4. Now, if you did not find the existing bug, or if you did find one, but it did not have WPT tests for it, or the existing tests did not cover your specific case, this would be the time to go and attempt to contribute to WPT.
+
+### Writing The Test
+
+Note: for now, I only contributed to the [testharness](https://web-platform-tests.org/writing-tests/testharness.html) unit tests by modifying the existing test suits. Writing a new test (and [writing reftests](https://web-platform-tests.org/writing-tests/reftest-tutorial.html)) is a slightly different beast; when I do that, I’ll try to update this post. However, a lot of what I’ll mention should apply to the new tests as well.
+
+At this point, you should already have a minimally reproducible case. If not, now is the time to finally remove things from your example code to find the point where the bug becomes obvious.
+
+#### Cloning the Repo and Setting Things Up
+
+I’ll write what _I_ did — I’m on macOS, for you, the setup could be different.
+
+Usually, it is recommended to first fork the repo, but I found it worked better for me to clone the repo first and then add a fork as an additional remote.
+
+1. Clone the repo: `git clone git@github.com:web-platform-tests/wpt.git`.
+2. Fork it through GitHub UI.
+3. Add the fork as a remote, in my case, it was `git remote add fork git@github.com:kizu/wpt.git` (obviously, use your own URL there).
+4. Set up the hosts file: `./wpt make-hosts-file | sudo tee -a /etc/hosts` (note that there is a `sudo` command — if you’re cautious, you could go into the repo and see what this would do).
+5. Run the dev server: `./wpt serve`.
+6. Find the port where it did open it: basically, one of the `https on port …` entry, for example, one with `Starting https server on https://web-platform.test:8443`. There might be multiple of them, all working. I’m not sure what the difference is, to be honest.
+7. Open the URL in your browser — it should work (though it might complain about the certificates). Now you could navigate inside to any test and check it out, or you could find the relative URL for the test you want to find and go to it there directly.
+
+The main problem you probably have now is finding _where_ to place the test.
+
+#### Where to Place the Test
+
+In my case, it was these places:
+
+- `css/css-values/round-mod-rem-computed.html`
+- `css/css-color/parsing/color-computed-color-mix-function.html`
+
+There are multiple ways to look up an appropriate place:
+
+- Use https://wpt.fyi/ to find the place that seems like it fits.
+- Use the [GitHub code search](https://github.com/search?q=repo%3Aweb-platform-tests%2Fwpt%20&type=code) at https://github.com/web-platform-tests/wpt with some parts of the code you did find a bug in to find a place that looks similar to what you want to add.
+- Use the search in your editor of choice for the cloned repo to do basically the same.
+
+When you first read about the reftests, it might seem that they could be the best way to add tests — but, in my opinion, it is better to first try and find a testharness place to add a smaller unit test.
+
+These run much faster and are much easier to test automatically. I suspect that if I wanted to test the reftests automatically (outside manual comparison in the browsers — a valid way in itself), you’d need to set up the `./wpt run` command (which I did not).
+
+### Add Your Test
+
+The testharness tests usually test a bunch of different combinations and permutations of things.
+
+As they run fast, it might make sense to add a lot of them, but only if the cases make sense. The problem of “what exactly to add as unit tests” is a much bigger issue, and I do it rather intuitively, based on my experience. Not too little, not too much — just enough to cover most of the cases I can think of at once. There is no need to do the same thing with different input unless the difference is obvious.
+
+### Commit & Push the code to your branch, open a PR
+
+I won’t provide a `git` tutorial on how to create a branch and all, main thing is not to forget to push your branch into your remote fork, like `git push -u fork my-branch`.
+
+Similarly, in this post I won’t describe how to open a PR or what to write there — I think I already wrote a bit too much for what I initially thought would be a short post!
+
+Maybe I’ll cover the way I tend to write PR descriptions at a different time.
+
+## That’s It
+
+Both my PRs were reviewed and merged rather quickly without any issues. Thanks, [David Baron](https://dbaron.org/) and [Chris Lilley](https://svgees.us/) for reviewing!
+
+After the PRs are merged, I prefer to wait until WPT builds the tests, and it would be possible to see the new failing tests at https://wpt.fyi/. Then it would be time to report these bugs to the trackers.
+
+Hopefully, you found this post useful! I highly encourage you to try and get into the groove of getting to the core of the bugs you encounter, reporting them and maybe even writing WPT tests yourself. It might be a bunch of work, but it is worth it, in my opinion!
