@@ -1,0 +1,141 @@
+---
+title: 'Personal Site Anniversary & History'
+description: 'Today is the 22nd anniversary of my first HTML page on the web: November 4th, 2001. Quite a long time going! Initially, I wanted to post a longer history of my personal website(s), but looking at all the archives, that would be a much longer task, especially if I would like to show the screenshots and examples of what I had. For now, I’ve decided to write a shorter post.'
+tags: ['IndieWeb']
+pubDate: '2023-11-04'
+mastodonPostId: ''
+
+current:
+	drinking: 'Camomile tea'
+	location: 'At Home'
+	music: 'Daughter — Smother'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+Today is the 22nd anniversary of my first HTML page on the web: November 4th, 2001. Quite a long time going!
+
+Initially, I wanted to post a longer history of my personal website(s), but looking at all the archives, that would be a much longer task, especially if I would like to show the screenshots and examples of what I had. For now, I’ve decided to write a shorter post.
+
+## Some Interesting Notes
+
+In the beginning, it was a non-technical, childish site; I moved from one free hosting provider to another in 2001 and “redesigned” that site, I think, eight times? Not counting the not-finished designs.
+
+In 2008, I purchased my first domain and started a technical blog, which evolved over time into what we can currently see at https://kizu.dev
+
+Here is the beginning of the timeline for my personal site and my history with the web.
+
+### 2001
+
+- Before I did start working on my site (I think on November 1st, so it was done rather quickly), I did touch HTML _a little_ during the summer school in June the same year. There was a project for a photo gallery to burn on a CD, with the gallery being made with JS. I think I did mostly content management there, but that exposure was probably what led to me creating my website (as well as a website dedicated to Baldur’s Gate from a school friend).
+
+- My first site was on the [framesets](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/frameset)!
+
+- Here is the full HTML of the `index.htm` that I had:
+
+	```html
+	<html><head><title>Kizmarh's Cave</title></head>
+	<frameset rows="74,*" border=0><frame src="menu.htm" name="menu" noresize>
+	<frame src="news.htm" name="document" noresize></frameset></html>
+	```
+
+- I won’t show you the content of the frames themselves, but there were _tables_. As in, using tables for the page layout. This would stay for the whole journey of my nontechnical site (I stopped working on it somewhere around 2006).
+
+- There was no CSS, not even inline styles.
+
+### 2002
+
+- My first redesign and hosting change!
+
+- Framesets were gone, but tables did stay.
+
+- I used JS to implement images changing on hover via inline events:
+
+	```html
+	onmouseover='document.qqq.src="mpic2.gif"' onmouseout='document.qqq.src="mpic.gif"'
+	```
+
+- Later the same year, I rewrote that site to be an SPA. Yes. Just one page, where I did change the content of the sections via JS. But hey, I did also write my first line of CSS: `overflow:auto` as an inline style!
+
+- That version of the site had “Best viewed in Internet Explorer”.
+
+- I think this version of the site did participate in a contest and won first place. I would not give _that_ the first place today.
+
+### 2003
+
+- I ditched SPA and kept things simple.
+
+- Every page had a different design, and I used [image maps](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/map) in a few places!
+
+- There was still no new CSS on the personal site itself.
+
+- _However_, looking through the archives of my files, I found some of my earlier experiments with CSS, from October 26. Here is how I wrote an external stylesheet, then. It’s pretty, isn’t it?
+
+	```css
+	body {background:      #000000;
+	      font:            11pt/14pt Serif;
+	      color:           #FFFFFF}
+
+	a    {text-decoration: none;
+	      color:           #BBBBBB}
+	```
+
+- And here is, as you could tell, my first _CSS experiment_: masking an e-mail against spambots (with a more modern e-mail):
+
+	```html
+	<p style="font:11pt/0pt Courier">
+	k&nbsp;z&nbsp;a&nbsp;h&nbsp;g&nbsp;a&nbsp;l&nbsp;c&nbsp;m<br>
+	&nbsp;i&nbsp;m&nbsp;r&nbsp;@&nbsp;m&nbsp;i&nbsp;.&nbsp;o&nbsp;
+	</p>
+	```
+
+	It still works!
+
+	<figure><p style="font:11pt/0pt Courier">k&nbsp;z&nbsp;a&nbsp;h&nbsp;g&nbsp;a&nbsp;l&nbsp;c&nbsp;m<br/>&nbsp;i&nbsp;m&nbsp;r&nbsp;@&nbsp;m&nbsp;i&nbsp;.&nbsp;o&nbsp;</p></figure>
+
+	I don’t think I ever used this in production — at some point I just started using the unmasked e-mails and did not notice a bump in the volume of spam.
+
+- Later in December, I did create my LiveJournal account.
+
+### 2004
+
+- Two more redesigns of the personal site, still nothing new there.
+
+- I think I did work a bit on a website for my Mom’s job. I don’t remember any context, and there is a chance I first did it in 2001, but I don’t believe the file timestamps, as the site did already contain some CSS, which did not look like something I would write in 2001. But it looks more fitting for 2004.
+
+- I started doing my first LiveJournal themes, customizing them via [S1 overrides](https://www.livejournal.com/support/faq/124.html). You could add custom HTML and CSS to your “social network profile” then!
+
+### 2005
+
+- I redesigned my personal site once again, but it was still using tables.
+
+- However, I made the design of the pages fully responsive! Before that, I used fixed layouts, now it was a `<table>` with `width=100% height=100%`.
+
+- I started practicing a bit more with CSS, probably closer to the end of the year. One thing I did was rewrite one random web page’s layout from tables to floats and absolute positioning. It also had text-shadows made by using duplicate content and `z-index`.
+
+### 2006
+
+- I did not update my personal site.
+
+- I was mostly doing the themes for LiveJournal.
+
+- December 26: I decided to read the CSS2.1 specs in full.
+
+### 2007
+
+- January: I started working officially as a full-time front-end web developer.
+
+### 2008
+
+- February: I published my first technical website on a personal domain.
+
+## To Be Continued!
+
+Sadly, it seems that while for some older files the timestamps are intact, for anything starting from 2006 there are not a lot of correct ones. Maybe if I could find a proper archive somewhere that did retain everything…
+
+In 2006, I was not in a good place closer to the end of the year, quitting the university and feeling quite worthless overall. I was lucky to finally land a job and start working as a developer full-time. Things have gotten much better since then for me. I’m happy where I am now (internally; externally… not so much).
+
+Maybe one day I will revisit this post — or write a new one — and update this timeline, adding new notes and maybe adding examples of some of my earlier experiments or LiveJournal themes. Sharing funny snippets of code here and there.
+
+If you have your own personal website, when did you start it? How did it evolve? I think it might be interesting to revisit your old code and your old self sometimes. I would be interested in reading more people’s stories about how they started their journey with the web platform.
