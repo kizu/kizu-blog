@@ -1,0 +1,59 @@
+---
+title: 'Weekly Bookmarks 4: CSS Edition'
+description: 'On one hand, I did miss two weeks of this “weekly” series. On the other, I did post every day from the start of the month. With the backlog through all these past weeks, I have maybe too much on my plate. So, this time, I’m only posting links related to CSS, as well as a quick list of everything I did write in this blog since the last weekly.'
+tags: ['CSS', 'weekly']
+pubDate: '2023-11-12'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan'
+	music: 'Neavh — Knothole'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+On one hand, I did miss two weeks of this “weekly” series. On the other, I _did_ post every day from the start of the month.
+
+With the backlog through all these past weeks ([last “weekly”](/weekly-bookmarks-003) had only IndieWeb bookmarks, so the [last time I actually posted regular ones](/weekly-bookmarks-002) was on October 22), I have maybe too much on my plate.
+
+So, this time, I’m only posting links related to CSS, as well as a quick list of everything I did write in this blog since the last weekly. That means that the next weekly would have some more non-CSS links to share!
+
+## CSS Techniques, Articles, and News
+
+- [“Solved by CSS Scroll-Driven Animations: Style an element based on the active Scroll Direction and Scroll Speed”](https://brm.us/css-scroll-detection) by [Bramus](https://www.bram.us/) — a _very_ wild hack around scroll-driven animations, utilizing the inheritance of values set by animations from a parent to children, _with transitions_, allowing to detect the velocity and direction of the scrolling.
+
+- [“Control Pixel Art Sprites With CSS Scroll-Driven Animations”](https://jamesbasoo.com/blog/scroll-driven-pixel-art-sprite/) by [James Basso](https://jamesbasoo.com/) — a nice application of the above technique, used to adjust the direction of the sprites based on the scroll direction.
+
+- [“Why You Should Use `px` Units for `margin`, `padding`, & Other Spacing Techniques”](https://ashleemboyer.com/blog/why-you-should-use-px-units-for-margin-padding-and-other-spacing-techniques) by [Ashlee M Boyer](https://ashleemboyer.com/) — an article comparing the relative and absolute units when applied to spacing. I, personally, was convinced to start doing this, but, as a rule of thumb, only for the inline direction. Block direction is trickier, in my opinion, and not as important. But real testing is the thing everyone should do to check which units to apply in their cases.
+
+- [“Some use cases for `display: contents`”](https://www.mayank.co/blog/use-cases-for-display-contents) by [Mayank](https://www.mayank.co/) — a nice look at the `contents` value of the `display` property. Applying it to custom elements is one thing I was thinking for a while about. And while I don’t think we’d get something like the “Light DOM slots” through CSS in the way they suggest, there is a chance we’d get [a `::contents` pseudo-element](https://github.com/w3c/csswg-drafts/issues/2406) one day. I wanted to compile a list of my use cases for it and post it to this issue, maybe I will find time to do this finally.
+
+- [“View transitions and stacking context: Why does my CSS View Transition ignore z-index?”](https://www.nicchan.me/blog/view-transitions-and-stacking-context/) by [Nic](https://www.nicchan.me/) — an interesting exploration of some view transitions’ nuances. I’ve yet to seriously try them, so it is nice to already have people looking into them and gathering workarounds to the potentially common issues.
+
+- [“Workarounds for buggy gradients”](https://keithjgrant.com/posts/2023/11/problematic-color-gradients-and-workarounds/) by [Keith J. Grant](https://keithjgrant.com/) — the new color spaces in CSS are cool, but there are still numerous issues in various browsers in how they’re applied and interpolated. This article provides a workaround to some of such issues. It is also a nice example of how writing about the issues you encounter, as well as your workarounds, can help everyone — [Adam Argyle](https://nerdy.dev/) [did use this article as something to motivate the engineers to look into this issue](https://front-end.social/@argyleink/111382710954484131).
+
+- [“OKLCH for better color in the browser”](https://www.learnwithjason.dev/blog/oklch-better-color-css-browser) by [Jason Lengstorf](https://jason.energy/) — a brief look at the `OKLCH` color space, with some examples and helpful links to some resources related to it.
+
+- [“What are my CSS user preferences?”](https://simevidas.github.io/css-prefs/) by [Šime Vidas](https://github.com/simevidas) — a tiny test page that can help in understanding which of the CSS-detectable user preferences are currently applied in your browser.
+
+- [“Intent to Ship: `:has` Selector”](https://groups.google.com/a/mozilla.org/g/dev-platform/c/oacuvZ2_hLg/m/4o28pFLkAwAJ) by Mozilla — finally! I’m delighted that the `:has()` pseudo-class is already available in Firefox Nightly, as [now that I moved to it](/moving-to-firefox), I can use my CSS overrides. [Nicolas Chevobbe](https://nicolaschevobbe.com/) did also [share on Mastodon](https://front-end.social/@nicolaschevobbe@mozilla.social/111330044743627218) that they would also provide some nice touches in the Firefox DevTools, warning about the performance impact of the unconstrained `:has()` selectors.
+
+ - [“RESOLVED: The CSSWG supports this CG’s efforts in defining levels for CSS as a way for the community to understand batches of CSS features.”](https://github.com/w3c/csswg-drafts/issues/4770#issuecomment-1802342332) in the issue by [Jen Simmons](https://jensimmons.com/) — nice to see attempts to make CSS more “marketable”. I’m not entirely sure that the numeric naming is the best approach there, but it is good that there is at least some movement.
+
+## My Blog Posts
+
+[My previous “weekly”](/weekly-bookmarks-003) was on the November 1st, and I did post every day since… And I did skip all the weekly posts afterward. So, here is everything I wrote in this blog after the previous weekly!
+
+- [“Shadow DOM on Regular Elements”](/shadows-separately)
+- [“My First Web Platform Tests”](/my-first-web-platform-tests)
+- [“Personal Site Anniversary & History”](/personal-site-anniversary)
+- [“Slightly Updated Blog Design”](/slightly-updated-blog-design)
+- [“My First “Fediversary””](/first-fediversary)
+- [“Unlayered Styles Issue”](/unlayered-styles-issue)
+- [“Moving to Firefox”](/moving-to-firefox)
+- [“Layer Overrides Update”](/layer-overrides-update)
+- [“Never Use “Scroll” Value for Overflow”](/never-use-overflow-scroll)
+- [“Calculation Indentation”](/calc-indent)
+
+If you did miss any of these — given them a go! Unlike the articles over at [my main website](https://kizu.dev/), these are much shorter, haha.
