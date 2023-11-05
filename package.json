@@ -14,9 +14,9 @@
     "@astrojs/mdx": "^1.1.3",
     "@astrojs/preact": "^3.0.1",
     "@astrojs/rss": "^3.0.0",
-    "@astrojs/sitemap": "^3.0.2",
-    "@astropub/md": "github:kizu/md#astro-update",
-    "astro": "^3.4.0",
-    "preact": "^10.18.1"
+    "@astrojs/sitemap": "^3.0.3",
+    "@astropub/md": "^0.3.0",
+    "astro": "^3.4.3",
+    "preact": "^10.18.2"
   }
 }
