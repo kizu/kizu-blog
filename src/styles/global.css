@@ -2,13 +2,55 @@ html {
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
 
+	--CONTENT-WIDTH: 50rem;
+	--BG-FROM:
+		var(--LIGHT, #9FFFE7)
+		var(--DARK, #003523);
+	--BG-FROM-OK:
+		var(--LIGHT, oklch(0.94 0.11 175.71))
+		var(--DARK, oklch(0.28 0.08 170.93));
+	--BG-TO:
+		var(--LIGHT, #FFFBF5)
+		var(--DARK, #0a0500);
+	--BG-TO-OK:
+		var(--LIGHT, oklch(0.99 0.01 68))
+		var(--DARK, oklch(0.12 0.03 86.71));
+
+	--CONTENT-BG:
+		var(--LIGHT, oklch(0.99 0.03 120.64))
+		var(--DARK, oklch(0.2 0.05 219.22));
+	--CONTENT-SHADOW:
+		var(--LIGHT, oklch(0.43 0.2 339.3))
+		var(--DARK, oklch(0.67 0.15 190.98));
+	--TEXT-COLOR:
+		var(--LIGHT, oklch(0.3 0.09 43.54))
+		var(--DARK, oklch(0.99 0.04 106.07));
+
+	--CODE-SHADOW: oklch(0.43 0.2 339.3);
+
 	/* Space toggles for the dark/light mode. */
 	--LIGHT: initial;
 	--DARK: ;
+
+	background-image: radial-gradient(
+		farthest-corner circle at 52% 50%,
+		var(--BG-FROM) min(0.5 * var(--CONTENT-WIDTH), 62vmin), var(--BG-TO) 100%
+	  )
+  	;
+	background-attachment: fixed;
+}
+
+@supports (background-image: radial-gradient(in oklab, #000, #000)) {
+	html {
+		background-image: radial-gradient(
+			farthest-corner circle at 50% 50% in oklab,
+			var(--BG-FROM-OK) min(0.5 * var(--CONTENT-WIDTH), 62vmin), var(--BG-TO-OK) 100%
+		);
+	}
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
+	html {
 		--DARK: initial;
 		--LIGHT: ;
 	}
@@ -16,9 +58,11 @@ html {
 
 body {
 	box-sizing: border-box;
-	max-width: 42rem;
+	max-width: var(--CONTENT-WIDTH);
 	min-height: 100vh;
-	padding: 1rem;
+	padding: 16px;
+	padding-inline:
+		calc(16px + min(2rem, max(0px, 100vw - var(--CONTENT-WIDTH))));
 	margin: 0 auto;
 
 	font-size: 1.25rem;
@@ -29,6 +73,10 @@ body {
 		'URW Palladio L',
 		P052,
 		serif;
+
+	background: var(--CONTENT-BG);
+	color: var(--TEXT-COLOR);
+	box-shadow: 0 0 1rem -0.6rem var(--CONTENT-SHADOW);
 }
 
 hr {
@@ -152,6 +200,10 @@ ul > li::marker {
 
 ul ul > li::marker {
 	--mix-alpha: 100%;
+}
+
+pre {
+	box-shadow: 0 0.1em 0.7rem -0.5rem var(--CODE-SHADOW);
 }
 
 pre{color:#657b83;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre-wrap;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;padding:1em;margin:.5em 0;overflow:auto;border-radius:.3em;background-color:#fdf6e3;& ::selection{background:#073642}}.token{&.cdata,&.comment,&.doctype,&.prolog{color:#93a1a1}&.punctuation{color:#586e75}&.namespace{opacity:.7}&.boolean,&.constant,&.deleted,&.number,&.property,&.symbol,&.tag{color:#268bd2}&.attr-name,&.builtin,&.char,&.inserted,&.selector,&.string,&.url{color:#2aa198}&.entity{color:#657b83;background:#eee8d5}&.atrule,&.attr-value,&.keyword{color:#859900}&.class-name,&.function{color:#b58900}&.important,&.regex,&.variable{color:#cb4b16}&.bold,&.important{font-weight:700}&.italic{font-style:italic}&.entity{cursor:help}}@media(prefers-color-scheme:dark){pre{color:#839496;background:#002b36;& ::selection{background:#073642}}.token{&.attr-name,&.cdata,&.comment,&.doctype,&.prolog{color:#93a1a1}&.punctuation{color:#657b83}&.boolean,&.constant,&.deleted,&.number,&.property,&.symbol{color:#d33682}&.attr-value,&.builtin,&.char,&.entity,&.inserted,&.selector,&.string,&.url{color:#2aa198}&.atrule,&.keyword{color:#859900}&.function,&.tag{color:#268bd2}&.important,&.regex,&.variable{color:#cb4b16}}}
