@@ -1,0 +1,49 @@
+---
+title: 'Moving to Firefox'
+description: 'I tried the Arc browser for a few months, and finally decided that I don’t really like it that much. Now, I’m starting to migrate (slowly) to Firefox Nightly.'
+tags: ['Firefox', 'Browsers']
+pubDate: '2023-11-08'
+mastodonPostId: ''
+
+current:
+	drinking: 'Camomile tea'
+	location: 'At Home'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+## What I Had Before
+
+I tried the [Arc browser](https://arc.net/) for a few months, and finally decided that I don’t really like it that much.
+
+The main thing that I would miss is the “little arc”: the temporary window for new tabs and for the tabs from external applications.
+
+Other than this, I tried using a lot of its features, but was frustrated at a lot of small bugs here and there. And it did seem like with each release things got worse and worse. Most of my issues were related to window management and multiple monitor set up: not remembering the window size and position, boosts window opening weirdly, incorrect behavior of maximize button and double-clicking on browser window edges among other things.
+
+The last straw was when I saw how it applies the custom styles from its “boosts” feature — as _user agent origin_! You could ask why this is an issue. This makes it, so any overrides _require_ adding `!important` — without it, they would always be lower in the cascade compared to any styles on any elements.
+
+I suspect this was a decision based on “oh, but the important styles from the user agent would win over anything!”, but yeah, this makes things much less convenient to override. I wish we had [the ability to use CSS layers for overrides](/unlayered-styles-issue)!
+
+Anyway.
+
+## What I’m Moving To
+
+Now, I’m starting to migrate (slowly) to [Firefox Nightly](https://www.mozilla.org/en-US/firefox/nightly/notes/).
+
+Why “Nightly”? A lot of my custom styles require `:has()` support, and — yay! — Nightly already supports it well enough.
+
+Here is a small list of add-ons I’m currently trying (thanks, [Vadim](https://pepelsbey.dev/), for some of your recommendations!), in alphabetical order:
+
+- [Awesome RSS](https://addons.mozilla.org/en-US/firefox/addon/awesome-rss/) — Show the “RSS” button in the address bar for the sites that have it.
+- [Firefox Multi-Account Containers](https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/) — I think I had some cases where I would use this, but as I’m just migrating, I have not had a chance to use it yet.
+- [LanguageTool](https://addons.mozilla.org/en-US/firefox/addon/languagetool/) — The grammar checker I’m using.
+- [Stylus](https://addons.mozilla.org/en-US/firefox/addon/styl-us/) — Adding CSS overrides to the websites.
+- [Tree Style Tab](https://addons.mozilla.org/en-US/firefox/addon/tree-style-tab/) — I like the idea of displaying tabs as a tree when doing some research. I wish there was a simple way to just hide the existing tabs, though.
+- [uBlock Origin](https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/) — Content blocker.
+
+## Recommend Me Stuff!
+
+As I’ve just started, I have no idea how things work, what the best settings are, or how to customize things further (I know that you can do a lot with CSS, which is awesome).
+
+If you’ve got any preferences, add-on or setting suggestions, or just life hacks, throw them at me!
