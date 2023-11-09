@@ -1,0 +1,103 @@
+---
+title: 'Layer Overrides Update'
+description: ''
+tags: ['CSS Layers', 'CSS Overrides', 'CSSWG', 'CSS']
+pubDate: '2023-11-09'
+mastodonPostId: ''
+
+current:
+	drinking: 'Camomile tea'
+	location: 'At Home'
+---
+
+Two days ago, I wrote an [“Unlayered Styles Issue”](/unleyered-styles-issue) post, where I shared a link to my comment in [a GitHub issue about unlayered styles](https://github.com/w3c/csswg-drafts/issues/6323).
+
+Since then, there was a brief discussion, after which the issue was reopened — yay!
+
+Now, the question is: what should be the direction the issue would move towards. There were a few different proposals over how to allow putting styles after the unlayered ones, the best one was [first proposed](https://github.com/w3c/csswg-drafts/issues/6323#issuecomment-939655516) by [François REMY](https://github.com/FremyCompany):
+
+> Another possibility is to add another layer that is not the unstyled layers but is one just after it. Then confusion drops a lot I guess, especially if we give it a better name.
+>
+> Something like `@layer !important.xyz { ... }` where the `!important` layer is a special layer that is above the unstyled styles.
+
+I did not first see this proposal, but after some thinking did propose essentially the same in [my most recent comment there](https://github.com/w3c/csswg-drafts/issues/6323#issuecomment-1804503198):
+
+> After some thoughts, my idea: what if we’d have a _single, system layer_ which could be used to place other layers _after_ the unlayered styles?
+>
+> Let’s say this system layer would be named `!overrides`. Then, let’s say it places nested styles after the unlayered styles _only_ within the same parent layer (if any).
+>
+> What this would mean:
+>
+> 1. We cannot create an arms race, as we have only one entry point for every layer that can be used to put styles into an “overrides” part.
+> 2. As we can put other layers inside this layer, we could continue to write our new styles using layers in any way.
+> 3. We don’t need to handle any specific syntax or complexity outside adding this one specific named layer.
+
+See — basically a repeat of what François wrote.
+
+I really think this is the best out of all proposals there. And, I think I could even use it inside the other layered styles I could write, as a way to first write some unlayered defaults:
+
+```css
+@layer my-component {
+	.my-component {
+		/* some styles */
+
+		&:is(:hover, :focus-visible) {}
+		& + & {}
+		/* some other styles with any specificity */
+	}
+}
+```
+
+Then, if I would want to add some _modifiers_ to this component (let’s put aside if we actually want to have a layer per component), but would like these modifiers to go _over_ the component’s styles, I could do this:
+
+```css
+@layer my-component {
+	.my-component {
+		/* some styles */
+
+		&:is(:hover, :focus-visible) {}
+		& + & {}
+		/* some other styles with any specificity */
+
+		@layer !overrides {
+			&:disabled {
+				/* Some styles, now guaranteed over any
+				   default styles. */
+			}
+		}
+	}
+}
+```
+
+If I wanted to add multiple different layers as overrides, then I could either use the same dot notation to make each of them `@layer! overrides.disabled` etc., or I could nest (or import!) these as their layers inside our overrides:
+
+```css
+@layer my-component {
+	.my-component {
+		/* some styles */
+
+		&:is(:hover, :focus-visible) {}
+		& + & {}
+		/* some other styles with any specificity */
+
+		@layer !overrides {
+			@layer disabled {
+				&:disabled {
+					/* Some styles, now guaranteed over any
+					   default styles. */
+				}
+			}
+
+			@layer something-else {}
+		}
+	}
+}
+```
+
+But, of course, the main profit would come from an ability to add any styles after unlayered styles in the _topmost_ unlayered context, where there is no a single parent layer surrounding our content. All these cases would become possible:
+
+- Adding custom browser style overrides in browser extensions like [Stylus](https://addons.mozilla.org/en-US/firefox/addon/styl-us/) — now without any need to care about the specificity of the selectors on the sites we override!
+- Adding custom styles for Mastodon instances: it would be much easier to write them with this, as it would be possible to write some kind of reset for everything. And then _have this reset be in its layer_, allowing to write new layers with simple styles using only what is necessary in their selectors.
+- Writing layered styles for anything new in legacy environments: like, let’s say you have an older website, where you don’t want to wrap all the existing styles in a layer, as you would rather not reduce the browser support for all the existing styles. Now we would be able to write new styles that are guaranteed to override the old styles, with layers. This is especially crucial for older sites, where non-BEM (and not idiomatic in any way) selectors could contain multiples ID selectors in them, and just be very unpleasant to work with.
+
+There are so many cases where I would already start using CSS layers, but can’t because there are some unlayered styles getting in the way. I really hope we would get the ability to do something about this sooner rather than later.
