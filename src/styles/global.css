@@ -61,8 +61,8 @@ body {
 	max-width: var(--CONTENT-WIDTH);
 	min-height: 100vh;
 	padding: 16px;
-	padding-inline:
-		calc(16px + min(2rem, max(0px, 100vw - var(--CONTENT-WIDTH))));
+	--content-padding: calc(16px + min(2rem, max(0px, 100vw - var(--CONTENT-WIDTH))));
+	padding-inline: var(--content-padding);
 	margin: 0 auto;
 
 	font-size: 1.25rem;
@@ -200,6 +200,20 @@ ul > li::marker {
 
 ul ul > li::marker {
 	--mix-alpha: 100%;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+p > img:only-child {
+	display: block;
+}
+
+p:has(> img:only-child) {
+	margin-inline: calc(-1 * var(--content-padding));
+	background: red;
 }
 
 pre {
