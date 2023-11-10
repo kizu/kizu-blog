@@ -213,7 +213,6 @@ p > img:only-child {
 
 p:has(> img:only-child) {
 	margin-inline: calc(-1 * var(--content-padding));
-	background: red;
 }
 
 pre {
