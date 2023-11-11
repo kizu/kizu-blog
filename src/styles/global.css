@@ -61,7 +61,8 @@ body {
 	max-width: var(--CONTENT-WIDTH);
 	min-height: 100vh;
 	padding: 16px;
-	--content-padding: calc(16px + min(2rem, max(0px, 100vw - var(--CONTENT-WIDTH))));
+	--min-content-padding: 16px;
+	--content-padding: calc(var(--min-content-padding) + min(2rem, max(0px, 100vw - var(--CONTENT-WIDTH))));
 	padding-inline: var(--content-padding);
 	margin: 0 auto;
 
@@ -168,11 +169,16 @@ a[href].is-inherited:not(:hover, :focus-visible) {
 
 ul, ol {
 	padding: 0;
+	padding-inline-start: calc(
+		2 * var(--min-content-padding)
+		-
+		var(--content-padding)
+	);
 }
 
 :is(ul, ol) ul {
 	padding-block: 0.25em;
-	padding-inline-start: 1em;
+	padding-inline-start: calc(1.25 * var(--min-content-padding));
 }
 
 /* Kinda a mixin */
