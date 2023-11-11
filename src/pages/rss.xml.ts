@@ -17,7 +17,7 @@ export async function get(context: APIContext) {
 		// Could be improved in the future, see
 		// > Possibly unblock .mdx compiledContent/html output
 		// https://github.com/withastro/roadmap/issues/533
-		const content = (await markdown(text, fullLink)).toString();
+		const content = (await markdown(text, fullLink)).toString().replaceAll(/(<pre[^>]+><code)/g, '$1 style="tab-size: 2;"');
 		items.push({
 			...post.data,
 			link,
