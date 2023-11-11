@@ -65,12 +65,10 @@ body {
 	--content-padding: calc(
 		var(--min-content-padding)
 		+
-		min(
-			2rem,
-			max(
-				0px,
-				100vw - var(--CONTENT-WIDTH)
-			)
+		clamp(
+			0px,
+			100vw - var(--CONTENT-WIDTH),
+			2rem
 		)
 	);
 	padding-inline: var(--content-padding);
@@ -125,6 +123,7 @@ h1, h2, h3, h4, h5, h6 {
 
 p, li {
 	line-height: 1.5;
+	text-wrap: pretty;
 }
 
 a[href] {

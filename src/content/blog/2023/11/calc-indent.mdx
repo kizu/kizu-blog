@@ -1,0 +1,148 @@
+---
+title: 'Calculation Indentation'
+description: 'For some time, I struggled with some of the more complicated calculations in CSS. Not with their contents, but with how I would like to see them formatted.'
+tags: ['CSS Formatting', 'CSS']
+pubDate: '2023-11-11'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan tea'
+	location: 'At Home'
+---
+
+import { Link } from '@components/mdx/Link.tsx';
+export const components = { a: Link };
+
+For some time, I struggled with some of the more complicated calculations in CSS. Not with their contents, but with how I would like to see them formatted.
+
+Let’s say we have some CSS like this (taken from the styles of this blog):
+
+```css
+body {
+	--content-padding: calc(var(--min-content-padding) + clamp(0px, 100vw - var(--CONTENT-WIDTH), 2rem));
+}
+
+ul, ol {
+	padding-inline-start: calc(2 * var(--min-content-padding) - var(--content-padding));
+}
+```
+
+It is not the most complex CSS, but it is already difficult to read and maintain.
+
+## How Prettier Handles It
+
+Let’s imagine we’d use [Prettier](https://prettier.io/) for this. As I’m going to display it here in my blog, by default it has around 54 symbols available with the `tab-size: 2`. Putting these settings in Prettier gives us this:
+
+```css
+body {
+	--content-padding: calc(
+		var(--min-content-padding) +
+			clamp(
+				0px,
+				100vw - var(--CONTENT-WIDTH),
+				2rem
+			)
+	);
+}
+
+ul,
+ol {
+	padding-inline-start: calc(
+		2 * var(--min-content-padding) -
+			var(--content-padding)
+	);
+}
+```
+
+Well, I guess, better, but I don’t really like Prettier’s way of bumping the indentation when wrapping a line of calculations.
+
+And I never liked how Prettier formatted many other things in CSS, so I would probably never want to use it for my styles.
+
+## How I Ended Up Writing It
+
+And here is what, after many thoughts, I ended up doing:
+
+```css
+body {
+	--content-padding: calc(
+		var(--min-content-padding)
+		+
+		clamp(
+			0px,
+			100vw - var(--CONTENT-WIDTH),
+			2rem
+		)
+	);
+}
+
+ul, ol {
+	padding-inline-start: calc(
+		2 * var(--min-content-padding)
+		-
+		var(--content-padding)
+	);
+}
+```
+
+A few things to note there.
+
+- Main feature I really liked doing: placing the `+` or `-` on separate lines. It is now much easier to spot different arguments of the calculations, and to spot what exactly is happening inside.
+- I think I prefer to keep the multiplication/division on the same line. Maybe even one day we would get [the syntax sugar of using custom properties as custom units](https://github.com/w3c/csswg-drafts/issues/7379)? Then it would be even more simple.
+- Yes, the code grows vertically, but I’m perfectly fine with that if that means things are easier to read. And, for more complicated calculations, that could give even better results.
+
+## Another Example
+
+Here is another (again, rather simple) example, this time from my [“Using the Connections”](https://kizu.dev/anchor-positioning-experiments/#using-the-connections) experiment of my [“Future CSS: Anchor Positioning”](https://kizu.dev/anchor-positioning-experiments/) article.
+
+How I did write it in the article:
+
+```css
+.tree-item-label::before {
+  top: calc(anchor(var(--to) top) + 0.5 * var(--lh));
+}
+.tree-item-label::after {
+  bottom: calc(anchor(var(--to) top) - 0.5 * var(--lh));
+}
+```
+
+How Prettier formats it:
+
+```css
+.tree-item-label::before {
+	top: calc(
+		anchor(var(--to) top) + 0.5 * var(--lh)
+	);
+}
+.tree-item-label::after {
+	bottom: calc(
+		anchor(var(--to) top) - 0.5 * var(--lh)
+	);
+}
+```
+
+Verbose, but does not really help.
+
+How I would now prefer to write it:
+
+```css
+.tree-item-label::before {
+	top: calc(
+		anchor(var(--to) top)
+		+
+		0.5 * var(--lh)
+	);
+}
+.tree-item-label::after {
+	bottom: calc(
+		anchor(var(--to) top)
+		-
+		0.5 * var(--lh)
+	);
+}
+```
+
+Now it is much easier to spot the main difference of the `+` vs the `-`, as well as distinguish between the calculation arguments.
+
+## It’s All Subjective
+
+That’s just the way I, at the present day, decided to write my CSS. Maybe it won’t fit you! Perhaps I would change it later! Or there would be things I reconsider and add to this method! We will see.
