@@ -62,7 +62,17 @@ body {
 	min-height: 100vh;
 	padding: 16px;
 	--min-content-padding: 16px;
-	--content-padding: calc(var(--min-content-padding) + min(2rem, max(0px, 100vw - var(--CONTENT-WIDTH))));
+	--content-padding: calc(
+		var(--min-content-padding)
+		+
+		min(
+			2rem,
+			max(
+				0px,
+				100vw - var(--CONTENT-WIDTH)
+			)
+		)
+	);
 	padding-inline: var(--content-padding);
 	margin: 0 auto;
 
