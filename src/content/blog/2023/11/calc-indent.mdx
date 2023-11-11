@@ -19,11 +19,11 @@ Let’s say we have some CSS like this (taken from the styles of this blog):
 
 ```css
 body {
-	--content-padding: calc(var(--min-content-padding) + clamp(0px, 100vw - var(--CONTENT-WIDTH), 2rem));
+	--content-padding: calc(var(--MIN-CONTENT-PADDING) + clamp(0px, 100vw - var(--CONTENT-WIDTH), 2rem));
 }
 
 ul, ol {
-	padding-inline-start: calc(2 * var(--min-content-padding) - var(--content-padding));
+	padding-inline-start: calc(2 * var(--MIN-CONTENT-PADDING) - var(--content-padding));
 }
 ```
 
@@ -36,7 +36,7 @@ Let’s imagine we’d use [Prettier](https://prettier.io/) for this. As I’m 
 ```css
 body {
 	--content-padding: calc(
-		var(--min-content-padding) +
+		var(--MIN-CONTENT-PADDING) +
 			clamp(
 				0px,
 				100vw - var(--CONTENT-WIDTH),
@@ -48,7 +48,7 @@ body {
 ul,
 ol {
 	padding-inline-start: calc(
-		2 * var(--min-content-padding) -
+		2 * var(--MIN-CONTENT-PADDING) -
 			var(--content-padding)
 	);
 }
@@ -65,7 +65,7 @@ And here is what, after many thoughts, I ended up doing:
 ```css
 body {
 	--content-padding: calc(
-		var(--min-content-padding)
+		var(--MIN-CONTENT-PADDING)
 		+
 		clamp(
 			0px,
@@ -77,7 +77,7 @@ body {
 
 ul, ol {
 	padding-inline-start: calc(
-		2 * var(--min-content-padding)
+		2 * var(--MIN-CONTENT-PADDING)
 		-
 		var(--content-padding)
 	);
