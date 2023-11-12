@@ -185,21 +185,22 @@ ul, ol {
 	);
 }
 
-/* For now, requires a `p` inside. I wonder if there is a way to do this without it? */
-li:has(> p:first-child > a:first-child > u) {
+li:has(
+	> a:first-child > u,
+	> p:first-child > a:first-child > u
+) {
 	--overhang: clamp(
 		0px,
 		var(--content-padding) - var(--MIN-CONTENT-PADDING),
 		0.5em
 	);
 
+	padding-left: var(--overhang);
+
 	&,
+	& > a:first-child:has(> u),
 	& > p:first-child > a:first-child:has(> u) {
 		margin-left: calc(-1 * var(--overhang));
-	}
-
-	& > p:first-child:has(a:first-child > u) {
-		padding-left: var(--overhang);
 	}
 }
 
