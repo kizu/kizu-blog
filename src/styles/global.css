@@ -144,7 +144,7 @@ a[href] {
 a[href],
 u {
 	text-decoration-thickness: max(1px, 0.075em);
-	text-underline-offset: max(1px, 0.075em);
+	text-underline-offset: clamp(2px, 0.075em, 4px);
 	/* https://github.com/web-platform-tests/wpt/pull/42940 */
 	/* text-decoration-color: var(--mix); */
 	--mix-alpha: 0.5;
