@@ -15,23 +15,23 @@ export const components = { a: Link };
 
 ## Min and Max
 
-A confession: I constantly get confused by [`min()` and `max()` comparison functions](https://drafts.csswg.org/css-values/#comp-func) — in CSS and JS alike. I often use them for the lower and upper bounds, and, in my head, it is not intuitive to use `min()` for the “upper” bound, and `max()` for the “lower”.
+A confession: I constantly get confused by [`min()` and `max()` comparison functions](https://drafts.csswg.org/css-values/#comp-func) — in CSS and JS alike. I often use them for the lower and upper bounds, and, in my head, it is not intuitive to use `min()` for the “upper” bound, and `max()` for the “lower”.
 
-Overall, it frequently takes me a few moments to parse any code that contains these mins and maxes.
+Overall, it frequently takes me a few moments to parse any code that contains these mins and maxes.
 
-That's why I really like the [`clamp()` function](https://drafts.csswg.org/css-values/#funcdef-clamp) for defining the bounds — I find it much easier to understand and parse in my head.
+That’s why I really like the [`clamp()` function](https://drafts.csswg.org/css-values/#funcdef-clamp) for defining the bounds — I find it much easier to understand and parse in my head.
 
 ## A Problem with `clamp()` in CSS
 
-After another time of me using `min()` (or was it `max()`?), I wondered: could I just always use `clamp()`, even if I need to have only the lower or the upper bound?
+After another time of me using `min()` (or was it `max()`?), I wondered: could I just always use `clamp()`, even if I need to have only the lower or the upper bound?
 
-The function itself does not provide a simple way to omit one of the bounds — all the arguments are required, and there is no `none` value that could be used instead of a value.
+The function itself does not provide a simple way to omit one of the bounds — all the arguments are required, and there is no `none` value that could be used instead of a value.
 
 ### Looking for a Solution
 
-The first thought is to use a massive value, like `99999px` for the upper bound, and a similar negative one for the lower. But I would really like to evade magical numbers like that, which, potentially, could backfire in case I'll actually need to handle bigger values.
+The first thought is to use a massive value, like `99999px` for the upper bound, and a similar negative one for the lower. But I would really like to evade magical numbers like that, which, potentially, could backfire in case I’ll actually need to handle bigger values.
 
-My second thought was: hey, didn't we get the [`infinity`](https://drafts.csswg.org/css-values/#valdef-calc-infinity) in CSS recently?
+My second thought was: hey, didn’t we get the [`infinity`](https://drafts.csswg.org/css-values/#valdef-calc-infinity) in CSS recently?
 
 ```css
 <div style="
@@ -39,7 +39,7 @@ My second thought was: hey, didn't we get the [`infinity`](https://drafts.csswg.
 ">test</div>
 ```
 
-Ah, but it does not work:
+Ah, but it does not work:
 
 <figure>
 	<div style="
@@ -48,9 +48,9 @@ Ah, but it does not work:
 </figure>
 
 
-Of course, because `infinity` is a `<number>`, and `clamp()` requires all arguments to be of the same type.
+Of course, because `infinity` is a `<number>`, and `clamp()` requires all arguments to be of the same type.
 
-My third thought was to divide by zero. A perfectly normal thought for me!
+My third thought was to divide by zero. A perfectly normal thought for me!
 
 ```css
 <div style="
@@ -66,11 +66,11 @@ This works:
 	">test</div>
 </figure>
 
-Then I started to write this post and gather the links to specs, as I often do. And guess what, there is [a note in the specs](https://drafts.csswg.org/css-values/#ref-for-number-value%E2%91%A2%E2%91%A3):
+Then I started to write this post and gather the links to specs, as I often do. And guess what, there is [a note in the specs](https://drafts.csswg.org/css-values/#ref-for-number-value%E2%91%A2%E2%91%A3):
 
-> As these keywords are `<number>`s, to get an infinite length, for example, requires an expression like `calc(infinity * 1px)`.
+> As these keywords are `<number>`s, to get an infinite length, for example, requires an expression like `calc(infinity * 1px)`.
 
-Of course, this works as well:
+Of course, this works as well:
 
 ```css
 <div style="
@@ -86,20 +86,20 @@ Of course, this works as well:
 	">test</div>
 </figure>
 
-I did use `1px * -infinity` instead of `-1px * infinity` just to test that it works as it should.
+I did use `1px * -infinity` instead of `-1px * infinity` just to test that it works as it should.
 
-But this is so verbose! Is the division by zero a hack? I'm not sure, but it is much more concise, and also is [defined in the specs as a valid way to get the infinity](https://drafts.csswg.org/css-values/#css-infinity):
+But this is so verbose! Is the division by zero a hack? I’m not sure, but it is much more concise, and also is [defined in the specs as a valid way to get the infinity](https://drafts.csswg.org/css-values/#css-infinity):
 
-> Dividing a value by zero produces either `+∞` or `−∞`, according to the standard sign rules.
+> Dividing a value by zero produces either `+∞` or `−∞`, according to the standard sign rules.
 
 ## Use Cases
 
-Would I use this in the future? I don't know. I think it is still a good idea to think of using the `clamp()` instead of the `min()` or `max()` right away — very often you'd still have to add the other bound later, and with `clamp()` it would be so much easier!
+Would I use this in the future? I don’t know. I think it is still a good idea to think of using the `clamp()` instead of the `min()` or `max()` right away — very often you’d still have to add the other bound later, and with `clamp()` it would be so much easier!
 
-Another case where this can be potentially helpful is when we're setting up some API using CSS variables — we could provide a way to clamp something _optionally_, where the default values for both boundaries would be infinities, but could be provided via CSS variables.
+Another case where this can be potentially helpful is when we’re setting up some API using CSS variables — we could provide a way to clamp something _optionally_, where the default values for both boundaries would be infinities, but could be provided via CSS variables.
 
 ## Aside: Starting to Record Observations
 
-One thing I wanted to start doing — and this blog now would allow me to — start writing about some observations I sometimes make when experimenting with CSS. Not always something I find has obvious use cases, and not always I have time to write a proper long and polished article like I do at [my main site](https://kizu.dev/). However, how many interesting things I did stumble upon and did not share in pursuit of perfectionism?
+One thing I wanted to start doing — and this blog now would allow me to — start writing about some observations I sometimes make when experimenting with CSS. Not always something I find has obvious use cases, and not always I have time to write a proper long and polished article like I do at [my main site](https://kizu.dev/). However, how many interesting things I did stumble upon and did not share in pursuit of perfectionism?
 
-Posting every day for almost 2 weeks made me think a bit less about the polish of the text, and more about “just doing it”. Which I did try to do today.
+Posting every day for almost 2 weeks made me think a bit less about the polish of the text, and more about “just doing it”. Which I did try to do today.
