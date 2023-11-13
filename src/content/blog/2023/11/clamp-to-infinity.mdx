@@ -45,6 +45,9 @@ Ah, but it does not work:
 	<div style="
 		border: solid clamp(-infinity, 1em, infinity);
 	">test</div>
+	<figcaption>
+		A live example that shows just an unstyled word “test”.
+	</figcaption>
 </figure>
 
 
@@ -64,6 +67,9 @@ This works:
 	<div style="
 		border: solid clamp(-1px/0, 1em, 1px/0);
 	">test</div>
+	<figcaption>
+		A live example that shows a thick border around the word “test”.
+	</figcaption>
 </figure>
 
 Then I started to write this post and gather the links to specs, as I often do. And guess what, there is [a note in the specs](https://drafts.csswg.org/css-values/#ref-for-number-value%E2%91%A2%E2%91%A3):
@@ -84,6 +90,9 @@ Of course, this works as well:
 		border: solid
 			clamp(1px * -infinity, 1em, 1px * infinity);
 	">test</div>
+	<figcaption>
+		A live example that shows a thick border around the word “test”.
+	</figcaption>
 </figure>
 
 I did use `1px * -infinity` instead of `-1px * infinity` just to test that it works as it should.

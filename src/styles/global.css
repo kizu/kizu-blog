@@ -105,7 +105,8 @@ blockquote {
 	font-style: italic;
 }
 
-blockquote code {
+blockquote code,
+figcaption em {
 	font-style: normal;
 }
 
@@ -248,6 +249,43 @@ p > img:only-child {
 p:has(> img:only-child) {
 	margin-inline: calc(-1 * var(--content-padding));
 }
+
+figure {
+	display: grid;
+	position: relative;
+	isolation: isolate;
+	--padding: var(--MIN-CONTENT-PADDING);
+	padding: var(--padding);
+	margin: 0;
+
+	&::before {
+		content: "";
+		position: absolute;
+		z-index: -1;
+		inset: calc(-1 * var(--padding)) 0;
+		grid-row: 1 / 99;
+		outline: 1px solid;
+		border-radius: .3em;
+	}
+
+	&:not(:has( > figcaption))::before {
+		inset-block-end: 0;
+	}
+}
+
+figcaption {
+	font-size: 0.8em;
+	font-style: italic;
+    grid-row: 99;
+    margin-top: var(--padding);
+	padding-block-start: calc(0.5 * var(--MIN-CONTENT-PADDING));
+	text-wrap: balance;
+
+	& > p {
+		margin: 0;
+	}
+}
+
 
 pre {
 	box-shadow: 0 0.1em 0.7rem -0.5rem var(--CODE-SHADOW);
