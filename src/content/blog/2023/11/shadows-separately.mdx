@@ -10,9 +10,6 @@ current:
 	location: 'At Home'
 ---
 
-import { Link } from '@components/mdx/Link.tsx';
-export const components = { a: Link };
-
 For some reason, I had this misconception that Shadow DOM could not be used with regular elements, I only ever tried it with the custom ones. But — thanks to [Doug Parker](https://blog.dwac.dev/), [who did point it out to me on Mastodon](https://techhub.social/@develwithoutacause/111337559322080302), — now I know that we can actually do that.
 
 I knew that custom elements (or [Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_Components)) _without_ Shadow DOM were a thing (see also a related article [“Blinded By the Light DOM”](https://meyerweb.com/eric/thoughts/2023/11/01/blinded-by-the-light-dom/) by [Eric Meyer](https://meyerweb.com/) from yesterday), but it never occurred to me that in the same way we could attach a Shadow DOM to a web component, we could do it just for a regular element. Sometimes it is very easy to overlook simple things!

@@ -5,18 +5,11 @@ html {
 	--CONTENT-WIDTH: 50rem;
 	--MIN-CONTENT-PADDING: 16px;
 	--BG-FROM:
-		var(--LIGHT, #9FFFE7)
-		var(--DARK, #003523);
-	--BG-FROM-OK:
 		var(--LIGHT, oklch(0.94 0.11 175.71))
 		var(--DARK, oklch(0.28 0.08 170.93));
 	--BG-TO:
-		var(--LIGHT, #FFFBF5)
-		var(--DARK, #0a0500);
-	--BG-TO-OK:
 		var(--LIGHT, oklch(0.99 0.01 68))
 		var(--DARK, oklch(0.12 0.03 86.71));
-
 	--CONTENT-BG:
 		var(--LIGHT, oklch(0.99 0.03 120.64))
 		var(--DARK, oklch(0.2 0.05 219.22));
@@ -34,20 +27,15 @@ html {
 	--DARK: ;
 
 	background-image: radial-gradient(
-		farthest-corner circle at 52% 50%,
-		var(--BG-FROM) min(0.5 * var(--CONTENT-WIDTH), 62vmin), var(--BG-TO) 100%
-	  )
-  	;
+		farthest-corner circle at 50% 50%
+		,
+		var(--BG-FROM)
+		min(0.5 * var(--CONTENT-WIDTH), 62vmin)
+		,
+		var(--BG-TO)
+		100%
+	);
 	background-attachment: fixed;
-}
-
-@supports (background-image: radial-gradient(in oklab, #000, #000)) {
-	html {
-		background-image: radial-gradient(
-			farthest-corner circle at 50% 50% in oklab,
-			var(--BG-FROM-OK) min(0.5 * var(--CONTENT-WIDTH), 62vmin), var(--BG-TO-OK) 100%
-		);
-	}
 }
 
 @media (prefers-color-scheme: dark) {
@@ -187,8 +175,8 @@ ul, ol {
 }
 
 li:has(
-	> a:first-child > u,
-	> p:first-child > a:first-child > u
+	> a.has-left-overhang:first-child,
+	> p:first-child > a.has-left-overhang:first-child
 ) {
 	--overhang: clamp(
 		0px,
@@ -196,12 +184,12 @@ li:has(
 		0.5em
 	);
 
-	padding-left: var(--overhang);
+	padding-inline-start: var(--overhang);
 
 	&,
-	& > a:first-child:has(> u),
-	& > p:first-child > a:first-child:has(> u) {
-		margin-left: calc(-1 * var(--overhang));
+	& > a.has-left-overhang:first-child,
+	& > p:first-child > a.has-left-overhang:first-child {
+		margin-inline-start: calc(-1 * var(--overhang));
 	}
 }
 
@@ -231,6 +219,7 @@ li:has(
 ul > li::marker {
 	color: var(--mix);
 	--mix-alpha: 75%;
+	line-height: 1; /* It uses a diff font */
 }
 
 ul ul > li::marker {
@@ -262,7 +251,8 @@ figure {
 		content: "";
 		position: absolute;
 		z-index: -1;
-		inset: calc(-1 * var(--padding)) 0;
+		inset-block: calc(-1 * var(--padding));
+		inset-inline: 0;
 		grid-row: 1 / 99;
 		outline: 1px solid;
 		border-radius: .3em;
@@ -277,7 +267,7 @@ figcaption {
 	font-size: 0.8em;
 	font-style: italic;
     grid-row: 99;
-    margin-top: var(--padding);
+    margin-block-start: var(--padding);
 	padding-block-start: calc(0.5 * var(--MIN-CONTENT-PADDING));
 	text-wrap: balance;
 
