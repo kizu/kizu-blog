@@ -5,7 +5,13 @@ import BlogPost from '../layouts/BlogPost.astro';
 import { betterSlug } from '../lib/betterSlug';
 
 import { Link } from '@components/mdx/Link.tsx';
-const components = { a: Link };
+import { Paragraph } from '@components/mdx/Paragraph.tsx';
+import { ListItem } from '@components/mdx/ListItem.tsx';
+const components = {
+	a: Link,
+	p: Paragraph,
+	li: ListItem,
+};
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');

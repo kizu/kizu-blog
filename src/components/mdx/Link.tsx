@@ -1,20 +1,10 @@
-import type { ComponentChildren, JSX } from 'preact';
+import type { MDXTagProps } from './types'
 
-// See https://github.com/withastro/astro/blob/main/packages/integrations/preact/src/static-html.ts
-// When passing children to preact, Astro does this by passing them as a string inside a wrapper element. I did not find it exported, so have to redefine the interface of what I'm using to render them.
-interface AstroPreactChildren {
-	props: {
-		value: {
-			toString: () => string;
-		}
-	}
-}
-
-interface LinkProps extends JSX.HTMLAttributes<HTMLAnchorElement> {
-	children: AstroPreactChildren;
-}
-
-export const Link = ({ children, className, ...props }: LinkProps) => {
+export const Link = ({
+	children,
+	className,
+	...props
+}: MDXTagProps<HTMLAnchorElement>) => {
 	const classNames = [];
 	if (className) {
 		classNames.push(className);
@@ -37,7 +27,7 @@ export const Link = ({ children, className, ...props }: LinkProps) => {
 	return (
 		<a
 			{...props}
-			{...(classNames.length ? { class: classNames.join(' ') } : {})}
-			dangerouslySetInnerHTML={{__html: modifiedContent}}
+			class={classNames.length ? classNames.join(' ') : undefined }
+			dangerouslySetInnerHTML={{ __html: modifiedContent }}
 		/>);
 };
