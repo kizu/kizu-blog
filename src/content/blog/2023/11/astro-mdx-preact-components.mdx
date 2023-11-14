@@ -1,0 +1,19 @@
+---
+title: 'Astro MDX Preact Components'
+description: ''
+tags: ['Astro', 'Preact', 'MDX', 'TypeScript']
+pubDate: '2023-11-14'
+mastodonPostId: ''
+
+current:
+	drinking: 'Cold Yunnan tea'
+	location: 'At Home'
+---
+
+Today's post is sponsored by me not knowing what I'm doing. In other words: fiddling with how my blog is built.
+
+As I did mention in [the first post here](/not-an-ideal-start), I'm using [Astro framework](https://astro.build/), [MDX](https://mdxjs.com/), and [TypeScript](https://www.typescriptlang.org/) for building everything.
+
+Best part about Astro is that it build everything statically by default, and has this concept of [“islands”](https://docs.astro.build/en/concepts/islands/), where it is possible to use _other_ frameworks for different components, which are, again, rendered statically by default, without shipping any JS code to the browser when it is not required.
+
+That means, that I was able to seamlessly add Preact to
