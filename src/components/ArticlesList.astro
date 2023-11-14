@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
-import FormattedDate from '../components/FormattedDate.astro';
-import { betterSlug } from '../lib/betterSlug';
+import FormattedDate from '@components/FormattedDate.astro';
+import { Link } from '@components/mdx/Link';
+import { betterSlug } from '@lib/betterSlug';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -12,7 +13,7 @@ const posts = (await getCollection('blog')).sort(
     posts.map((post) => (
       <li>
         <FormattedDate date={post.data.pubDate} />{' '}
-        <a href={`/${betterSlug(post.slug)}/`}>{post.data.title}</a>
+        <Link href={`/${betterSlug(post.slug)}/`}><>{post.data.title}</></Link>
       </li>
     ))
   }
