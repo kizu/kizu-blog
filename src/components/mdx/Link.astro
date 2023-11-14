@@ -14,13 +14,13 @@ const extraClasses: string[] = [];
 // wrap the contens with a `<u>` to enable a better link display.
 const modifiedHTML =
 	html.replace(/^([“‘]?)(.+?)([”’]?)$/, (m, p1, p2, p3) => {
-		if (!p1 && !p2) {
+		if (!p1 && !p3) {
 			return m;
 		}
 		if (p1) {
 			extraClasses.push('has-left-overhang')
 		}
-		if (p2) {
+		if (p3) {
 			extraClasses.push('has-right-overhang')
 		}
 		return `${p1}<u>${p2}</u>${p3}`;

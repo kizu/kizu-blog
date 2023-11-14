@@ -1,0 +1,96 @@
+---
+title: 'Astro MDX Components'
+description: 'Today’s post is sponsored by me not knowing what I’m doing. In other words: fiddling with how my blog is built. Given Astro is a relatively new framework, I struggled to find solutions to some probably simple things I wanted to do with it. In this post, I’ll document what I did find working for me, and maybe this could be of any assistance to others also struggling with Astro & its MDX integration.'
+tags: ['Astro', 'MDX']
+pubDate: '2023-11-14'
+mastodonPostId: ''
+
+current:
+	drinking: 'Cold Yunnan tea'
+	location: 'At Home'
+	music: 'Sharon Murphy — Can’t Catch Polly'
+---
+
+Today’s post is sponsored by me not knowing what I’m doing. In other words: fiddling with how my blog is built.
+
+As I mentioned in [the first post here](/not-an-ideal-start), I’m using [Astro framework](https://astro.build/) and [MDX](https://mdxjs.com/) for building everything.
+
+Given Astro is a relatively new framework, I struggled to find solutions to some probably simple things I wanted to do with it.
+
+In this post, I’ll document what I did find working for me, and maybe this could be of any assistance to others also struggling with Astro & its MDX integration.
+
+## Providing MDX Components by Default
+
+The biggest reason I like MDX is because it allows a straightforward way of augmenting your markdown, as it is possible to provide your [custom components](https://mdxjs.com/table-of-components/) for every HTML tag it will output.
+
+The best part about MDX with Astro is that it builds everything statically by default, and if we provide any custom components to the underlying MDX, they’d be just rendered as plain HTML (unless we’d enable any [dynamic islands](https://docs.astro.build/en/concepts/islands/)).
+
+I want to do numerous things with these custom components, and, the important part: **I want to always use them**.
+
+The default way of applying custom components to MDX is by first importing right into your `.mdx` file, and then _exporting_ them back as a `components` object. This is described in the Astro docs: [“Assigning Custom Components to HTML elements”](https://docs.astro.build/en/guides/markdown-content/#assigning-custom-components-to-html-elements), and it provides this code snippet as an example:
+
+```js
+import Blockquote from '../components/Blockquote.astro';
+export const components = {blockquote: Blockquote}
+
+> This quote will be a custom Blockquote
+```
+
+And that’s how I did do it, for every blog post… Not ideal. Is there a better way? When I was looking for it, most suggestions were to somehow pass components via remark plugins, but I’m not entirely sure if that would work with Astro. If it is up to me, I’d better not enter the plugins' territory unless I really have to.
+
+Finally, after a few attempts to find a solution, I found out that it _is_ possible to provide custom components, but only if you’re using the [“Content Collections”](https://docs.astro.build/en/guides/content-collections/) feature.
+
+Basically, when we render a content collection, the final step to render the content to HTML is to do something like this (reduced snippet from the [“Rendering content to HTML”](https://docs.astro.build/en/guides/content-collections/#rendering-content-to-html) section):
+
+```jsx
+---
+const { Content, headings } = await entry.render();
+---
+<Content />
+```
+
+What I _did not find in the docs_ is that that dynamic `Content` component **accepts a `components`** prop!
+
+That means that all I need to do to provide my default custom components is first import them and create a `components` object:
+
+```js
+import Link from '@components/mdx/Link.astro';
+import Paragraph from '@components/mdx/Paragraph.astro';
+import ListItem from '@components/mdx/ListItem.astro';
+const components = {
+	a: Link,
+	p: Paragraph,
+	li: ListItem,
+};
+```
+
+And then pass this object to `Content`:
+
+```jsx
+<Content components={components} />
+```
+
+And that’s it — now every page rendered this way would automatically apply these components.
+
+## Accessing the Slots Content
+
+Now that I have an ability to override the components, one thing that I want to do inside of them — access the content that is passed to them. Then, either do things based on what is inside, or maybe even modify the content. Why did I want this? Perhaps I’ll write about this one day!
+
+In more traditional frameworks like React or Preact, we’d have the `children` in the props, which we could analyze or modify in some way.
+
+But can we do something similar with `.astro` components? I did not find this ability initially, so used a bit hacky Preact solution for a while, but I was not happy with the solution I had.
+
+After another attempt to go through the docs, I, finally, got to the solution: [`Astro.slots.render()`](https://docs.astro.build/en/reference/api-reference/#astroslotsrender). Here is the code example from this doc:
+
+```jsx
+---
+const html = await Astro.slots.render('default');
+---
+<Fragment set:html={html} />
+```
+
+The “default” slot is what would be in every MDX component, so now we can do anything with this `html`: it is just a rendered string with HTML inside. We could look inside of it, modify, and then pass further into any element via [`set: html`](https://docs.astro.build/en/reference/directives-reference/#sethtml) Astro prop.
+
+## That’s It
+
+Now I have an ability to do almost anything with the MDX components, without the need to include them _every time_ I write a blog post. And also an ability to just use Astro components without any additional frameworks when all I want is to modify the final generated HTML.
