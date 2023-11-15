@@ -1,0 +1,60 @@
+---
+title: 'Observation: Range Input’s Thumb and Emerging CSS'
+description: 'Today would be a quick “observation”, but a longer prelude. I did stumble upon what I’ll elaborate on today back in June, but for several reasons I did not share or write about this. Today, I saw Adam Argyle’s CodePen, and first forked it, using that technique, and now I’m writing about it as a way to share my obsevations more widely.'
+tags: ['Range Input', 'ScrollDrivenAnimations', 'AnchorPositioning', 'CSS', 'Observation']
+pubDate: '2023-11-15'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan tea'
+	location: 'At Home'
+---
+
+## A Long Prelude
+
+Today would be a quick “observation”, but a longer prelude. I did stumble upon what I’ll elaborate on today back in June, [see this CodePen](https://codepen.io/kizu/details/yLQVvdq), but for several reasons I did not share or write about this. These reasons:
+
+1. Fun fact: I never did really work with range inputs, so before I could do more experiments, I would need to learn much more about them.
+2. I have no idea about their cross-browser compatibility, and the way they and their styles are specified. What are the differences? How likely my experiment could apply to other browsers when they’d get the features I’m using?
+3. I did not have good use cases which to present. Usually, my experiments are very technical: I either achieve some effect, or not. And later, when I’m writing an article, I struggle the most with the actual examples. Like, I have all the use cases somewhere in my head, but it is always hard for me to actually access them. And I’m terrible at design — it takes me countless iterations to come up with something nice.
+
+These reasons, and other things my perfectionism used to contribute, were why I did an experiment, found something for myself, and moved on.
+
+Now that I started trying to write more regularly, write about less polished stuff, and not pursue a perfection (at least not always), I want to continue posting just these small experiments and observations.
+
+I can see how just sharing a technique behind what I’m doing can help eventually.
+
+Yes, perfectionism tells me: “But hey, you could do so much more! Open a CSSWG issue! Read the specs! Experiment on this for another 20 hours!”
+
+I need to learn not to do the maximum, but just share the minimum. The best part: I already have _so many drafts_ of things that I _want_ to do in a more perfect way, unless I’ll clone myself I won’t ever get to do all of that. So, a compromise of just throwing a seed of an observation when I know I cannot grow it fully is something I’m trying right now.
+
+## To the Point
+
+If you did not yet look at [the CodePen I mentioned before](https://codepen.io/kizu/pen/yLQVvdq), now is the time! Ah, and look at it in Chrome, ideally in Chrome Canary with the Experimental Web Platform feature flag on.
+
+This CodePen shows two things:
+
+1. We can define a [`view-timeline`](https://drafts.csswg.org/scroll-animations/#view-timeline-shorthand) on a `::-webkit-slider-thumb`, and then use this timeline to get the slider’s position!
+2. We can define an [`anchor-name`](https://drafts.csswg.org/css-anchor-position-1/#propdef-anchor-name) on the same pseudo-element, and target it with anchor positioning!
+
+Ah, and as a bonus, I did also use another method to pass the hovered state from the thumb to the label outside. We cannot use `:has()` with pseudo-elements, so this is the only way I know we could do something like that.
+
+Can this unlock numerous possibilities for styling the range input? Allowing us to use it to control things outside without JS? Maybe!
+
+But, as I mentioned in the prelude, — I’m not optimistic that this technique would work in other browsers when scroll-driven animations and anchor positioning would get implemented in them. But maybe?
+
+## An Occasion to share
+
+If I first experimented with this in June, is there a reason I’m sharing this particular example now? Yes.
+
+This morning I saw [this CodePen](https://codepen.io/argyleink/pen/XWOaazZ) by [Adam Argyle](https://nerdy.dev/), [shared on Mastodon](https://fosstodon.org/@codepen/111411277781075170) by [Chris Coyier](https://chriscoyier.net/).
+
+In this CodePen, Adam demonstrates how we can create an image comparison widget using a range input and just a tiny snippet of JavaScript to apply the current input’s value as a CSS variable, which is then used in all calculations.
+
+Me, remembering my summer experiment, instantly went and [forked this CodePen](https://codepen.io/kizu/pen/RwvLBqM) (view in Chrome), replacing this JS with this method using scroll-driven animations to pass the current range input’s state.
+
+It is nice to have a good use case to apply a technique!
+
+## Future Observation
+
+In the Mastodon thread about this, [Bramus](https://www.bram.us/) did also share his solution for this, also using scroll-driven animations, but in a different way. I did share _another observation_ later, but I’ll save it for a future blog post. After all, I’m trying to post less polished things, right? And having an already decided topic for a future post is nice as well!
