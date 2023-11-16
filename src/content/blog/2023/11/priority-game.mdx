@@ -1,0 +1,105 @@
+---
+title: 'Interop Priority Game'
+description: ''
+tags: ['Interoperability', 'Interop 2024', 'CSS']
+pubDate: '2023-11-16'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan tea'
+	location: 'At Home'
+---
+
+Today, [Brian Kardell](https://bkardell.com/) posted a question in his blog, in an entry named [“Let’s Play a Game”](https://bkardell.com/blog/PriorityGame.html), let me quote it:
+
+> It’s Interop 24 planning time! Let’s play a game: Tell me what you prioritize, or don’t and why?
+
+In the post, he asks to try to sort a list of the proposed focus and investigation areas to our liking, alongside some commentary. That’s what I’ll do!
+
+There are more than 90 proposals! I can’t cover them all, and I lack expertize in many areas (sure, [JPEG XL](https://github.com/web-platform-tests/interop/issues/430) sounds cool! I have no idea about image compression, how it compares to other formats and so on, so I cannot weight on it; if you can — go ahead!).
+
+I will order things from those I need right now, needed them yesterday, and probably needed them 10 years ago, to things that would be nice to have. Likewise, I think almost all the proposals make sense and are things I’d want to see — the “game” is not trying to tell what is good or not, but to _prioritize_, after all. If I don’t mention something, that means that I don’t have enough to say about it, at least at the current moment.
+
+## Top Ten Interop Proposals, as Sorted by Me
+
+### 1. [Scroll-driven Animations](https://github.com/web-platform-tests/interop/issues/439)
+
+I _am_ biased: I wrote [multiple articles about them](https://kizu.dev/tags/scroll_driven_animations/), describing the weirder use cases which become possible when using scroll-driven animations.
+
+As I mentioned in [Igalia Chats](https://www.igalia.com/chats/power-of-css), when I first saw the scroll-driven animation specs, I did not think I would write all these articles. I did not understand at the time how powerful it is to get access to the elements' positions and dimensions in CSS in the way scroll-driven animations allows us.
+
+But here we are — with them unlocking so many effects and use cases! And now that [they’re in Chrome Stable](https://blog.kizu.dev/scroll-driven-animations-in-stable-chrome/), let’s prioritize shipping them _everywhere_.
+
+And — in an interoperable way.
+
+There is one fear I have — with so many techniques I (and others) come up with, what are the chances they would work even when other browsers would implement scroll-driven animations? There are so many moving pieces: `@property`, interactions of custom CSS properties with animations, and more.
+
+But, without shipping the scroll-driven animations in the first place, we couldn’t even come closer to all these techniques, and with them in place, arguing towards interop for `@property` and custom CSS properties would be easier.
+
+### 2. [CSS style container queries (custom properties)](https://github.com/web-platform-tests/interop/issues/433)
+
+Ugh, I still need to write a proper article about style container queries. In my first initial experiments around their workarounds I stumbled upon the [“cyclic toggles” technique](https://kizu.dev/cyclic-toggles/), and during [“CSS Day 2023” conference](https://cssday.nl/2023) many speakers did mention, and did provide very real use cases for style container queries. Having them available everywhere would unlock _so much_.
+
+Maybe one reason why I’m not writing this article is that it would expose so many things I’ll need _right now_, that the style container queries absence would hurt even more.
+
+### 3. [Unit division and multiplication for mixed units of the same type within `calc()`](https://github.com/web-platform-tests/interop/issues/513)
+
+This is such a powerful thing! Stripping a unit from length values in CSS calculations is something I wanted _for ages_. This would unlock countless use cases.
+
+Today, we have only wild hacks like the [`tan(atan2())` hack](https://dev.to/janeori/css-type-casting-to-numeric-tanatan2-scalars-582j) by [Jane Ori](https://propjockey.io/), or have to define our values unitless. But we really require this as a native feature, available in all browsers at the same time. It might be complicated to work around interop issues in calculations, as the current `atan2()` issues show.
+
+### 4. [`attr()` support extended capabilities](https://github.com/web-platform-tests/interop/issues/521)
+
+An ability to get an HTML attribute, and use it not as a string, but as any other CSS value is something that would also unlock so many use cases!
+
+Yes, it can be worked around by using custom properties, but they are much more cumbersome, especially if we’d want to just reuse the existing attributes on regular HTML tags.
+
+And irregular as well: with custom elements, we can name our attributes as anything. Imagine if we could use them directly in CSS, as proper values? Instead of `<my-component style="--foo: 10; --bar: 5">` we could do just `<my-component foo="10" bar="5">`. In addition to just added convenience, this would remove the potential CSS variables clashes, where right now we have to namespace them, but with attributes on custom elements we won’t have this issue.
+
+### 5. [CSS `element()` function](https://github.com/web-platform-tests/interop/issues/442)
+
+I only recently [started using Firefox](https://blog.kizu.dev/moving-to-firefox/), so I did not yet experiment with `element()`, but it was for sure on my radar for a while. An ability to reuse the visuals of some element on the page? Huh? This can be so powerful! And it is almost impossible to work around otherwise (except for some very specific cases where we could use [`-webkit-box-reflect`](https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-box-reflect)).
+
+### 6. [Popover](https://github.com/web-platform-tests/interop/issues/423)
+
+Ok, I need to confess: this element of the list is that high only because it’s related to [anchor positioning](https://kizu.dev/anchor-positioning-experiments/). Moving the Popover API forward would mean more use cases and need for anchor positioning, which is in a much earlier stage to be present in the Interop 2024, _but_ I want to do everything possible to move towards it.
+
+And the Popover API is cool by itself, of course. But it would be so much cooler with anchor positioning! I just can’t stop mentioning anchor positioning. Sorry. By the way, my next article on [my main site](https://kizu.dev/) would be about them, for once, and not about scroll-driven animations! Stay tuned! That article won’t even be the last time I’ll write about anchor positioning this year, can you imagine?
+
+### 7. [CSS Multi-Column Layout block element breaking](https://github.com/web-platform-tests/interop/issues/520)
+
+I will take any improvements to multi-column layout, to be honest. One dream I have is to have [Overflow In The Block Dimension For Multicol](https://github.com/w3c/csswg-drafts/issues/2923). Please? Of course, handling the element breaking is something _required_ for mutlicol to be viable as well. Improving interop for them, giving more developer hands for multicol layout, fragmentation, all of that, would be so good!
+
+### 8. [Relative Color Syntax](https://github.com/web-platform-tests/interop/issues/426)
+
+We now have `color-mix()` which [can cover _some_ relative color syntax use cases](https://codepen.io/leaverou/pen/gOZZQZb?editors=1100) (CodePen by [Lea Verou](https://lea.verou.me/)), but from all of them.
+
+Functions like `fade()`, `darken()`, `lighten()` and so on in preprocessors are sometimes the last reason to continue using them. Being able to dynamically adjust colors, by _modifying_ some components, and not just replacing them, would be invaluable, especially for design systems.
+
+### 9. [`text-box-trim`](https://github.com/web-platform-tests/interop/issues/422)
+
+And, `text-box-edge` and other related properties, of course. I’ll take anything that allows us to improve typography and aligning things around text. The `cap` unit is almost here, and while it will cover _some_ use-cases (like vertical alignment of icons near text), `text-box-trim` would allow for so much more precise control over how things look in relation to text.
+
+### 10. [Declarative Shadow DOM](https://github.com/web-platform-tests/interop/issues/501)
+
+[I did briefly write recently](https://blog.kizu.dev/shadows-separately/) about one use case for the Declarative Shadow DOM. As with many other items in this list, I look at this issue as a part of something bigger. In this case, as a path towards [Declarative Custom Elements](https://github.com/WICG/webcomponents/issues/1009) which would be so nice to have! But, yes, I’ll take Declarative Shadow DOM as well, especially given I now have at least one use case for it, with the [“fully transparent” elements](https://codepen.io/kizu/pen/LYqRRMQ?editors=1100).
+
+### Participation Award
+
+I could continue writing and writing, scoring and sorting the proposals, but hey, I’m doing this in my less polished blog, so I need to stop at some point! Some other notable mentions that could get into a top 15, if I’d get to write more about them:
+
+- [View Transitions Level 1](https://github.com/web-platform-tests/interop/issues/437)
+- [CSS box-decoration-break](https://github.com/web-platform-tests/interop/issues/486)
+- [margin-trim](https://github.com/web-platform-tests/interop/issues/429)
+- [CSS background-clip](https://github.com/web-platform-tests/interop/issues/517)
+- [css fill/stroke](https://github.com/web-platform-tests/interop/issues/440)
+
+And so many more other things. So many things I did not even mention, only from the CSS proposals, and there were even more…
+
+## Final Words
+
+I really hope at least some of the things I did mention will get into the Interop 2024. I encourage everyone to go, read the proposals, vote for what you’ll find interesting, and provide your use cases in the issues if you have some.
+
+Very often browser vendors do not know if developers really want the features, or if existing workarounds are enough, if the use cases were covered by something else, and so on.
+
+I believe that by writing about what _you_ care about, you move things forward, give a signal that that thing you wrote about is something you still need.

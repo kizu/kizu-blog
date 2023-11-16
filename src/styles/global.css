@@ -103,6 +103,10 @@ figcaption em {
 	font-style: normal;
 }
 
+blockquote {
+	text-wrap: balance;
+}
+
 iframe {
 	border: none;
 }
