@@ -1,0 +1,117 @@
+---
+title: 'Observation: Snappy Scroll-Start'
+description: 'Two days ago, I published my previous observation: “Range Input’s Thumb and Emerging CSS”, where I promised to share another observation later. Here it is! In it, I would share how we can work around the absence of the scroll-start property.'
+tags: ['scroll-snap', 'scroll-start', 'Container Queries', 'CSS', 'Observation']
+pubDate: '2023-11-18'
+mastodonPostId: ''
+
+current:
+	drinking: 'Lapsang Souchong tea'
+	location: 'At Home'
+	music: 'Robert Dallas Gray — Quartal Reels'
+---
+
+## Context
+
+Two days ago, I published my previous observation: [“Range Input’s Thumb and Emerging CSS”](/input-range-thumb).
+
+At the end of this post, I did write:
+
+> In the Mastodon thread about this, [Bramus](https://www.bram.us/) did also share his solution for this, also using scroll-driven animations, but in a different way. I did share _another observation_ later, but I’ll save it for a future blog post.
+
+Here is this blog post!
+
+## The Problem
+
+I’ll quote Bramus, from the end of [his Mastodon message](https://front-end.social/@bramus/111414355820949700) that I mentioned above:
+
+> (My demo begs for `scroll-start`, a new property to set a non-zero starting scroll position BTW)
+
+Two quick related links:
+
+- Here is [a spec for `scroll-start`](https://drafts.csswg.org/css-scroll-snap-2/#scroll-start).
+- And here is [the original proposal for `scroll-start`](https://github.com/w3c/csswg-drafts/issues/6986) by [Adam Argyle](https://nerdy.dev/).
+
+As usual, when I see something that sounds good, I always think about how we can work around the absence of this feature _now_.
+
+I remember, I did already think about this at some point, but did not really try, so no _old_ CodePen to show this time. Given I was already in the mood of sharing stuff, I shared [a modified CodePen](https://codepen.io/kizu/pen/gOqGBow) where I demonstrated my idea for a workaround.
+
+## The `scroll-start` Workaround
+
+My thought process was: ok, we need to have a scroll to be at a certain position. Do we have something that controls the scroll position?
+
+**Scroll Snap.** (I recommend Adam’s talk about it — [“Oh Snap!”](https://www.youtube.com/watch?v=34zcWFLCDIc))
+
+The problem: it would always apply, interfering with the scrolling.
+
+Potential solution: one-time animation or a `@starting-style`? Trying the latter in Chrome, it didn’t work. Trying the former — it did! I’ve tested only in Chrome, and for the purpose of this exact demo, which already did work only in it due to the scroll-driven animations, it was enough.
+
+Now, however, I’d want to see if it is possible to use this workaround in a cross-browser way.
+
+Ooops. It did not work in Firefox and Safari. Why? [Scroll Snap support is actually decent](https://caniuse.com/css-snappoints). Debugging time!
+
+1. In Firefox, the issue was that in order to scroll-snap to work, I had to add the dimensions to an element with it. It had to be at least 1×1 pixel.
+
+2. In Safari, the issue is less pleasant: for some reason, the scroll-snap does not want to work when applied from inside an animation.
+
+I’ve tried many things! The solution I found in the end was… to add container queries?
+
+[Here is the final CodePen](https://codepen.io/kizu/pen/JjxMLVG)
+
+And here is most of the code for this CodePen:
+
+```html
+<div class="scroller" style="--scroll-start: 10em;">
+	<div class="content">
+		<div class="scroll-start"></div>
+	</div>
+</div>
+```
+
+```css
+.scroller {
+	width: 10em;
+	height: 10em;
+	overflow: auto;
+	outline: 1px solid;
+
+	scroll-snap-type: y mandatory;
+}
+
+.scroll-start {
+	position: absolute;
+	width: 1px;
+	top: var(--scroll-start);
+	container-type: size;
+	visibility: hidden;
+	animation: --snap 0.01s both;
+}
+
+.scroll-start::before {
+	content: "";
+	height: 1px;
+	display: block;
+}
+
+@container (width: 1px) {
+	.scroll-start::before {
+		scroll-snap-align: start;
+	}
+}
+
+@keyframes --snap {
+	to { width: 0 }
+}
+```
+
+The trick was to apply the `scroll-snap-align` not from an animation directly, but conditionally through a container query, which changes based on an animation that runs once.
+
+Our helper element starts with `1px` width, and at this point the `scroll-snap-align` applies.
+
+The animation changes the width of the helper to `0px`, and the container query no longer matches, removing the `scroll-snap-align`.
+
+That’s it! We get our `scroll-start` position, and after it applies, we can freely scroll the container.
+
+## Follow-ups
+
+If this was an article on my main site, I would feel obliged to go and look up both the Firefox and Safari issues, check what the specs did mean, are there web platform tests, are there open bugs… Posting this as an observation here is liberating: I could still do it later (unless someone would get to do it first — you’re welcome, by the way), but for now, I could just share this, not postponing it until I’ll sort _everything_.
