@@ -1,0 +1,60 @@
+---
+title: 'Dashed Idents for Everything'
+description: 'What do you think when you see --foo in CSS? Is this a custom CSS property? Maybe, but not necessary. It is a “dashed ident” — a variation of an author-defined identifier, “custom ident”. In this post, I would explain why I’ve decided to always use one, but not the other, and would recommend you to do so as well.'
+tags: ['CSS', 'Dashed Idents']
+pubDate: '2023-11-18'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan tea'
+	location: 'At Home'
+---
+
+What do you think when you see `--foo` in CSS? Is this a custom CSS property? Maybe, but not necessary.
+
+It is a [“dashed ident”](https://www.w3.org/TR/css-values-4/#dashed-idents) — a variation of an author-defined identifier, [“custom ident”](https://www.w3.org/TR/css-values-4/#custom-idents).
+
+You can read why we have these in the specs by the links above, but the main difference is: in the dashed ident there are two dashes at the start. That’s it, that’s the whole difference. At least in how it looks.
+
+But there is a big difference in how it works.
+
+**Not all places that accept a dashed ident would accept a custom ident**.
+
+If something wants a “dashed” one explicitly, for example, [`anchor-name`](https://drafts.csswg.org/css-anchor-position-1/#name) in anchor positioning, or a [`view-timeline-name`](https://drafts.csswg.org/css-anchor-position-1/#name) in scroll-driven animations — they won’t accept a regular ident.
+
+When first encountering this difference, it might be challenging to adjust initially — and I did actually mention this in [my article about anchor positioning](https://kizu.dev/anchor-positioning-experiments/):
+
+> One common mistake I initially had in my experiments — using the names without the double dashes in the beginning. The spec defines the names as `<dashed-ident>`, so they won’t be your usual idents, like with animation names or grid areas, but more like a CSS custom property’s name.
+
+My solution to this problem? See the title of this post. We can just use dashed idents for any author-defined identifiers. Yes, not all places would accept a custom ident, but **any place that accepts custom idents, would also accept a dashed one**.
+
+By doing this, we achieve the following:
+
+- We don’t have to remember if something accepts a custom ident or a dashed one.
+- We make it easier to understand that these idents are _author-defined_ — the main reason to have them was to be able to distinguish them for the parser in places where there might be both author-defined identifiers present and other CSS keywords. There will never be a conflict between a dashed ident and a CSS keyword, this is guaranteed.
+
+Yes, the syntax is a bit more verbose, and yes, you might get used to dashed idents only being used for CSS variables. But that is changing, and I suspect more and more specs would allow only dashed idents, just because this makes writing the properties' syntax definitions much easier.
+
+What are the properties that we could start dashed idents for now?
+
+- The counter name in [CSS counters](https://drafts.csswg.org/css-lists/#auto-numbering):
+	- `counter-reset: --foo 1;`,
+	- `content: counter(--foo);`, and so on.
+
+- Keyframes' names in [CSS animations](https://drafts.csswg.org/css-animations/#keyframes):
+	- `@keyframes --foo {}`,
+	- `animation: --foo 1s linear infinite;`, and so on.
+
+- [View transitions names](https://drafts.csswg.org/css-view-transitions/#view-transition-name-prop) (I was a bit surprised that these were not required to be dashed):
+	- `view-transition-name: --foo;`.
+
+- Named grid lines and areas in [CSS grids](https://drafts.csswg.org/css-grid/). Ok, this one might be controversial, just because the definitions that are already rather verbose could become even more verbose. However! A usual mistake I do with CSS grids is using a string for the area name when doing something like `grid-column: 'foo'`, which, obviously, won’t work. I think this can often happen if you’d define the `grid-template-areas` as an ASCII string — it is logical to follow-up with it with a string usage as well. Using a dashed ident could remove this issue.
+
+	- `grid-template-areas: "--start --content --end"`, or even
+	- `grid-template-rows: [--header-top] auto [--header-bottom --main-top] 1fr [--main-bottom]`
+
+	But yes, it can get verbose. But I think it is still worth it.
+
+Did I miss something? Maybe!
+
+I have been using this notation for a while, and so far, I’m happy with it. If you’re attentive, you could’ve noticed it in my [previous post](/snappy-scroll-start), where I used it for the keyframes' name! One thing I wanted to try: create a stylelint rule that would enforse this. Maybe one day.

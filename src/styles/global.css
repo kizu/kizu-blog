@@ -124,6 +124,14 @@ p, li {
 	text-wrap: pretty;
 }
 
+li p {
+	margin: 0;
+}
+
+li:has(p) + li {
+	margin-top: 0.5lh;
+}
+
 a[href] {
 	padding-block: 0.1em;
 	font-weight: 600; /* Slightly better contrast */
