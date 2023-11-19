@@ -13,7 +13,7 @@ const extraClasses: string[] = [];
 // If the text content of the link starts and ends with the quotes,
 // wrap the contens with a `<u>` to enable a better link display.
 const modifiedHTML =
-	html.replace(/^([“‘]?)(.+?)([”’]?)$/, (m, p1, p2, p3) => {
+	html?.replace(/^([“‘]?)(.+?)([”’]?)$/, (m, p1, p2, p3) => {
 		if (!p1 && !p3) {
 			return m;
 		}
