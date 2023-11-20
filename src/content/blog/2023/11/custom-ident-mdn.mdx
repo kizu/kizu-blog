@@ -1,0 +1,25 @@
+---
+title: 'Fixing the Custom Ident Docs'
+description: 'Two days ago, I published a post named “Dashed Idents for Everything”, in which I did say that we could just use dashed idents in place of custom idents in CSS. In one of the replies, Taylor Hunt did mention that on the MDN page for custom idents it did state that we _cannot_ use dashed idents instead. I did my research and created a PR for MDN content, which did fix this.'
+tags: ['CSS', 'MDN', 'Dashed Idents']
+pubDate: '2023-11-20'
+mastodonPostId: ''
+
+current:
+	drinking: 'Yunnan tea'
+	location: 'At Home'
+---
+
+Two days ago, I published a post named [“Dashed Idents for Everything”](/dashed-idents-for-everything/), in which I did say that we could just use dashed idents in place of custom idents in CSS.
+
+In [one of the replies](https://mastodon.social/@tigt/111434096284304777), [Taylor Hunt](https://ti.gt/) did mention that on [the MDN page for custom idents](https://developer.mozilla.org/en-US/docs/Web/CSS/custom-ident) it did state that we _cannot_ use dashed idents instead:
+
+> A `<custom-ident>` must not be placed between single or double quotes[…]. Moreover, the first character must not be a decimal digit, nor a hyphen (-) followed by a decimal digit or another hyphen.
+
+Well, I just had to go do some more research: did I miss something in the specs? But no, wherever I did look, everything did seem to be ok with the dashed idents usage for custom idents. Browser testing did not also show any discrepancies.
+
+So, I did go and fixed this on MDN via a [pull request](https://github.com/mdn/content/pull/30374). It is now merged, and my post does no longer contradict MDN.
+
+Docs are not always correct — even when they’re written by humans (these written by LLMs could just go straight to the trash bin). If something seems weird, like if you notice a perceived difference between what is written in the docs and what you experience in practice — the best course of action is to do your own research and go and fix the docs. Or, at least, report this to the project. If I did not have opportunity to contribute this time, just filling an issue for MDN content would’ve been enough.
+
+Anyway: contribute in any way you can! Report the bugs, write the tests, do the research, send the PRs. As with everything, at the start you might not know what to do, but when you’re used to it — this is the best way to interact with the web platform.
