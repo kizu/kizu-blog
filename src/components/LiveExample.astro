@@ -1,0 +1,28 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'a'> {
+	caption?: string;
+	shouldHideHTML?: boolean;
+}
+
+const { shouldHideHTML, caption, ...props } = Astro.props;
+
+// TODO: use a proper sanitizer, lol.
+let html = await Astro.slots.render('default');
+const foundHTML = html.match(/<code[^>]* class="language-html"[^>]*>([\s\S]+?)<\/code>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')
+const foundCSS = html.match(/<code[^>]* class="language-css"[^>]*>([\s\S]+?)<\/code>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')
+
+if (shouldHideHTML) {
+	html = html.replaceAll(/<pre[^>]*><code[^>]* class="language-html"[^>]*>([\s\S]+?)<\/code><\/pre>/g, '');
+}
+
+---
+
+<figure {...props}>
+		<Fragment set:html={foundHTML} />
+	</>
+	<style set:html={foundCSS} />
+	<Fragment set:html={html} />
+	{caption ? <figcaption>{caption}</figcaption> : null}
+</figure>

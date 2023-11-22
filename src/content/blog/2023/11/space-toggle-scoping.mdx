@@ -1,0 +1,235 @@
+---
+title: 'Space Toggles for Scoping'
+description: 'Today I did encounter a bug, for which I would really want to use CSS Scopes, or Style Container Queries. But they’re not yet available in any cross-browser way. But the bug won’t wait! Thankfully, space toggles did save the day.'
+tags: ['Space Toggles', 'CSS Scopes', 'Style Queries', 'CSS Variables', 'CSS']
+pubDate: '2023-11-22'
+mastodonPostId: ''
+
+current:
+	drinking: 'Peppermint tea'
+	location: 'At Home'
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+
+Today I did encounter a bug, for which I would really want to use [CSS Scopes](https://drafts.csswg.org/css-cascade-6/#scoped-styles), or [Style Container Queries](https://drafts.csswg.org/css-contain-3/#style-container). But they’re not yet available in any cross-browser way. But the bug won’t wait!
+
+## The Issue
+
+This is a rather common issue which can resurface for very complex components. Prerequisites:
+
+1. A wrapper, on which we handle the modifications via toggling classes.
+2. Some descendant element, which depends on these styles, with an unknown deepness of nesting inside our wrapper.
+3. Ability to nest this component inside itself.
+
+Here is a simplified example:
+
+<LiveExample class="example1" caption="A live example with an incorrectly applied styles for the header in the inner section.">
+```css
+.section {
+    border: 2px solid;
+    padding: 16px;
+    width: max-content;
+}
+
+.section-header {
+    margin: 0 0 8px;
+}
+
+.section.isPretty {
+    border-radius: 2em;
+}
+
+.example1 .section.isPretty .section-header {
+    border: 4px double hotpink;
+    border-radius: 9em;
+    padding-inline: 16px;
+}
+```
+```html
+<div class="section isPretty">
+    <h2 class="section-header">Section Header</h2>
+    <div class="section-content">
+        <div class="section">
+            <h3 class="section-header">Subsection Header</h2>
+            <div class="section-content">
+                Some content
+            </div>
+        </div>
+    </div>
+</div>
+```
+</LiveExample>
+
+The intent of the styles above was for the `.section-header` to have the modified styles only when it is inside the `.isPretty` section. But, because the selector is selecting _any_ descendant header inside, it also matches the header inside our nested section.
+
+You might say: oh, but just use the child combinator! Yes, in this simplified example, `.section.isPretty > .section-header` would immediately resolve the issue.
+
+However, remember when I mentioned “very complex components” and “with an unknown deepness of nesting”?
+
+The child combinator is handy when we know the structure of our components. Ideally, we should. But in some cases, that might be complicated! Imagine we’d have a table inside our component, and we’d want to nest some element inside one of the cells. We would not want to write something like `.section > table > tbody > tr > td > .our-element`. Especially, if the structure could change, and the element could be present on different nesting levels, so we couldn’t even do something like `.section > * > * > * > * > .out-element`, as this won’t guarantee that we will select the proper element, or if we’d over-reach into a nested section this way.
+
+Potentially, we could handle this via HTML: duplicate the modifier on every element that needs it. So, we’d have a `class="section-header isPretty"`. This means, we will have too much logic for handling HTML. This will unnecessarily overcomplicate things.
+
+## Scopes
+
+[CSS Scopes](https://drafts.csswg.org/css-cascade-6/#scoped-styles) could help us with this!
+
+<LiveExample class="example2 require-at-scope" shouldHideHTML caption="A live example, where the header styles are fixed via CSS scopes.">
+```css
+@scope (.example2 .section.isPretty) to (.section-content) {
+    .section-header {
+        border: 4px double hotpink;
+        border-radius: 9em;
+        padding-inline: 16px;
+    }
+}
+```
+```html
+<div class="section isPretty">
+    <h2 class="section-header">Section Header</h2>
+    <div class="section-content">
+        <div class="section">
+            <h3 class="section-header">Subsection Header</h2>
+            <div class="section-content">
+                Some content
+            </div>
+        </div>
+    </div>
+</div>
+```
+</LiveExample>
+
+(HTML for this and the following examples is the same)
+
+If you’ll look at the above example in Chrome or most other Chromium-based browsers, you’ll see that it actually works! What we did is utilize the donut scoping: defining a scope boundary, beyond which the styles won’t be applied.
+
+We used the `.section-content`, but there are multiple ways we could’ve solved this, like stopping the scope on the next `.scope` element, or maybe not even using the donut scoping, and relying on the “closest scope” mechanism, defining two scoped styles: for non-modified styles, and modified. I did not play with the scopes enough to properly research which method would be the best, so for now, I’ll omit them.
+
+## Style Container Queries
+
+[Style Queries](https://drafts.csswg.org/css-contain-3/#style-container) could also help us!
+
+<LiveExample class="example3 require-style-queries" shouldHideHTML caption="A live example, where the header styles are fixed via style container queries.">
+```css
+.example3 .section {
+    --is-pretty: initial;
+}
+
+.example3 .section.isPretty {
+    --is-pretty: 1;
+}
+
+@container style(--is-pretty) {
+    .section-header {
+        border: 4px double hotpink;
+        border-radius: 9em;
+        padding-inline: 16px;
+    }
+}
+```
+```html
+<div class="section isPretty">
+    <h2 class="section-header">Section Header</h2>
+    <div class="section-content">
+        <div class="section">
+            <h3 class="section-header">Subsection Header</h2>
+            <div class="section-content">
+                Some content
+            </div>
+        </div>
+    </div>
+</div>
+```
+</LiveExample>
+
+Again, if you’ll look at this in Chrome or most other Chromium-based browsers, you’ll see that this works. Because of the way CSS variables are inherited, we can use this to scope things in a way similar to the native CSS scopes!
+
+One thing I think I need to mention right away: even though those two methods look similar, we need both. In many other aspects, scopes and style container queries are very different, and this is not a place where we should choose only one over another.
+
+But the issue with both methods — so far, they were only implemented in Chromium… Can we do something with what we have in every browser today?
+
+## Space Toggles
+
+We can! I did come across this method when playing with the style query alternatives when going back from [CSS Day 2023](https://cssday.nl/2023). The actual method I discovered is [“Cyclic Dependency Space Toggles”](https://kizu.dev/cyclic-toggles/), and is a variation on regular space toggles (about [the history of which](https://kizu.dev/cyclic-toggles/#was-this-always-possible) you can also read in my article).
+
+For this post, I’ll demonstrate regular space toggles — after all, cyclic toggles are just a variation of them when we want to have more than just a binary state, and it could be applied for this as well.
+
+<LiveExample class="example4" shouldHideHTML caption="A live example, where the header styles are fixed via CSS space toggles.">
+```css
+.example4 .section {
+    --is-pretty: ;
+}
+
+.example4 .section.isPretty {
+    --is-pretty: initial;
+}
+
+.example4 .section-header {
+    border: var(--is-pretty, 4px double hotpink);
+    border-radius: var(--is-pretty, 9em);
+    padding-inline: var(--is-pretty, 16px);
+}
+```
+```html
+<div class="section isPretty">
+    <h2 class="section-header">Section Header</h2>
+    <div class="section-content">
+        <div class="section">
+            <h3 class="section-header">Subsection Header</h2>
+            <div class="section-content">
+                Some content
+            </div>
+        </div>
+    </div>
+</div>
+```
+</LiveExample>
+
+Yay, it now works everywhere! Of course, the usage is much more cumbersome than with scopes or style queries. And right now, when the `--is-pretty` is not defined, the corresponding properties would revert to their initial values. If we’d want to set some alternative values, we’d have to define an additional variable:
+
+<LiveExample class="example5" shouldHideHTML caption="A live example, where, compared to the previous, we did add another space toggle to handle the inverted state.">
+```css
+.example5 .section {
+    --is-pretty: ;
+    --is-not-pretty: initial;
+}
+
+.example5 .section.isPretty {
+    --is-pretty: initial;
+    --is-not-pretty: ;
+}
+
+.example5 .section-header {
+    border:
+        var(--is-pretty, 4px double hotpink)
+        var(--is-not-pretty, 2px solid);
+    border-radius: var(--is-pretty, 9em);
+    padding-inline:
+        var(--is-pretty, 16px)
+        var(--is-not-pretty, 4px);
+}
+```
+```html
+<div class="section isPretty">
+    <h2 class="section-header">Section Header</h2>
+    <div class="section-content">
+        <div class="section">
+            <h3 class="section-header">Subsection Header</h2>
+            <div class="section-content">
+                Some content
+            </div>
+        </div>
+    </div>
+</div>
+```
+</LiveExample>
+
+This method did allow me to untangle some overrides which were really difficult to work around differently without introducing some complex dynamic HTML output logic. All because of how custom properties work in CSS!
+
+## Conclusion
+
+If you did not yet dig into how to use space toggles — I will highly recommend it! They can be a bit tricky to set up, but we’re using them for around a year in production, and so far, no complaints. And, as this post shows, they can be used to solve some complex cases, a proper solution for which we will only get with the more advanced solutions like scopes or style container queries.
+
+But oh how I would prefer to use a more proper solution, and not a hack!
