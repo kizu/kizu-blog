@@ -3,7 +3,7 @@ title: 'Space Toggles for Scoping'
 description: 'Today I did encounter a bug, for which I would really want to use CSS Scopes, or Style Container Queries. But they’re not yet available in any cross-browser way. But the bug won’t wait! Thankfully, space toggles did save the day.'
 tags: ['Space Toggles', 'CSS Scopes', 'Style Queries', 'CSS Variables', 'CSS']
 pubDate: '2023-11-22'
-mastodonPostId: ''
+mastodonPostId: '111456177546169987'
 
 current:
 	drinking: 'Peppermint tea'
@@ -28,36 +28,36 @@ Here is a simplified example:
 <LiveExample class="example1" caption="A live example with an incorrectly applied styles for the header in the inner section.">
 ```css
 .section {
-    border: 2px solid;
-    padding: 16px;
-    width: max-content;
+	border: 2px solid;
+	padding: 16px;
+	width: max-content;
 }
 
 .section-header {
-    margin: 0 0 8px;
+	margin: 0 0 8px;
 }
 
 .section.isPretty {
-    border-radius: 2em;
+	border-radius: 2em;
 }
 
 .example1 .section.isPretty .section-header {
-    border: 4px double hotpink;
-    border-radius: 9em;
-    padding-inline: 16px;
+	border: 4px double hotpink;
+	border-radius: 9em;
+	padding-inline: 16px;
 }
 ```
 ```html
 <div class="section isPretty">
-    <h2 class="section-header">Section Header</h2>
-    <div class="section-content">
-        <div class="section">
-            <h3 class="section-header">Subsection Header</h2>
-            <div class="section-content">
-                Some content
-            </div>
-        </div>
-    </div>
+	<h2 class="section-header">Section Header</h2>
+	<div class="section-content">
+		<div class="section">
+			<h3 class="section-header">Subsection Header</h2>
+			<div class="section-content">
+				Some content
+			</div>
+		</div>
+	</div>
 </div>
 ```
 </LiveExample>
@@ -79,24 +79,24 @@ Potentially, we could handle this via HTML: duplicate the modifier on every el
 <LiveExample class="example2 require-at-scope" shouldHideHTML caption="A live example, where the header styles are fixed via CSS scopes.">
 ```css
 @scope (.example2 .section.isPretty) to (.section-content) {
-    .section-header {
-        border: 4px double hotpink;
-        border-radius: 9em;
-        padding-inline: 16px;
-    }
+	.section-header {
+		border: 4px double hotpink;
+		border-radius: 9em;
+		padding-inline: 16px;
+	}
 }
 ```
 ```html
 <div class="section isPretty">
-    <h2 class="section-header">Section Header</h2>
-    <div class="section-content">
-        <div class="section">
-            <h3 class="section-header">Subsection Header</h2>
-            <div class="section-content">
-                Some content
-            </div>
-        </div>
-    </div>
+	<h2 class="section-header">Section Header</h2>
+	<div class="section-content">
+		<div class="section">
+			<h3 class="section-header">Subsection Header</h2>
+			<div class="section-content">
+				Some content
+			</div>
+		</div>
+	</div>
 </div>
 ```
 </LiveExample>
@@ -114,32 +114,32 @@ We used the `.section-content`, but there are multiple ways we could’ve solv
 <LiveExample class="example3 require-style-queries" shouldHideHTML caption="A live example, where the header styles are fixed via style container queries.">
 ```css
 .example3 .section {
-    --is-pretty: initial;
+	--is-pretty: initial;
 }
 
 .example3 .section.isPretty {
-    --is-pretty: 1;
+	--is-pretty: 1;
 }
 
 @container style(--is-pretty) {
-    .section-header {
-        border: 4px double hotpink;
-        border-radius: 9em;
-        padding-inline: 16px;
-    }
+	.section-header {
+		border: 4px double hotpink;
+		border-radius: 9em;
+		padding-inline: 16px;
+	}
 }
 ```
 ```html
 <div class="section isPretty">
-    <h2 class="section-header">Section Header</h2>
-    <div class="section-content">
-        <div class="section">
-            <h3 class="section-header">Subsection Header</h2>
-            <div class="section-content">
-                Some content
-            </div>
-        </div>
-    </div>
+	<h2 class="section-header">Section Header</h2>
+	<div class="section-content">
+		<div class="section">
+			<h3 class="section-header">Subsection Header</h2>
+			<div class="section-content">
+				Some content
+			</div>
+		</div>
+	</div>
 </div>
 ```
 </LiveExample>
@@ -159,30 +159,30 @@ For this post, I’ll demonstrate regular space toggles — after all, cyclic to
 <LiveExample class="example4" shouldHideHTML caption="A live example, where the header styles are fixed via CSS space toggles.">
 ```css
 .example4 .section {
-    --is-pretty: ;
+	--is-pretty: ;
 }
 
 .example4 .section.isPretty {
-    --is-pretty: initial;
+	--is-pretty: initial;
 }
 
 .example4 .section-header {
-    border: var(--is-pretty, 4px double hotpink);
-    border-radius: var(--is-pretty, 9em);
-    padding-inline: var(--is-pretty, 16px);
+	border: var(--is-pretty, 4px double hotpink);
+	border-radius: var(--is-pretty, 9em);
+	padding-inline: var(--is-pretty, 16px);
 }
 ```
 ```html
 <div class="section isPretty">
-    <h2 class="section-header">Section Header</h2>
-    <div class="section-content">
-        <div class="section">
-            <h3 class="section-header">Subsection Header</h2>
-            <div class="section-content">
-                Some content
-            </div>
-        </div>
-    </div>
+	<h2 class="section-header">Section Header</h2>
+	<div class="section-content">
+		<div class="section">
+			<h3 class="section-header">Subsection Header</h2>
+			<div class="section-content">
+				Some content
+			</div>
+		</div>
+	</div>
 </div>
 ```
 </LiveExample>
@@ -192,36 +192,36 @@ Yay, it now works everywhere! Of course, the usage is much more cumbersome th
 <LiveExample class="example5" shouldHideHTML caption="A live example, where, compared to the previous, we did add another space toggle to handle the inverted state.">
 ```css
 .example5 .section {
-    --is-pretty: ;
-    --is-not-pretty: initial;
+	--is-pretty: ;
+	--is-not-pretty: initial;
 }
 
 .example5 .section.isPretty {
-    --is-pretty: initial;
-    --is-not-pretty: ;
+	--is-pretty: initial;
+	--is-not-pretty: ;
 }
 
 .example5 .section-header {
-    border:
-        var(--is-pretty, 4px double hotpink)
-        var(--is-not-pretty, 2px solid);
-    border-radius: var(--is-pretty, 9em);
-    padding-inline:
-        var(--is-pretty, 16px)
-        var(--is-not-pretty, 4px);
+	border:
+		var(--is-pretty, 4px double hotpink)
+		var(--is-not-pretty, 2px solid);
+	border-radius: var(--is-pretty, 9em);
+	padding-inline:
+		var(--is-pretty, 16px)
+		var(--is-not-pretty, 4px);
 }
 ```
 ```html
 <div class="section isPretty">
-    <h2 class="section-header">Section Header</h2>
-    <div class="section-content">
-        <div class="section">
-            <h3 class="section-header">Subsection Header</h2>
-            <div class="section-content">
-                Some content
-            </div>
-        </div>
-    </div>
+	<h2 class="section-header">Section Header</h2>
+	<div class="section-content">
+		<div class="section">
+			<h3 class="section-header">Subsection Header</h2>
+			<div class="section-content">
+				Some content
+			</div>
+		</div>
+	</div>
 </div>
 ```
 </LiveExample>
