@@ -28,9 +28,10 @@ Here is a simplified example:
 <LiveExample class="example1" caption="A live example with an incorrectly applied styles for the header in the inner section.">
 ```css
 .section {
-	border: 2px solid;
+	max-width: max-content;
+	box-sizing: border-box;
 	padding: 16px;
-	width: max-content;
+	border: 2px solid;
 }
 
 .section-header {
