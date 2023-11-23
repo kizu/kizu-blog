@@ -1,0 +1,64 @@
+---
+title: 'Calculated Fractions (Report the Bugs!)'
+description: 'If you see something that you think should work in every browser, but it does not work in every browser, what would you do? When I did encounter this issue a few months ago for the first time, I thought that maybe this was some obscure CSS specs limitation that did apply to my case. I was wrong. Today I investigated this further, and in this post would tell you what I found.'
+tags: ['Web Platform Tests', 'CSS Grids', 'CSS']
+pubDate: '2023-11-23'
+mastodonPostId: ''
+
+current:
+	drinking: 'Peppermint tea'
+	location: 'At Home'
+---
+
+If you see something that you think should work in every browser, but it does not work in every browser, what would you do?
+
+When I did encounter this issue a few months ago for the first time, I thought that maybe this was some obscure CSS specs limitation that did apply to my case.
+
+What was that case? Using a `fr` unit inside `calc()` for CSS grids.
+
+It does not work. You can check for yourself in [this CodePen](https://codepen.io/kizu/pen/RwvyyOg) (unless you’re from the future, where this is fixed).
+
+It does not work in Firefox, it does not work in Safari, it does not work in Chrome.
+
+The first time I encountered this, I moved on. This, as a feature, would’ve been nice to have, but not crucial, and only as a part of an unrelated experiment. Moving on was a wrong choice!
+
+Today, glancing over the [“An Interactive Guide to CSS Grid”](https://www.joshwcomeau.com/css/interactive-guide-to-grid/) by [Josh W. Comeau](https://www.joshwcomeau.com/), I randomly remembered that I couldn’t use the fractions inside a calculation. Why was that again? Should I write an observation about this absence of a feature? I investigated.
+
+Things I found:
+
+1. There was already [a bug filled in Chromium](https://bugs.chromium.org/p/chromium/issues/detail?id=993136) from August 2019 by [Xiaocheng Hu](https://github.com/xiaochengh).
+
+2. At the beginning of 2022, [Lea Verou](https://lea.verou.me/) did already bring this up to CSSWG in a [“Should `calc(1fr)` be invalid?” issue](https://github.com/w3c/csswg-drafts/issues/6989) asking if that is per spec, or a misunderstanding of [a particular note in the spec](https://drafts.csswg.org/css-grid/#ref-for-typedef-flex%E2%91%A8).
+
+    [Tab Atkins-Bittner](https://xanthir.com/) replied. Here is what they said:
+
+    > Definitely a bug; `fr` units should be math’able just fine. That note is, indeed, just observing that `fr` is not a `<length>` so `calc(1px + 1fr)` is invalid, but `calc(1fr / 3)` should be just fine.
+
+3. While there were tests covering some `fr` cases, like properly disallowing it when used with the `<length>` units (like `calc(1fr + 100px)`), there were no tests assuring that just the `calc(1fr)` and similar would work.
+
+So, per spec, this should work. It was even clarified by one of the spec editors! What does this mean?
+
+That means that this is a good case, where filling up the bugs in other browsers, and writing WPT tests should be trivial and, hopefully, won’t be challenged.
+
+That's what I did!
+
+- I opened [a Firefox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1866236).
+- I opened [a WebKit bug](https://bugs.webkit.org/show_bug.cgi?id=265276).
+- I opened [my third Web Platform Tests PR](https://github.com/web-platform-tests/wpt/pull/43322) (open at the moment of writing this).
+- I cross-linked everything together, just in case (I like backlinks, and I think there should be more two-way connected pages on the web).
+
+Writing this post probably took longer than doing the above (excluding the research time).
+
+Now, one day, hopefully, we could use flexible lengths inside CSS calculations, and maybe what I did today did bring this closer to reality, even if a tiny bit.
+
+## Open the Bugs!
+
+[I did ask today in Mastodon](https://front-end.social/@kizu/111460085317096031) what people do when they encounter a bug in CSS, in a form of a poll. So far, 61% (out of 164 persons) did choose the “ignore or work around it; continue with your day”.
+
+That was what I did initially when I encountered this issue. It is easy to assume that something that does not work anywhere is “working as intended”. Every so often, it is not. Believe in your feelings! Try to question yourself less. Yes, you might be confused about something, and the issue is on your side.
+
+However! My experience tells me that any confusion can be a very helpful flag for the spec writers and implementers that something could be improved, either in the specs, or in the implementation.
+
+Whenever you encounter something weird, try asking about it. The `#CSS` hashtag works really well on Mastodon, for example: there are plenty of people who’re ready to help.
+
+And, if you have time — I highly recommend reading the specs, looking if there are bugs filled, CSSWG issues, and WPT tests about what you’ve stumbled upon. Looking deeper into the problems is an excellent way to learn.
