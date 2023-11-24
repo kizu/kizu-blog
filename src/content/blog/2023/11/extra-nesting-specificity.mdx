@@ -1,0 +1,53 @@
+---
+title: 'Extra Nesting Specificity'
+description: 'Exactly a month ago, I started a thread on Mastodon about unlayered styles, which led to me bumping the corresponding CSSWG issue a bit more than two weeks ago. There was one CSS hack I did share in this thread which I did not yet write about in this blog, which I’m going to do now!'
+tags: ['CSS Layers', 'CSS Nesting', 'CSS Overrides', 'CSS']
+pubDate: '2023-11-24'
+mastodonPostId: ''
+
+current:
+	drinking: 'Camomile tea'
+	location: 'At Home'
+---
+
+Exactly a month ago, I started [a thread on Mastodon](https://front-end.social/@kizu/111291721848435193) about unlayered styles, which led to me bumping [the corresponding CSSWG issue](https://github.com/w3c/csswg-drafts/issues/6323) a bit more than two weeks ago ([here is my short post about this](/unlayered-styles-issue/)).
+
+There was [one CSS hack I did share in this thread](https://front-end.social/@kizu/111291771872519128) which I did not yet write about in this blog, which I’m going to do now!
+
+Say welcome to… whatever this is:
+
+```css
+*:not(#a#b) {
+	& .whatever {
+		…
+	}
+}
+```
+
+So, what we’re looking at? I present you a _kind of_ workaround for the inability to use layers when there are unlayered styles present.
+
+With CSS nesting [now available in all major browsers](https://caniuse.com/css-nesting) (at the time of writing, I would still not recommend using it in production), we can easily add almost any selectors to our code as a wrapper, making it very convenient to write code without remembering that we have to mention something for every rule.
+
+The `& .whatever` part in the above example is not interesting — there might be any nested rules, with almost any selectors nested right inside our root selector.
+
+The point is: our root `*:not(#a#b)` would bump the specificity of anything nested inside by exactly two ID selectors.
+
+The best part: this selector will always apply, is fast, and should never fail.
+
+In the case of our `.whatever` class, we can think of the final selector as
+
+```css
+*:not(#a#b) .whatever {}
+```
+
+This selector should match for an element with the class `whatever` if any (regardless of type, explicitly represented by a `*` for clarity) of its ancestors **does not** contain both an `id` with the value `a` **and** an `id` with the value `b`.
+
+Obviously, an element cannot have two different IDs at the same time, but the selector is nevertheless valid, and, because it uses `:not()`, it would match for _anything_.
+
+The only case where we’d have to be careful: if we’d want to match the `:root` or `html` (and maybe in some other rare cases), in which case we’d have to write `&:root` or `&:is(html)` inside the nesting. If we don’t have a parent to check — the selector would fail, so when we know of this, we’d add this selector directly to our root elements.
+
+Did I mention that this selector will be fast? Browser engines match the selectors from right to left, so in this case they will first match the `.whatever`, then will look at this element’s direct parent, see that it does not contain two IDs, and stop. Only one parent node to check! And, because it is guaranteed that we’d stop matching on the first parent, it is not necessary to use the child combinator like `& > .whatever`.
+
+It is also rather easy to fake “layers” with this method: just keep adding IDs inside the `:not()` to bump the specificity up, as a way to separate one group of rules from another!
+
+I find this method very useful for custom website CSS overrides, as it is very rare that a site would have more than one `id` in a selector. The bigger problem is if there is an `!important` somewhere, and that’s why it would be nice to have a proper way to handle unlayered styles, and put another layer on top of them.
