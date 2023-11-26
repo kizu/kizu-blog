@@ -2,7 +2,7 @@ html {
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
 
-	--CONTENT-WIDTH: 60rem;
+	--CONTENT-WIDTH: 52rem;
 	--MIN-CONTENT-PADDING: 16px;
 	--BG-FROM:
 		var(--LIGHT, oklch(0.94 0.11 175.71))
@@ -36,6 +36,7 @@ html {
 		100%
 	);
 	background-attachment: fixed;
+	hyphens: auto;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -121,12 +122,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 p, li {
-	line-height: 1.5;
+	line-height: 1.6;
 	text-wrap: pretty;
 }
 
 li p {
 	margin: 0;
+}
+
+li + li {
+	margin-top: 0.25lh;
 }
 
 li:has(p) + li {
@@ -166,6 +171,15 @@ a[href]:is(:hover, :focus-visible) > u {
 
 a:has(> u) {
 	text-decoration: none;
+}
+
+/* When the links are inside a list, we don't want the kerning to move the inner part of the link beyond the left edge. */
+li.starts-with-tag > a.has-left-overhang:first-child {
+	font-kerning: none;
+
+	& > u {
+		font-kerning: auto;
+	}
 }
 
 a[href].is-inherited:not(:hover, :focus-visible) {
@@ -351,7 +365,7 @@ pre{color:#657b83;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monosp
 	}
 }
 
-@container not style(--foo) {
+@container not style(--foo: 1) {
 	.require-style-queries::before {
 		--require-style-queries: initial;
 	}

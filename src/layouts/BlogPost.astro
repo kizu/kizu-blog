@@ -42,9 +42,7 @@ const { pathname } = Astro.url;
 							class="u-url u-uid is-inherited"
 							href={Astro.url}
 							aria-description="This post’s permalink."
-						>
-							<FormattedDate class="dt-published" date={pubDate} />
-						</a>.</> : null}
+						><FormattedDate class="dt-published" date={pubDate} /></a>.</> : null}
 					{
 						updatedDate ? (
 							<span>
@@ -58,8 +56,7 @@ const { pathname } = Astro.url;
 							Categories:
 							{tags.map((tag, index) => <>
 								{index !== 0 ? ', ' : null}
-								<span class="p-category">{tag}</span>
-							</>)}.
+								<span class="p-category">{tag}</span></>)}.
 						</span>) : null
 					}
 				</p>
