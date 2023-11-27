@@ -158,7 +158,7 @@ u {
 	text-decoration-thickness: max(1px, 0.075em);
 	text-underline-offset: clamp(2px, 0.075em, 4px);
 	/* https://github.com/web-platform-tests/wpt/pull/42940 */
-	/* text-decoration-color: var(--mix); */
+	text-decoration-color: var(--mix);
 	--mix-alpha: 0.5;
 }
 
@@ -166,7 +166,8 @@ a[href]:is(:hover, :focus-visible),
 a[href]:is(:hover, :focus-visible) > u {
 	--mix-alpha: 1;
 	/* TODO: Fill a Safari bug: with code elements */
-	text-decoration-thickness: max(1.5px, 0.125em);
+	/* Also, with the mix working, I might not need this. */
+	/* text-decoration-thickness: max(1.5px, 0.125em); */
 }
 
 a:has(> u) {
@@ -235,22 +236,19 @@ li.starts-with-tag:has(
 *::before,
 *::after,
 *::marker {
-	--mix-space: var(--oklch);
-	--oklch: var(--mix-space,);
-	--srgb: var(--mix-space,);
 	--mix-color: currentColor;
 	--mix-alpha: 100%;
 	--mix: color-mix(
-		in var(--oklch, oklch) var(--srgb, srgb),
-		var(--mix-color) 0%,
-		var(--oklch, oklch(none none none / var(--mix-alpha)))
-		var(--srgb, rgba(none none none / var(--mix-alpha)))
+		/* oklch is buggy in Safari for now with this method */
+		in srgb,
+		var(--mix-color) calc(100% * var(--mix-alpha)),
+		transparent
 	);
 }
 
 ul > li::marker {
 	color: var(--mix);
-	--mix-alpha: 75%;
+	--mix-alpha: 0.75;
 	line-height: 1; /* It uses a diff font */
 }
 
