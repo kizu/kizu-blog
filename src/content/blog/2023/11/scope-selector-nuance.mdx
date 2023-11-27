@@ -1,0 +1,125 @@
+---
+title: 'Scope Selector Nuance'
+description: 'In yesterday’s “weekly” I shared the new MDN docs page for @scope — a new CSS feature currently only available in Chromium-based browser. Looking at it made me remember one issue that I had with the @scope, which was actually intended. I imagine this might be something many people would stumble upon, so here I am, sharing it.'
+tags: ['CSS Scopes', 'CSS Nesting', 'CSS']
+pubDate: '2023-11-27'
+mastodonPostId: ''
+
+current:
+	drinking: 'Coffee'
+	location: 'At Home'
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+In [yesterday’s “weekly”](/weekly-bookmarks-006/) I shared the new [MDN docs page for `@scope`](https://developer.mozilla.org/en-US/docs/Web/CSS/@scope) — a new CSS feature currently only available in Chromium-based browser.
+
+Looking at it made me remember one issue that I had with the `@scope`, which was actually intended. I imagine this might be something many people would stumble upon, so here I am, sharing it.
+
+The issue might appear if you’d try to use a selector that would have a mention of a wrapper that exists outside the scope, like this:
+
+<LiveExample class="require-at-scope" caption="A live example, showing how one of the rules does not apply, why intuitively, you might think it should.">
+```css
+@scope (.my-scope) {
+	.inner {
+		background: var(--PINK);
+	}
+	.outer .inner {
+		background: var(--GREEN);
+	}
+}
+```
+```html
+<div class="outer">
+	<div class="my-scope">
+		<div class="inner">Hello?</div>
+	</div>
+</div>
+```
+</LiveExample>
+
+The `.inner` element now has the pink background — not green. It might be easy to think that it would match if you’d think of scope as of something similar to a media or container query: we really care only about the _target_ element, and the `.inner` is both inside our scope, _and_ inside the `.outer`, right?
+
+But the issue is: scopes behave closer to native CSS nesting: anything inside would be as if it were nested inside an implicit `:scope` element!
+
+Let me quote [the corresponding section from the abovementioned MDN docs](https://developer.mozilla.org/en-US/docs/Web/CSS/@scope#the_scope_pseudo-class):
+
+> In the context of a `@scope` block, the `:scope` pseudo-class represents the scope root — it provides an easy way to apply styles to the scope root itself, from inside the scope.
+>
+> In fact, `:scope` is implicitly prepended to all scoped style rules. If you want, you can explicitly prepend `:scope` or prepend the nesting selector (`&`) to get the same effect if you find these representations easier to understand.
+
+So what we get in the end is `:scope .outer .inner` — and, of course, we don’t have the `.outer` inside our scope! But we can easily confirm this by modifying HTML:
+
+<LiveExample class="require-at-scope" caption="A live example showing the HTML structure that the broken selector actually expects.">
+```html
+<div class="my-scope">
+	<div class="outer">
+		<div class="inner">Hello!</div>
+	</div>
+</div>
+```
+</LiveExample>
+
+Now, the `.inner` element has the green background.
+
+How can we fix this? There are, actually, multiple ways to do so, all using different ways we can create selectors:
+
+<LiveExample class="require-at-scope" caption="A live example showing four different ways we can use the outer element in our selectors.">
+```html
+<div class="outer">
+	<div class="my-scope">
+		<div class="inner inner1">With an ampersand</div>
+		<div class="inner inner2">With a :scope</div>
+		<div class="inner inner3">Using nesting</div>
+		<div class="inner inner4">Using :is()</div>
+	</div>
+</div>
+```
+```css
+@scope (.my-scope) {
+	.outer & .inner1,
+	.outer :scope .inner2 {
+		background: var(--GREEN);
+	}
+	.inner3 {
+		.outer & {
+			background: var(--GREEN);
+		}
+	}
+	/* Not entirely correct */
+	.inner4:is(.outer *) {
+		background: var(--GREEN);
+	}
+}
+```
+</LiveExample>
+
+The “proper” way to fix this is to just explicitly mention the scope — either by `&` or `:scope`. This way there won’t be anything implicit added, similar to how `&` works in native CSS nesting!
+
+The third example is something that works because the `:scope` would be added to the topmost selector, so when the native CSS nesting would expand, it would become `.outer :scope .inner3` essentially.
+
+The fourth case is interesting, and not entirely a substitute to others. While it works, it is actually _wider_ than you might think: it would also include the case when the `.outer` is _inside_ the `.my-scope` or even if both classes are present on the same element:
+
+<LiveExample class="require-at-scope" caption="A live example showing how the `:is()` selector is applied flexibly without relying on the existent structure.">
+```html
+<div class="outer">
+	<div class="my-scope">
+		<div class="inner inner4">Outside</div>
+	</div>
+</div>
+<div class="my-scope">
+	<div class="outer">
+		<div class="inner inner4">Inside</div>
+	</div>
+</div>
+<div class="my-scope outer">
+	<div class="inner inner4">Mixed</div>
+</div>
+```
+</LiveExample>
+
+This is because of how what is inside the `:is()` does not really care about any nesting that the element already has — it just checks if the target element is also nested inside the `.outer` element.
+
+While this is not a one-to-one to what we intended, knowing this behavior can be useful in other cases.
+
+We cannot use CSS scopes right now, only play with them in Chromium-based browsers, but when they would become more widely available, hopefully knowing this nuance will help you.

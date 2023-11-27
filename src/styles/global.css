@@ -22,9 +22,32 @@ html {
 
 	--CODE-SHADOW: oklch(0.43 0.2 339.3);
 
+	--PINK:
+		var(--SRGB,
+			var(--LIGHT, pink)
+			var(--DARK, darkmagenta)
+		)
+		var(--OKLCH,
+			var(--LIGHT, oklch(0.89 0.08 1.1))
+			var(--DARK, oklch(0.45 0.2 347.15))
+		);
+	--GREEN:
+		var(--SRGB,
+			var(--LIGHT, lightgreen)
+			var(--DARK, forestgreen)
+		)
+		var(--OKLCH,
+			var(--LIGHT, oklch(0.9 0.19 155.57))
+			var(--DARK, oklch(0.36 0.11 161.84))
+		);
+
 	/* Space toggles for the dark/light mode. */
 	--LIGHT: initial;
 	--DARK: ;
+
+	/* Space toggles for the oklch support. */
+	--SRGB: initial;
+	--OKLCH: ;
 
 	background-image: radial-gradient(
 		farthest-corner circle at 50% 50%
@@ -38,11 +61,17 @@ html {
 	background-attachment: fixed;
 	hyphens: auto;
 }
-
 @media (prefers-color-scheme: dark) {
 	html {
-		--DARK: initial;
 		--LIGHT: ;
+		--DARK: initial;
+	}
+}
+
+@supports (color: oklch(0.89 0.2 166.25)) {
+	:root {
+		--SRGB: ;
+		--OKLCH: initial;
 	}
 }
 
@@ -99,8 +128,7 @@ blockquote {
 	font-style: italic;
 }
 
-blockquote code,
-figcaption em {
+:is(blockquote, figcaption) :is(code, em) {
 	font-style: normal;
 }
 

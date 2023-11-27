@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
+import { markdown } from '@astropub/md'
 
 interface Props extends HTMLAttributes<'a'> {
 	caption?: string;
@@ -10,19 +11,20 @@ const { shouldHideHTML, caption, ...props } = Astro.props;
 
 // TODO: use a proper sanitizer, lol.
 let html = await Astro.slots.render('default');
-const foundHTML = html.match(/<code[^>]* class="language-html"[^>]*>([\s\S]+?)<\/code>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')
-const foundCSS = html.match(/<code[^>]* class="language-css"[^>]*>([\s\S]+?)<\/code>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')
+const foundHTML = html.match(/<code[^>]* class="language-html"[^>]*>([\s\S]+?)<\/code>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')?.replaceAll('&amp;', '&')
+const foundCSS = html.match(/<code[^>]* class="language-css"[^>]*>([\s\S]+?)<\/code>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')?.replaceAll('&amp;', '&')
 
 if (shouldHideHTML) {
 	html = html.replaceAll(/<pre[^>]*><code[^>]* class="language-html"[^>]*>([\s\S]+?)<\/code><\/pre>/g, '');
 }
 
+const captionHTML = caption ? (await markdown(caption)).toString().trim().replace(/^<p>(.+)<\/p>$/, '$1') : undefined;
+
 ---
 
 <figure {...props}>
-		<Fragment set:html={foundHTML} />
-	</>
+	<Fragment set:html={foundHTML} />
 	<style set:html={foundCSS} />
 	<Fragment set:html={html} />
-	{caption ? <figcaption>{caption}</figcaption> : null}
+	{captionHTML ? <figcaption set:html={captionHTML} /> : null}
 </figure>
