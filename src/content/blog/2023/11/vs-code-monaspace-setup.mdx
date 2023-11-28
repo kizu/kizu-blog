@@ -1,0 +1,73 @@
+---
+title: 'My VS Code Monaspace Font Setup'
+description: 'In the last “weekly” I did share a link to the “The Monaspace type system”. For a few weeks, I was trying one of its fonts in VS Code. There were a few things that did not go very smoothly, so I have decided to share them in this post.'
+tags: ['VS Code', 'CSS', 'Typography']
+pubDate: '2023-11-28'
+mastodonPostId: ''
+
+current:
+	drinking: 'Darjeeling tea'
+	location: 'At home'
+---
+
+In the last [“weekly”](/weekly-bookmarks-006/) I did share a link to [“The Monaspace type system”](https://monaspace.githubnext.com/). For a few weeks, I was trying one of its fonts in VS Code. There were a few things that did not go very smoothly, so I have decided to share them in this post.
+
+## My Configuration
+
+Below is what I have configured for the font in the editor and its integrated terminal.
+
+```json
+{
+	"editor.fontFamily":
+		"Monaspace Neon Var, Fira Code, Monaco, monospace",
+	"editor.fontSize": 16,
+	"editor.fontVariations": "'wght' 350",
+	"editor.fontLigatures":
+		"'calt', 'liga', 'ss03', 'ss04', 'ss06'",
+	"editor.tokenColorCustomizations": {
+		"textMateRules": [
+			{
+				"scope": "comment",
+				"settings": { "fontStyle": "italic" }
+			},
+			{
+				"scope": "storage,entity,variable",
+				"settings": { "fontStyle": "" }
+			}
+		]
+	},
+	"terminal.integrated.fontFamily":
+		"Monaspace Neon Var, Fira Code, Monaco, monospace",
+	"terminal.integrated.fontSize": 14,
+	"terminal.integrated.fontWeight": 450,
+	"terminal.integrated.fontWeightBold": 800
+}
+```
+
+As you can see, I’m using the “Neon” font, and the variable font version, and also using the [“Fira Code”](https://github.com/tonsky/FiraCode) font by [Niki Tonsky](https://tonsky.me/) as the fallback font — this is helpful for when the terminal has the special characters set up, like the git branch symbol and so on.
+
+## Font-Weight Weirdness
+
+You might notice that for the editor font, I’m setting the font-weight via `"editor.fontVariations": "'wght' 350"`, and not via `fontWeight`. For me, the `fontWeight` did result in the incorrect results for the “regular” font-weight. There is [a similar issue on GitHub](https://github.com/githubnext/monaspace/issues/1) similar to mine.
+
+But using the `fontVariations` and specifying the variable font’s value for the `wght` axis did work correctly for me. It seems that maybe the built-in instances for the font-weight were not set up properly? When uploading the font to [“Wakamai Fondue”](https://wakamaifondue.com/) (a web service for analyzing fonts by [Roel Nieskens](https://pixelambacht.nl/)), it does not even show if the font contains any built-in mappings for the regular font-weights. But I’m not an expert, and perhaps there is something else at play.
+
+Thankfully, at least for the editor, it is possible to set up things, the integrated terminal, sadly, does not provide an ability to override the `fontVariations`.
+
+As a sidenote, there is also a small issue with the minimal font width — it is a bit too wide. Would’ve been nice if it was possible to make the font narrower.
+
+## Ligatures
+
+At first, I did try using more than three stylistic sets I ended up using; however, some ligatures were not set up properly, breaking the caret navigation and selection (“merging” the symbols into one). Thankfully, many other ligatures seem to work fine, so I found those from `'ss03', 'ss04', 'ss06'` work well for me.
+
+Basically, I did choose to keep only those ligatures that did not change how the characters displayed very drastically. Otherwise, it might be very challenging to navigate from the keyboard through the symbols when you can’t tell on which symbol you’re currently on, for example when the `!==` is converted into a wide `≠`.
+
+But those ligatures where things are just looking slightly different — I, for the most part, don’t mind.
+
+## Customizing Tokens
+
+Sadly, while the Monaspace’s promo site did show how cool it would be if we could set up entirely different fonts for different semantic entities on the page, this is not supported in VS Code (apart from using some extensions that allow for more customization). The only thing we can control via `editor.tokenColorCustomizations` is basically only if something is italic or no (and some other very minor things).
+
+I did, at least, set up to use italic for all code comments, _except_ for the code bits inside [JSDoc](https://jsdoc.app/) — the `storage, entity, variable` tokens.
+
+But I really wish VS Code did provide more ways to customize the fonts, including all the font features for the editor and its specific highlighted tokens, and for the integrated terminal.

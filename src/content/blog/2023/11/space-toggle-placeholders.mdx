@@ -23,38 +23,38 @@ Here is one way I like to do this:
 <LiveExample class="example" caption="A live example of four rounded pills that have different shadows based on the CSS variables which are applied to them.">
 ```html
 <p style="--em-shadow-top: var(--shadow-border),;">
-    <em>First pill</em>
-    <em style="
-        --em-shadow-mid: var(--shadow-basic),;
-    ">Second pill</em>
-    <em style="
-        --em-shadow-top: initial;
-        --em-shadow-low: var(--shadow-glow),;
-    ">Third pill</em>
-    <em style="
-        --em-shadow-mid: var(--shadow-basic),;
-        --em-shadow-low: var(--shadow-glow),;
-    ">Fourth pill</em>
+	<em>First pill</em>
+	<em style="
+		--em-shadow-mid: var(--shadow-basic),;
+	">Second pill</em>
+	<em style="
+		--em-shadow-top: initial;
+		--em-shadow-low: var(--shadow-glow),;
+	">Third pill</em>
+	<em style="
+		--em-shadow-mid: var(--shadow-basic),;
+		--em-shadow-low: var(--shadow-glow),;
+	">Fourth pill</em>
 </p>
 ```
 ```css
 .example {
-    --shadow-border: 0 0 0 1px hotpink;
-    --shadow-basic: 2px 5px 4px -2px blue;
-    --shadow-glow: 0px 0px 2px 5px lightgreen;
+	--shadow-border: 0 0 0 1px hotpink;
+	--shadow-basic: 2px 5px 4px -2px blue;
+	--shadow-glow: 0px 0px 2px 5px lightgreen;
 }
 
 .example em {
-    display: inline-block;
-    border-radius: 9em;
-    background: pink;
-    color: #000;
-    padding-inline: 0.5lh;
-    box-shadow:
-        var(--em-shadow-top,)
-        var(--em-shadow-mid,)
-        var(--em-shadow-low,)
-        0 0;
+	display: inline-block;
+	border-radius: 9em;
+	background: pink;
+	color: #000;
+	padding-inline: 0.5lh;
+	box-shadow:
+		var(--em-shadow-top,)
+		var(--em-shadow-mid,)
+		var(--em-shadow-low,)
+		0 0;
 }
 ```
 </LiveExample>
@@ -63,11 +63,11 @@ There are a few interesting things going on in there which might look weird a
 
 1. In CSS, we can see the weird comma at the end of the variable name: `var(--em-shadow-top,)` — this is a valid way to define an _empty_ fallback, or a _space_, often used in the space toggles.
 
-    I wrote a bit more extensively about this part in [my article on cyclic toggles](https://kizu.dev/cyclic-toggles/#omit-the-space), but in short: whenever the variable in question has its initial value (or — it is _not defined_, or it is _invalid at computed-value time_), it would result in just an empty space, which is a valid thing to have in any part of any value in CSS. This is a very compact way of saying, “we can put something here, but it is also ok to just skip it”. If we don’t use the comma, the “initial” value of the variable would make the whole property invalid, so we have to have _some_ fallback here.
+	I wrote a bit more extensively about this part in [my article on cyclic toggles](https://kizu.dev/cyclic-toggles/#omit-the-space), but in short: whenever the variable in question has its initial value (or — it is _not defined_, or it is _invalid at computed-value time_), it would result in just an empty space, which is a valid thing to have in any part of any value in CSS. This is a very compact way of saying, “we can put something here, but it is also ok to just skip it”. If we don’t use the comma, the “initial” value of the variable would make the whole property invalid, so we have to have _some_ fallback here.
 
 2. The `box-shadow` definition ends with `0 0`. If you’d look at the HTML we have, you might already guess why: we define our variables like this: `--em-shadow-top: var(--shadow-border),; ` — note the comma at the end. Because CSS does not allow trailing commas in lists, and we don’t know in advance which variables we could define and in which order, we want to make sure any combination of them would work.
 
-    The easiest way to achieve this is by adding the comma either to our token definition (like to the `--shadow-border`), or to the places where we use the tokens (as in the example). With the `0 0` at the end of our `box-shadow`, we can be sure that if we’d add a comma for any of the values, things would still render properly. And the `0 0` is just the smallest valid shadow that does not really do anything. Other properties could have other ways of handling this, but often they would not even require this comma stuff, like for the `content` or `transform` values which are just separated by spaces.
+	The easiest way to achieve this is by adding the comma either to our token definition (like to the `--shadow-border`), or to the places where we use the tokens (as in the example). With the `0 0` at the end of our `box-shadow`, we can be sure that if we’d add a comma for any of the values, things would still render properly. And the `0 0` is just the smallest valid shadow that does not really do anything. Other properties could have other ways of handling this, but often they would not even require this comma stuff, like for the `content` or `transform` values which are just separated by spaces.
 
 The rest should be relatively obvious: we’re using tokens so we won’t need to define their values all the time, we can define the “default” values on the ancestors (on the `<p>` in our case), and then override them back to nothing (see `--em-shadow-top: initial;`).
 
