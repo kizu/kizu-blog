@@ -1,0 +1,141 @@
+---
+title: 'Observation: color-mix and currentColor'
+description: 'Today I’ll share my observation that I initially wanted to work more on, but just had to get out sooner rather than later: we can use the `currentColor` inside `color-mix()`! And with them, we could modify an alpha channel of a color only with CSS.'
+tags: ['color-mix', 'currentColor', 'CSS', 'Observation']
+pubDate: '2023-11-29'
+mastodonPostId: ''
+
+current:
+	drinking: 'Karkade with raspberries'
+	location: 'At Home'
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+
+This post is sponsored by the second-to-last day of the month, and me not knowing what to write.
+
+In frantic search for a topic, I remembered one thing I was keeping slightly under wraps — mostly because I wanted to do more experiments with it, probably fill more bugs, and, as usual, polish-polish-polish. But the whole idea of me trying to write more “observations” is to get away from it!
+
+So, today I’ll share my observation: we can use the `currentColor` inside `color-mix()`! But only after I’ll share how we can modify the alpha channel of a color by using them.
+
+Sounds simple enough and, maybe, obvious, but it works, look:
+
+<LiveExample caption="A live example showing how we can modify the alpha channel of a color.">
+```css
+.context {
+	color: var(--PINK);
+}
+.test {
+	color: color-mix(
+		in srgb,
+		currentColor 50%,
+		transparent
+	);
+}
+```
+```html
+<div class="context">
+	<p>This is a very pink text.</p>
+	<p class="test">And this one has 50% opacity.</p>
+</div>
+```
+</LiveExample>
+
+Right away, before I would explain what’s going on, I need to link to two things:
+
+1. The [“Emulate basic relative color syntax with `color-mix()` + the `none` keyword”](https://codepen.io/leaverou/pen/gOZZQZb?editors=1100) by [Lea Verou](https://lea.verou.me/) — I did already mention it twice on this blog. This is the third time!
+
+2. [This Mastodon post](https://social.lol/@anniegreens/111480483490758075) by [Anne Sturdivant](https://anniegreens.lol/), in which she did, inadvertently, solved an issue I was trying to work around for some time.
+
+Lea’s CodePen was about how we can use `color-mix()` and mix colors that have `none` for some color stops.
+
+For a while, I was trying to do the same, but only for adjusting the alpha component of a color, like this:
+
+<LiveExample caption="A live example that attempts the same as the previous one, but at the moment of writing fails almost everywhere." shouldHideHTML>
+```css
+.test-broken {
+	color: color-mix(
+		in srgb,
+		currentColor 0%,
+		rgba(none none none / 50%)
+	);
+}
+```
+```html
+<div class="context">
+	<p>This is a very pink text.</p>
+	<p class="test-broken">And this one should have 50% opacity.</p>
+</div>
+```
+</LiveExample>
+
+But that doesn’t work anywhere except for Chrome Canary (I’ve yet to fill a bug). Or this:
+
+<LiveExample caption="A similar live example that uses a different color space, and currently fails only in Chrome." shouldHideHTML>
+```css
+.test-broken2 {
+	color: color-mix(
+		in oklch,
+		currentColor 0%,
+		oklch(none none none / 50%)
+	);
+}
+```
+```html
+<div class="context">
+	<p>This is a very pink text.</p>
+	<p class="test-broken2">And this one should have 50% opacity.</p>
+</div>
+```
+</LiveExample>
+
+This works in Firefox, works in Safari, but doesn’t in Chrome.
+
+I even went to write web platform tests for that one (it was before I found out about the above issue), and they were merged, but! That’s still an ongoing thing, I’ll probably write about it at some point later.
+
+Regardless. Now we can do this!
+
+<LiveExample caption="The same live example as the first one on this page." shouldHideHTML>
+```css
+.test {
+	color: color-mix(
+		in srgb,
+		currentColor 50%,
+		transparent
+	);
+}
+```
+```html
+<div class="context">
+	<p>This is a very pink text.</p>
+	<p class="test">And this one has 50% opacity.</p>
+</div>
+```
+</LiveExample>
+
+It is the same example as the first one, and it should work everywhere.
+
+The crucial parts:
+
+1. We should use `srgb`. Other color spaces do not work the same for some reason (again — would probably need to investigate further — do you see how I’d want to spend more time on this instead of just writing about it?)
+
+2. We should use `transparent`, and instead of having the alpha component there, we use the percentage with the first color!
+
+Now — we can use this method to adjust (srgb) colors, and get their versions with alpha channel modified! All thanks to Lea and Anne!
+
+## Wait About CurrentColor?
+
+I think I did sidetrack a bit. The other thing I wanted to share: that we can do this not just with some color, even if it comes from a CSS variable, but with a `currentColor`, even when used with `color` property!
+
+Long story short: this works the same way as `font-size: 2em`. The `em` mentioned inside `font-size` is the _inherited_ value of the font-size, and in the same way, `currentColor` mentioned inside the `color` is the _inherited_ color.
+
+I would really want to play with this a bit more, maybe involve `@property` in some way to see how things would behave with it, but I did promise myself that I need to learn when to stop — and here I am, doing this.
+
+- - -
+
+The browser support for `color-mix()` might seem pretty good, _however_, as you could see from all the issues around color spaces and mixing — it might not be _as stable as we might think_. I’ll be cautious before using this in production seriously, there will need to be a lot of testing, and a lot of cross-browser testing.
+
+A [quick test](https://codepen.io/kizu/pen/LYqBZXB) that I did with this shows that Safari, Firefox and Chrome all render something in it differently except for the `srgb` with `transparent` method, which, I think, we _could_ cautiously start trying.
+
+But even if this is still unstable — I really encourage you to experiment with this. Try other color modes, try other ways to mix things up — and give your feedback to browsers! `color-mix()` is very powerful, and the sooner it will become stable, the better for everyone.
