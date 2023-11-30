@@ -2,8 +2,9 @@ html {
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
 
-	--CONTENT-WIDTH: 52rem;
+	--CONTENT-WIDTH: 54rem;
 	--MIN-CONTENT-PADDING: 16px;
+	--MAX-CONTENT-PADDING: 3rem;
 	--BG-FROM:
 		var(--LIGHT, oklch(0.94 0.11 175.71))
 		var(--DARK, oklch(0.28 0.08 170.93));
@@ -86,7 +87,7 @@ body {
 		clamp(
 			0px,
 			100vw - var(--CONTENT-WIDTH),
-			2rem
+			var(--MAX-CONTENT-PADDING)
 		)
 	);
 	--overhang: clamp(
@@ -229,7 +230,7 @@ a[href].is-inherited:not(:hover, :focus-visible) {
 ul, ol {
 	padding: 0;
 	padding-inline-start: calc(
-		2 * var(--MIN-CONTENT-PADDING)
+		3 * var(--MIN-CONTENT-PADDING)
 		-
 		var(--content-padding)
 	);

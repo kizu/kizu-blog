@@ -7,14 +7,45 @@ import { betterSlug } from '@lib/betterSlug';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+
+const years: Map<number, Map<string, Array<(typeof posts)[number]>>> = new Map();
+for (const post of posts) {
+	const date = new Date(post.data.pubDate);
+	const year = date.getFullYear();
+	const monthName = date.toLocaleDateString('en', {
+		month: 'long',
+	});
+	let months = years.get(year);
+	if (!months) {
+		months = new Map();
+		years.set(year, months);
+	}
+	let month = months.get(monthName);
+	if (!month) {
+		month = [];
+		months.set(monthName, month);
+	}
+	month.push(post);
+}
+
 ---
-<ul>
-  {
-    posts.map((post) => (
-      <li>
-        <FormattedDate date={post.data.pubDate} />{' '}
-        <Link href={`/${betterSlug(post.slug)}/`}>{post.data.title}</Link>
-      </li>
-    ))
-  }
-</ul>
+
+{
+	[...years.entries()].map(([yearName, year]) => (<>
+		<h3>{yearName}</h3>
+		{
+			[...year.entries()].map(([monthName, month]) => (<>
+				<h4>{monthName}</h4>
+				<ol reversed>
+					{
+						month.map((post) => (
+							<li value={post.data.pubDate.getDate()}>
+								<Link href={`/${betterSlug(post.slug)}/`}>{post.data.title}</Link>
+							</li>
+						))
+					}
+				</ol>
+			</>))
+		}
+	</>))
+}

@@ -2,15 +2,16 @@
 export interface Props {
 	date: Date;
 	class?: string;
+	hasOnlyDays?: boolean;
 }
 
-const { date, ...rest } = Astro.props;
+const { date, hasOnlyDays, ...rest } = Astro.props;
 ---
 
 <time datetime={date.toISOString()} {...rest}>{
 	date.toLocaleDateString('en', {
-		year: 'numeric',
-		month: 'long',
+		year: hasOnlyDays ? undefined : 'numeric',
+		month: hasOnlyDays ? undefined : 'long',
 		day: 'numeric',
 	})
 }</time>
