@@ -204,7 +204,7 @@ a:has(> u) {
 }
 
 /* When the links are inside a list, we don't want the kerning to move the inner part of the link beyond the left edge. */
-li.starts-with-tag > a.has-left-overhang:first-child {
+.starts-with-tag > a.has-left-overhang:first-child {
 	font-kerning: none;
 
 	& > u {
