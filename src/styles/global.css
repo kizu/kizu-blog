@@ -5,6 +5,7 @@ html {
 	--CONTENT-WIDTH: 54rem;
 	--MIN-CONTENT-PADDING: 16px;
 	--MAX-CONTENT-PADDING: 3rem;
+	--FONT-SIZE--SMALL: 0.8em;
 	--BG-FROM:
 		var(--LIGHT, oklch(0.94 0.11 175.71))
 		var(--DARK, oklch(0.28 0.08 170.93));
@@ -260,6 +261,21 @@ li.starts-with-tag:has(
 	padding-inline-start: calc(1.25 * var(--MIN-CONTENT-PADDING));
 }
 
+dl {
+	display: grid;
+	grid-template: "dt dd" / auto 1fr;
+	gap: 0 0.4em;
+	font-size: var(--FONT-SIZE--SMALL);
+}
+
+dt {
+	font-weight: 600;
+}
+
+dd {
+	margin: 0;
+}
+
 /* Kinda a mixin */
 *,
 *::before,
@@ -325,7 +341,7 @@ figure {
 }
 
 figcaption {
-	font-size: 0.8em;
+	font-size: var(--FONT-SIZE--SMALL);
 	font-style: italic;
     grid-row: 99;
     margin-block-start: var(--padding);

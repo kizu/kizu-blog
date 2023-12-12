@@ -16,6 +16,12 @@ const blog = defineCollection({
 			.transform((str) => (str ? new Date(str) : undefined)),
 		heroImage: z.string().optional(),
 		mastodonPostId: z.string().optional(),
+		current: z.object({
+			mood: z.string().optional(),
+			music: z.string().optional(),
+			drink: z.string().optional(),
+			location: z.string().optional(),
+		}).optional(),
 		tags: z.array(z.string()),
 	}),
 });

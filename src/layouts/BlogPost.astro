@@ -17,6 +17,7 @@ const {
 	updatedDate,
 	heroImage,
 	mastodonPostId,
+	current,
 	tags = [],
 } = Astro.props;
 const { pathname } = Astro.url;
@@ -60,7 +61,7 @@ const { pathname } = Astro.url;
 						</span>) : null
 					}
 				</p>
-
+				{current ? <dl>{Object.entries(current).map(([key, value]) => (<><dt>Current {key}:</dt><dd>{value}</dd></>))}</dl> : ''}
 				<hr />
 				<slot />
 			</article>

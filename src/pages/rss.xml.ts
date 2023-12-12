@@ -12,12 +12,15 @@ export async function get(context: APIContext) {
 	for (const post of posts) {
 		const link = `/${betterSlug(post.slug)}/`;
 		const fullLink = `${context.site}${betterSlug(post.slug)}/`;
-		const { mastodonPostId } = post.data;
+		const { mastodonPostId, current } = post.data;
 		const text = `${post.body}\n- - -\nLet me know what you think about this [on Mastodon](${getMastodonPostLink(mastodonPostId)})!`;
 		// Could be improved in the future, see
 		// > Possibly unblock .mdx compiledContent/html output
 		// https://github.com/withastro/roadmap/issues/533
-		const content = (await markdown(text, fullLink)).toString().replaceAll(/(<pre[^>]+><code)/g, '$1 style="tab-size: 2;"');
+		let content = (await markdown(text, fullLink)).toString().replaceAll(/(<pre[^>]+><code)/g, '$1 style="tab-size: 2;"');
+		if (current) {
+			content = `<dl>${Object.entries(current).map(([key, value]) => (`<dt>Current ${key}:</dt><dd>${value}</dd>`)).join('')}</dl><hr />${content}`
+		}
 		items.push({
 			...post.data,
 			link,
