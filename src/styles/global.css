@@ -184,6 +184,7 @@ a[href] {
 }
 
 a[href],
+summary,
 u {
 	text-decoration-thickness: max(1px, 0.075em);
 	text-underline-offset: clamp(2px, 0.075em, 4px);
@@ -192,15 +193,24 @@ u {
 	--mix-alpha: 0.5;
 }
 
-a[href]:is(:hover, :focus-visible),
-a[href]:is(:hover, :focus-visible) > u {
+:is(a[href], summary):is(:hover, :focus-visible),
+:is(a[href], summary):is(:hover, :focus-visible) > u {
 	--mix-alpha: 1;
 	/* TODO: Fill a Safari bug: with code elements */
 	/* Also, with the mix working, I might not need this. */
 	/* text-decoration-thickness: max(1.5px, 0.125em); */
 }
 
-a:has(> u) {
+summary {
+	cursor: pointer;
+	text-decoration-style: dotted;
+
+	& > u {
+		text-decoration-style: dotted;
+	}
+}
+
+:is(a, summary):has(> u) {
 	text-decoration: none;
 }
 
