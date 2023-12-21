@@ -1,0 +1,33 @@
+---
+title: 'CSS Scope Issues'
+description: 'A week ago, a “CSS `@scope`” article by Miriam Suzanne was published at “12 Days of Web” (curated by Stephanie Eckles). This article did clarify a few things for me, but also made me think of one potential usage of the `: scope` pseudo-class: “storing” the scoping root’s selector as a reusable entity, covering the use case which is available in some of the CSS preprocessors. However, when exploring this use case, I stumbled upon a few issues: this post is about them.'
+tags: ['CSS Scopes', 'CSS Nesting', 'CSS']
+pubDate: '2023-12-21'
+mastodonPostId: ''
+
+current: {
+	drink: 'Lapsang Souchong tea',
+    music: 'Mice Parade — Two, Three, Fall',
+}
+---
+
+A week ago, a [“CSS `@scope`”](https://12daysofweb.dev/2023/css-scope/) article by [Miriam Suzanne](https://www.miriamsuzanne.com/) was published at [“12 Days of Web”](https://12daysofweb.dev/) (curated by [Stephanie Eckles](https://thinkdobecreate.com/)).
+
+This article did clarify a few things for me, but also made me think of one potential usage of the `:scope` pseudo-class: “storing” the scoping root’s selector as a reusable entity, covering the use case which is available in some of the CSS preprocessors: [`@at-root` in Sass](https://sass-lang.com/documentation/at-rules/at-root/) and [root reference in Stylus](https://stylus-lang.com/docs/selectors.html#root-reference). We don’t have anything like this with native CSS nesting, so the possibility to use scopes in this way seemed like a really neat feature.
+
+However, when exploring this use case, I stumbled upon a few issues, one of which was the way Chromium implemented the `:scope` inside the `:is()`. I did open a PR to [Web Platform Tests](https://github.com/web-platform-tests/wpt/pull/43697) adding a test for this.
+
+It is from [a comment in this PR](https://github.com/web-platform-tests/wpt/pull/43697#issuecomment-1864175647) by [Matthieu Dubet](https://blog.matthieud.me/about/) that I first heard about the [`@scope` becoming stable in WebKit](https://github.com/WebKit/WebKit/pull/21435)!
+
+Of course, I couldn’t help myself from going and exploring how the `@scope` works in Safari Technology Preview.
+
+Some things that I did found were nice (my use case with `:is(:scope *)` did work, unlike in Chromium!), but also some things did not work as I expected. However, my expectations for these are based more on the current Chromium implementation, rather than the specs — I think a lot of these are in the “gray area”, not yet exlicitly defined in the specs (or explained there in a not the most obvious way, allowing room for an implementation difference between Chromium and WebKit right now).
+
+Some more explorations and thinking later, I did open four issues in CSSWG. I will not copy what I did write there here, but will invite you to read them yourself, and participate in case you’ll have something to contribute! Here they are:
+
+- [[css-cascade-6] `:scope` scoping root node clarification](https://github.com/w3c/csswg-drafts/issues/9739)
+- [[css-cascade-6] `&` matching inside the `@scope`, and its interaction with `:scope`](https://github.com/w3c/csswg-drafts/issues/9740)
+- [[css-cascade-6] clarification of `:scope` matching in nested scopes](https://github.com/w3c/csswg-drafts/issues/9741)
+- [[css-cascade-6] Named scopes proposal](https://github.com/w3c/csswg-drafts/issues/9742)
+
+I hope these issues will be clarified in one way or another, allowing me to be more sure when writing the follow-up WPT tests for the `@scope` issues I discovered.
