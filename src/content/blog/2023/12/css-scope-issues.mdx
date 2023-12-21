@@ -1,9 +1,9 @@
 ---
 title: 'CSS Scope Issues'
-description: 'A week ago, a “CSS `@scope`” article by Miriam Suzanne was published at “12 Days of Web” (curated by Stephanie Eckles). This article did clarify a few things for me, but also made me think of one potential usage of the `: scope` pseudo-class: “storing” the scoping root’s selector as a reusable entity, covering the use case which is available in some of the CSS preprocessors. However, when exploring this use case, I stumbled upon a few issues: this post is about them.'
+description: 'A week ago, a “CSS `@scope`” article by Miriam Suzanne was published at “12 Days of Web” (curated by Stephanie Eckles). This article did clarify a few things for me, but also made me think of one potential usage of the `:scope` pseudo-class: “storing” the scoping root’s selector as a reusable entity, covering the use case which is available in some of the CSS preprocessors. However, when exploring this use case, I stumbled upon a few issues: this post is about them.'
 tags: ['CSS Scopes', 'CSS Nesting', 'CSS']
 pubDate: '2023-12-21'
-mastodonPostId: ''
+mastodonPostId: '111619097212807346'
 
 current: {
 	drink: 'Lapsang Souchong tea',
@@ -13,7 +13,7 @@ current: {
 
 A week ago, a [“CSS `@scope`”](https://12daysofweb.dev/2023/css-scope/) article by [Miriam Suzanne](https://www.miriamsuzanne.com/) was published at [“12 Days of Web”](https://12daysofweb.dev/) (curated by [Stephanie Eckles](https://thinkdobecreate.com/)).
 
-This article did clarify a few things for me, but also made me think of one potential usage of the `:scope` pseudo-class: “storing” the scoping root’s selector as a reusable entity, covering the use case which is available in some of the CSS preprocessors: [`@at-root` in Sass](https://sass-lang.com/documentation/at-rules/at-root/) and [root reference in Stylus](https://stylus-lang.com/docs/selectors.html#root-reference). We don’t have anything like this with native CSS nesting, so the possibility to use scopes in this way seemed like a really neat feature.
+This article did clarify a few things for me, but also made me think of one potential usage of the `:scope` pseudo-class: “storing” the scoping root’s selector as a reusable entity, covering the use case which is available in some CSS preprocessors: [`@at-root` in Sass](https://sass-lang.com/documentation/at-rules/at-root/) and [root reference in Stylus](https://stylus-lang.com/docs/selectors.html#root-reference). We don’t have anything like this with native CSS nesting, so the possibility to use scopes in this way seemed like a really neat feature.
 
 However, when exploring this use case, I stumbled upon a few issues, one of which was the way Chromium implemented the `:scope` inside the `:is()`. I did open a PR to [Web Platform Tests](https://github.com/web-platform-tests/wpt/pull/43697) adding a test for this.
 
