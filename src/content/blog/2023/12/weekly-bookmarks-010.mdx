@@ -1,0 +1,50 @@
+---
+title: 'Weekly Bookmarks 10'
+description: 'It is the last week for many advent calendars. I did not have an opportunity to follow most of them — this is why I did post links from only one of them, but I’ll try to catch up in the next weeks! Regardless, there were some good articles about CSS outside of advent calendars as well.'
+tags: ['CSS', 'weekly']
+pubDate: '2023-12-24'
+mastodonPostId: ''
+
+current: {
+	drink: 'Lapsang Souchong tea',
+}
+---
+
+It is the last week for many advent calendars. I did not have an opportunity to follow most of them — this is why I did post links from only one of them, but I’ll try to catch up in the next weeks! Regardless, there were some good articles about CSS outside of advent calendars as well.
+
+- [“12 Days of Web”](https://12daysofweb.dev/) curated by [Stephanie Eckles](https://thinkdobecreate.com/) — now with all articles. As previously, I will put the related links inside the `<details>`, as a way not to spoil the topics for you.
+
+    <details>
+        <summary><u>This week’s 12 Days of Web’s articles (5 links</u>)</summary>
+		- [“View Transitions”](https://12daysofweb.dev/2023/view-transitions/) by [Chen Hui Jing](https://chenhuijing.com/) — an introduction to view transitions. I’ve yet to properly play with them, as I’m mostly waiting for them to be available for regular page transitions. And when I did try them, I found out that they’re something that you have to design in-advance, and it might not be a good idea to try and apply them to existing web-sites without putting any thought into it.
+		- [“CSS Nesting”](https://12daysofweb.dev/2023/css-nesting/) by [Kilian Valkhof](https://kilianvalkhof.com/) — a round-up of various aspects of native CSS nesting. It feels so good to finally use it after years of preprocessors!
+		- [“Scroll-driven Animations”](https://12daysofweb.dev/2023/css-scroll-driven-animations/) by [Michelle Barker](https://css-irl.info/) — an introduction to some of the common use cases for the scroll-driven animations, showcasing some simple but festive examples. I did already write [4 articles about them](https://kizu.dev/tags/scroll_driven_animations/), and not planning to stop — though I tend to explore the less common use cases.
+		- [“Responsive SVGs”](https://12daysofweb.dev/2023/responsive-svgs/) by [Nils Binder](https://ichimnetz.com/) — a nice exploration of how we can make the SVGs responsive. There are many interesting details, some of which I had to stumble myself when doing my examples involving SVG in my [“Future CSS: Anchor Positioning”](https://kizu.dev/anchor-positioning-experiments/) article (specifically, for the [last example of the “Four Quadrants”](https://kizu.dev/anchor-positioning-experiments/#Toggle-anchor-positioning-2-6) section, and for the example in the [“Using the Connections”](https://kizu.dev/anchor-positioning-experiments/#using-the-connections)).
+		- [“Container Style Queries”](https://12daysofweb.dev/2023/container-style-queries/) by [Manuel Matuzović](https://matuzo.at/) — an introduction to the style queries. During this year’s [CSS Day](https://cssday.nl/2023) many speakers did mention style queries as something that could solve one or another problem. We need more articles about them! And we need them in all browsers as well, the sooner — the better.
+
+		- - -
+
+		Note: I did not list two posts about JS; if you’re interested in them — look for them on the website for yourself!
+	</details>
+
+- [“The mysterious case of using CSS `animation-composition: accumulate` on a `scale` transform”](https://brm.us/accumulate-scale) by [Bramus](https://www.bram.us/) — an explanation of one curious detail from one of the last week’s “12 Days of Web” articles.
+
+- [“New CSS Viewport Units Do Not Solve The Classic Scrollbar Problem”](https://www.smashingmagazine.com/2023/12/new-css-viewport-units-not-solve-classic-scrollbar-problem/) by [Šime Vidas](https://webplatform.news/) — a deep dive into viewport units, their interactions with classic scrollbars, some other related contexts, and how we can work with them.
+
+- [“CSS-based state management”](https://www.mayank.co/blog/css-for-js-state) by [Mayank](https://www.mayank.co/) — an exploration of how CSS custom properties can be used to store state, utilizing the way inheritance works in CSS.
+
+- [“Border images in CSS: A key focus area for Interop 2023”](https://developer.mozilla.org/en-US/blog/border-images-interop-2023/) by [Dipika Bhattacharya](https://github.com/dipikabh/) — an MDN article about `border-image`. As the title of the article says — this property was one of the focus areas for this year, and browsers did a lot of progress on fixing interop issues with it. This is still a rather challenging property to work with, but this article does a good job of talking through its fundamentals.
+
+- [“Intent to Prototype: CSS `calc-size()` function”](https://groups.google.com/a/chromium.org/g/blink-dev/c/YSc-ri5O32I/m/fvjllNgVAAAJ) by [David Baron](https://dbaron.org/). Can’t wait to play with it! An ability to have a transition between unknown `width` or `height` is literally [the most reacted to issues](https://github.com/w3c/csswg-drafts/issues/626#issuecomment-1800254442) in CSSWG repo. For now, there is only a [CSS Grids trick](https://chriscoyier.net/2022/12/21/things-css-could-still-use-heading-into-2023/#animate-to-auto) from [Chris Coyier](https://chriscoyier.net/), but having this available natively will be wonderful.
+
+- [Firefox 121.0 Release Notes](https://www.mozilla.org/en-US/firefox/121.0/releasenotes/) — among others, I want to note two notable CSS-related features: addition of `text-wrap: balance`, and, more importantly — `:has()` selector, which is now available in all stable versions of major browsers! Maybe not yet a time to put it into production, but a time to start learning about it. There are many articles about it already (someone should make a round-up!), and at least two were written specifically due to the release:
+
+	- [“Can I `:has` stuff?”](https://www.sarahgebauer.com/post/day-19-can-i-has-stuff/) by [Sarah Gebauer](https://www.sarahgebauer.com/) — in which she explores the basics of it.
+
+	- [“Locking scroll with `:has()`”](https://robbowen.digital/wrote-about/locking-scroll-with-has/) by [Robb Owen](https://robbowen.digital/) — in which he looks at one of its possible use cases: detecting when we need to “lock” the scrollbar based on some condition (I can already think of using it with [`:popover-open`](https://developer.mozilla.org/en-US/docs/Web/CSS/:popover-open) from the [Popover API](https://open-ui.org/components/popover.research.explainer/))
+
+- [Safari Technology Preview 185 Release Notes](https://webkit.org/blog/14885/release-notes-for-safari-technology-preview-185/) — again, I want to focus on just two points: `align-content` in normal flow (which was already present in Chrome Canary, and now we could test it in Safari TP thanks to [a contribution](https://github.com/WebKit/WebKit/pull/21522) by [Elika J. Etemad](https://fantasai.inkedblade.net/)), and a relatively stable implementation of `@scope`! Here are two related articles from this week:
+
+    - [“How Do You Vertically Centre an Element in CSS? (Even More) Easily! “](https://css-irl.info/how-do-you-vertically-centre-an-element-in-css/) by [Michelle Barker](https://css-irl.info/) — an overview of this new possibility.
+
+	- [“CSS Scope Issues”](https://blog.kizu.dev/css-scope-issues/) by me — a post and links to four CSSWG issues I created after testing the `@scope` in Safari.
