@@ -28,19 +28,19 @@ If we were to express the above A-A-A-B-B-B-… grouping with the `:nth-child
 <LiveExample class="example example1" caption="A live example showing an ordered list of twelve items, where the first three items, as well as those from seventh to ninth, have a green background.">
 ```css
 .example1 {
-    li:nth-child(6n+1),
-    li:nth-child(6n+2),
-    li:nth-child(6n+3) {
-        background: var(--GREEN);
-    }
+	li:nth-child(6n+1),
+	li:nth-child(6n+2),
+	li:nth-child(6n+3) {
+		background: var(--GREEN);
+	}
 }
 ```
 <style>{`
-    .example ol {
-        font-size: 0.75em;
-        max-height: 50vh;
-        overflow: auto;
-    }
+	.example ol {
+		font-size: 0.75em;
+		max-height: 50vh;
+		overflow: auto;
+	}
 `}</style>
 <Example count={3} />
 </LiveExample>
@@ -59,13 +59,13 @@ We can omit a bit of repetition if instead of using a separate `:nth-child
 <LiveExample class="example example2" caption="A live example showing an ordered list of twelve items, where the first three items, as well as those from seventh to ninth, have a green background.">
 ```css
 .example2 {
-    li:nth-child(6n+1) {
-        &,
-        & + *,
-        & + * + * {
-            background: var(--GREEN);
-        }
-    }
+	li:nth-child(6n+1) {
+		&,
+		& + *,
+		& + * + * {
+			background: var(--GREEN);
+		}
+	}
 }
 ```
 <Example count={3} />
@@ -82,21 +82,21 @@ Why did I call this a “Christmas Tree” selector? Let’s say we will want
 <LiveExample class="example example3" caption="A live example showing an ordered list of fourty items, where the first ten items, as well as those from 21st to 30th, have a green background.">
 ```css
 .example3 {
-    li:nth-child(20n+1) {
-                 &,
-                &+*,
-               &+*+*,
-              &+*+*+*,
-             &+*+*+*+*,
-            &+*+*+*+*+*,
-           &+*+*+*+*+*+*,
-          &+*+*+*+*+*+*+*,
-         &+*+*+*+*+*+*+*+*,
-        &+*+*+*+*+*+*+*+*+*
-                 {
-            background: var(--GREEN);
-        }
-    }
+	li:nth-child(20n+1) {
+		         &,
+		        &+*,
+		       &+*+*,
+		      &+*+*+*,
+		     &+*+*+*+*,
+		    &+*+*+*+*+*,
+		   &+*+*+*+*+*+*,
+		  &+*+*+*+*+*+*+*,
+		 &+*+*+*+*+*+*+*+*,
+		&+*+*+*+*+*+*+*+*+*
+		         {
+			background: var(--GREEN);
+		}
+	}
 }
 ```
 <Example count={10} />
@@ -115,23 +115,47 @@ When thinking about this, I thought of one optimization that we could do to�
 <LiveExample class="example example4" caption="A live example showing an ordered list of fourty items, where the first ten items, as well as those from 21st to 30th, have a green background.">
 ```css
 .example4 {
-    li:nth-child(20n+1),
-    li:nth-child(20n+6) {
-            &,
-           &+*,
-          &+*+*,
-         &+*+*+*,
-        &+*+*+*+*
-            {
-            background: var(--GREEN);
-        }
-    }
+	li:nth-child(20n+1),
+	li:nth-child(20n+6) {
+		    &,
+		   &+*,
+		  &+*+*,
+		 &+*+*+*,
+		&+*+*+*+*
+		    {
+			background: var(--GREEN);
+		}
+	}
 }
 ```
 <Example count={10} />
 </LiveExample>
 
 If the count of elements in our group is not a prime number, we can express our desired “group” as a product of two or more nested selectors! In the above case, we can use just two `:nth-child()` and a smaller Christmas tree to achieve our group of ten, as 2×5=10.
+
+And if we can have our group as a product of more than two numbers, things can be simplified even more, like for selecting twelve elements it can be expressed as 2×3×2:
+
+<LiveExample class="example example5" caption="A live example showing an ordered list of fourty eight items, where the first twelve items, as well as those from 25th to 36th, have a green background.">
+```css
+.example5 {
+	li:nth-child(24n+1),
+	li:nth-child(24n+7) {
+		    &,
+		  &+*+*,
+		&+*+*+*+* {
+			 &,
+			&+*
+			 {
+				background: var(--GREEN);
+			}
+		}
+	}
+}
+```
+<Example count={12} />
+</LiveExample>
+
+Now we have just two happy little trees.
 
 ## The Need for `:nth-sibling()`
 
