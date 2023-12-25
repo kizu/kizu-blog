@@ -133,30 +133,6 @@ When thinking about this, I thought of one optimization that we could do to�
 
 If the count of elements in our group is not a prime number, we can express our desired “group” as a product of two or more nested selectors! In the above case, we can use just two `:nth-child()` and a smaller Christmas tree to achieve our group of ten, as 2×5=10.
 
-And if we can have our group as a product of more than two numbers, things can be simplified even more, like for selecting twelve elements it can be expressed as 2×2×3:
-
-<LiveExample class="example example5" caption="A live example showing an ordered list of fourty eight items, where the first twelve items, as well as those from 25th to 36th, have a green background.">
-```css
-.example5 {
-    li:nth-child(24n+1),
-    li:nth-child(24n+5),
-    li:nth-child(24n+9) {
-         &,
-        &+* {
-              &,
-             &+*,
-            &+*+* {
-                background: var(--GREEN);
-            }
-        }
-    }
-}
-```
-<Example count={12} />
-</LiveExample>
-
-Now we have just two happy little trees.
-
 ## The Need for `:nth-sibling()`
 
 As demonstrated by the above cases, even though we can try to optimize the selectors, they’re still a bit too complicated. I won’t use them in production, and won’t recommend doing so as well.
