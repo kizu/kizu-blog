@@ -381,7 +381,11 @@ figure > pre {
 	border-radius: 0;
 }
 
-figure > pre:has(+ figcaption) {
+figure > *:nth-last-child(1 of :not(style, figcaption)) {
+	margin-block-end: 0;
+}
+
+figure > pre:nth-last-child(1 of :not(style, figcaption)) {
 	margin-block-end: min(calc(-1 * var(--padding)), 0px);
 	border-end-start-radius: calc(.3em + 1px);
 	border-end-end-radius: calc(.3em + 1px);

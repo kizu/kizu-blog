@@ -25,7 +25,7 @@ But right now — we don't have a good way to do this. However, I did spend some
 
 If we were to express the above A-A-A-B-B-B-… grouping with the `:nth-child()`, we will have to repeat it for every element of the group:
 
-<LiveExample class="example example1" caption="">
+<LiveExample class="example example1" caption="A live example showing an ordered list of twelve items, where the first three items, as well as those from seventh to ninth, have a green background.">
 ```css
 .example1 {
     li:nth-child(6n+1),
@@ -56,7 +56,7 @@ As you can guess, if we would like to have a group of ten selected element
 
 We can omit a bit of repetition if instead of using a separate `:nth-child()` we will use only one of them, but then use a [next-sibling combinator](https://developer.mozilla.org/en-US/docs/Web/CSS/Next-sibling_combinator):
 
-<LiveExample class="example example2" caption="">
+<LiveExample class="example example2" caption="A live example showing an ordered list of twelve items, where the first three items, as well as those from seventh to ninth, have a green background.">
 ```css
 .example2 {
     li:nth-child(6n+1) {
@@ -79,7 +79,7 @@ Two important notes:
 
 Why did I call this a “Christmas Tree” selector? Let’s say we will want to select the abovementioned group of 10 elements and format our code a bit differently:
 
-<LiveExample class="example example3" caption="">
+<LiveExample class="example example3" caption="A live example showing an ordered list of fourty items, where the first ten items, as well as those from 21st to 30th, have a green background.">
 ```css
 .example3 {
     li:nth-child(20n+1) {
@@ -112,7 +112,7 @@ Maybe you could even spot [an owl](https://alistapart.com/article/axiomatic-css-
 
 When thinking about this, I thought of one optimization that we could do to reduce the number of lines of code (but not the complexity, really): combine both methods:
 
-<LiveExample class="example example4" caption="">
+<LiveExample class="example example4" caption="A live example showing an ordered list of fourty items, where the first ten items, as well as those from 21st to 30th, have a green background.">
 ```css
 .example4 {
     li:nth-child(20n+1),
@@ -135,7 +135,7 @@ If the count of elements in our group is not a prime number, we can expres
 
 And if we can have our group as a product of more than two numbers, things can be simplified even more, like for selecting twelve elements it can be expressed as 2×2×3:
 
-<LiveExample class="example example5" caption="">
+<LiveExample class="example example5" caption="A live example showing an ordered list of fourty eight items, where the first twelve items, as well as those from 25th to 36th, have a green background.">
 ```css
 .example5 {
     li:nth-child(24n+1),
