@@ -1,0 +1,13 @@
+---
+interface Props {
+  count: number;
+}
+const { count } = Astro.props;
+---
+
+<ol>
+	{[...Array(count)].map(() => <li>A</li>)}
+	{[...Array(count)].map(() => <li>B</li>)}
+	{[...Array(count)].map(() => <li>A</li>)}
+	{[...Array(count)].map(() => <li>B</li>)}
+</ol>

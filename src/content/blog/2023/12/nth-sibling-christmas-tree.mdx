@@ -1,0 +1,166 @@
+---
+title: 'A Christmas Tree Selector: Prototyping the :nth-sibling() with CSS Nesting'
+description: ''
+tags: ['CSS Nesting', 'CSS Selectors', 'CSS']
+pubDate: '2023-12-25'
+mastodonPostId: ''
+
+current: {
+    drink: 'Yunnan tea',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+import Example from './nth-sibling-christmas-tree.astro';
+
+While working on another article, I stumbled upon a case that I never could achieve in any good way: an ability to select repeating groups of elements.
+
+We have [`:nth-child()`](https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-child), but it only allows us to select one specific element, and while we can do things like [“Quantity Queries”](https://alistapart.com/article/quantity-queries-for-css/) (article by [Heydon Pickering](https://heydonworks.com/)), `:nth-child()` really allows us to only select a finite group of elements, or repeating sequences of a single selected element.
+
+What I want is: to be able to select groups like A-A-A-B-B-B-A-A-A-B-B-B and so on. I’m not alone in wanting something like that: there is [a CSSWG issue](https://github.com/w3c/csswg-drafts/issues/3813) with comments from [Amelia Bellamy-Royds](https://github.com/AmeliaBR) and [Johannes Odland](https://johannesodland.github.io/) thinking about a hypothetical `:nth-sibling()` pseudo-class that could allow us to achieve it.
+
+But right now — we don't have a good way to do this. However, I did spend some time trying to come up with something that could be used for prototyping it instead.
+
+## A List of `nth-child()` Pseudo-Classes
+
+If we were to express the above A-A-A-B-B-B-… grouping with the `:nth-child()`, we will have to repeat it for every element of the group:
+
+<LiveExample class="example example1" caption="">
+```css
+.example1 {
+    li:nth-child(6n+1),
+    li:nth-child(6n+2),
+    li:nth-child(6n+3) {
+        background: var(--GREEN);
+    }
+}
+```
+<style>{`
+    .example ol {
+        font-size: 0.75em;
+        max-height: 50vh;
+        overflow: auto;
+    }
+`}</style>
+<Example count={3} />
+</LiveExample>
+
+It is a bit cumbersome, but it works:
+
+1. First, we need to determine the periodicity — at which point does our pattern repeat? In the above case, every sixth element is the same, so we’re using the `6n` inside the `:nth-child()`.
+2. Then, as we want to select the first three elements of every group, we have to repeat the selector for every `+1`, `+2`, and `+3`. And if we wish to invert the logic and select the elements from the fourth to the sixth, we could just use `+4`, `+5` and `+6`.
+
+As you can guess, if we would like to have a group of ten selected elements, we would have to repeat ourselves ten times! Which is far from ideal. This is where we can introduce [native CSS Nesting](https://drafts.csswg.org/css-nesting-1/).
+
+## A Christmas Tree Selector
+
+We can omit a bit of repetition if instead of using a separate `:nth-child()` we will use only one of them, but then use a [next-sibling combinator](https://developer.mozilla.org/en-US/docs/Web/CSS/Next-sibling_combinator):
+
+<LiveExample class="example example2" caption="">
+```css
+.example2 {
+    li:nth-child(6n+1) {
+        &,
+        & + *,
+        & + * + * {
+            background: var(--GREEN);
+        }
+    }
+}
+```
+<Example count={3} />
+</LiveExample>
+
+Two important notes:
+
+1. This is likely to be more performance-expensive than a regular `:nth-child()`. While performance of selectors is usually very fast these days, `:nth-child()` and sibling selectors can be potentially harmful for large DOM trees, especially when the nodes are added and removed dynamically.
+
+2. This makes sense only with native CSS nesting: when using preprocessors, just using the repeated `:nth-child()` should be more performant (this is only speculation; actual testing should be done).
+
+Why did I call this a “Christmas Tree” selector? Let’s say we will want to select the abovementioned group of 10 elements and format our code a bit differently:
+
+<LiveExample class="example example3" caption="">
+```css
+.example3 {
+    li:nth-child(20n+1) {
+                 &,
+                &+*,
+               &+*+*,
+              &+*+*+*,
+             &+*+*+*+*,
+            &+*+*+*+*+*,
+           &+*+*+*+*+*+*,
+          &+*+*+*+*+*+*+*,
+         &+*+*+*+*+*+*+*+*,
+        &+*+*+*+*+*+*+*+*+*
+                 {
+            background: var(--GREEN);
+        }
+    }
+}
+```
+<Example count={10} />
+</LiveExample>
+
+Yeah. Not super practical, but, in my opinion, better than a list of repeated `:nth-child()` where we have to adjust every number if we want to adjust how it is applied!
+
+And it looks neat.
+
+Maybe you could even spot [an owl](https://alistapart.com/article/axiomatic-css-and-lobotomized-owls/) hidden somewhere between the branches of this tree!
+
+## Further Optimizations
+
+When thinking about this, I thought of one optimization that we could do to reduce the number of lines of code (but not the complexity, really): combine both methods:
+
+<LiveExample class="example example4" caption="">
+```css
+.example4 {
+    li:nth-child(20n+1),
+    li:nth-child(20n+6) {
+            &,
+           &+*,
+          &+*+*,
+         &+*+*+*,
+        &+*+*+*+*
+            {
+            background: var(--GREEN);
+        }
+    }
+}
+```
+<Example count={10} />
+</LiveExample>
+
+If the count of elements in our group is not a prime number, we can express our desired “group” as a product of two or more nested selectors! In the above case, we can use just two `:nth-child()` and a smaller Christmas tree to achieve our group of ten, as 2×5=10.
+
+And if we can have our group as a product of more than two numbers, things can be simplified even more, like for selecting twelve elements it can be expressed as 2×2×3:
+
+<LiveExample class="example example5" caption="">
+```css
+.example5 {
+    li:nth-child(24n+1),
+    li:nth-child(24n+5),
+    li:nth-child(24n+9) {
+         &,
+        &+* {
+              &,
+             &+*,
+            &+*+* {
+                background: var(--GREEN);
+            }
+        }
+    }
+}
+```
+<Example count={12} />
+</LiveExample>
+
+Now we have just two happy little trees.
+
+## The Need for `:nth-sibling()`
+
+As demonstrated by the above cases, even though we can try to optimize the selectors, they’re still a bit too complicated. I won’t use them in production, and won’t recommend doing so as well.
+
+With all the goodness that we got recently in CSS, including things like CSS Scopes, CSS Nesting, `:nth-child(… of …)`, and so on, an ability to easily select these groups of selectors seems like a big missing piece.
+
+Over the years, I did come upon many cases when I wanted to have something like that. If you did as well — I urge you to post them to the [abovementioned CSSWG issue](https://github.com/w3c/csswg-drafts/issues/3813) and share your thoughts about the existing proposals and their syntax — will it apply to your cases? Is there still something missing?

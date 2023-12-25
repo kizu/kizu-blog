@@ -333,6 +333,8 @@ figure {
 	margin: 0;
 	container-type: inline-size;
 
+	--content-padding: 0px;
+
 	&::after {
 		content: "";
 		position: absolute;
