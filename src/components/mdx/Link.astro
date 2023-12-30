@@ -11,7 +11,8 @@ const { class: className, ...props } = Astro.props;
 const extraClasses: string[] = [];
 
 // If the text content of the link starts and ends with the quotes,
-// wrap the contens with a `<u>` to enable a better link display.
+// or other symbols that look better without an underline,
+// wrap the the symbols with `.nou` to enable a better link display.
 const modifiedHTML =
 	html?.replace(/^([“‘\(]?)(.+?)([”’\)]?)$/, (m, p1, p2, p3) => {
 		if (!p1 && !p3) {
@@ -23,7 +24,7 @@ const modifiedHTML =
 		if (p3) {
 			extraClasses.push('has-right-overhang')
 		}
-		return `${p1}<u>${p2}</u>${p3}`;
+		return `<span class="nou"><span>${p1}</span></span>${p2}<span class="nou"><span>${p3}</span></span>`;
 	});
 
 ---

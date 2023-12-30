@@ -203,23 +203,32 @@ u {
 
 summary {
 	cursor: pointer;
-	text-decoration-style: dotted;
 
+	/* We need `<u>` inside, as otherwise some browsers won't show the text-decoration */
 	& > u {
 		text-decoration-style: dotted;
 	}
 }
 
-:is(a, summary):has(> u) {
-	text-decoration: none;
+summary:focus:not(:focus-visible),
+:root:not(:active) label:hover,
+label:active {
+	-webkit-user-select: none;
+	user-select: none;
 }
 
-/* When the links are inside a list, we don't want the kerning to move the inner part of the link beyond the left edge. */
-.starts-with-tag > a.has-left-overhang:first-child {
-	font-kerning: none;
+.nou {
+	white-space: nowrap;
 
-	& > u {
-		font-kerning: auto;
+	/* Required for Chrome */
+	&::before,
+	&::after {
+		content: "\200b"; /* zero-width space */
+	}
+
+	/* A good case for `::content` */
+	& > span {
+		display: inline-block;
 	}
 }
 
@@ -355,8 +364,8 @@ figure {
 figcaption {
 	font-size: var(--FONT-SIZE--SMALL);
 	font-style: italic;
-    grid-row: 99;
-    margin-block-start: var(--padding);
+	grid-row: 99;
+	margin-block-start: var(--padding);
 	padding-block-start: calc(0.5 * var(--MIN-CONTENT-PADDING));
 	text-wrap: balance;
 
