@@ -1,14 +1,13 @@
 ---
 import { SITE_TITLE } from '../consts';
+
+const { pathname } = Astro.url;
 ---
 
 <header>
-	<h2>
-		<a href="/">{SITE_TITLE}</a>
-	</h2>
-	<!-- Skip for now, as not enough content -->
-	<!-- <nav>
-		<HeaderLink href="/">Home</HeaderLink>
-		<HeaderLink href="/about">About</HeaderLink>
-	</nav> -->
+	{
+		pathname !== '/'
+			? <a href="/">{SITE_TITLE}</a>
+			: <h1>{SITE_TITLE}</h1>
+	}
 </header>
