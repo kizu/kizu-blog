@@ -1,0 +1,30 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { classNames } from '@lib/classNames';
+interface Props { lang?: string }
+
+const prefix = 'class="astro-code ';
+
+const { lang } = Astro.props;
+let html = (await Astro.slots.render('default'))
+html = html
+	// Add the language class
+	.replace(prefix, `${prefix}${lang ? `language-${lang} `: ''}`)
+	// Simplify the variables
+	.replaceAll(/--shiki-([DL])/g, '--$1')
+	// Simplify the variables even more (merge same colors)
+	.replaceAll(/--D:([^;]+);--L:\1/g, '--C:$1')
+	// No need for the shiki line classes
+	.replaceAll(/<span class="line">(.*)<\/span>/g, '$1')
+	// Remove the regular styles
+	.replaceAll(/([";])(background-)?color:[^;]+;/g, '$1')
+	;
+
+const defaultColors = html.match(/<pre[^>]+(--D:[^;]+;--L:[^;]+);/)?.[1];
+if (defaultColors) {
+	const regexp = new RegExp(`<span style="${defaultColors}">([\\s\\S]+?)</span>`, 'g');
+	html = html.replaceAll(regexp, '$1');
+}
+
+---
+<Fragment set:html={html} />

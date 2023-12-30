@@ -6,9 +6,10 @@ import preact from "@astrojs/preact";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://blog.kizu.dev',
-  markdown: {
-    syntaxHighlight: 'prism'
-  },
-  integrations: [mdx(), sitemap(), preact()],
+	site: 'https://blog.kizu.dev',
+	markdown: {
+		// Done manually using Astro's Code component and some overrides
+		syntaxHighlight: false
+	},
+	integrations: [mdx(), sitemap(), preact()],
 });

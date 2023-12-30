@@ -1,0 +1,21 @@
+---
+import { Code } from 'astro:components';
+import PreWrapper from './PreWrapper.astro';
+const [,,lang, code] = (await Astro.slots.render('default')).match(/^<code( class="language-([^"]+)")?>([\s\S]+)<\/code>$/) || [];
+
+const theme = 'solarized';
+const finalCode = code
+	.replaceAll('&lt;', '<')
+	.replaceAll('&gt;', '>')
+	.replaceAll('&quot;', '"')
+	.replaceAll('&#39;', '\'')
+	.replaceAll('&amp;', '&');
+
+---
+<PreWrapper lang={lang}>
+	<Code experimentalThemes={{
+		light: `${theme}-light`,
+		D: `${theme}-dark`,
+		L: `${theme}-light`
+	}} code={finalCode} lang={lang as any} />
+</PreWrapper>
