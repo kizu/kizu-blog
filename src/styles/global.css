@@ -1,6 +1,7 @@
 html {
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
+	font-synthesis: none;
 
 	--CONTENT-WIDTH: 48rem;
 	--MIN-CONTENT-PADDING: 16px;
@@ -115,7 +116,7 @@ body {
 		+
 		clamp(
 			0px,
-			100vw - var(--MAX-PAGE-WIDTH),
+			0.5 * (100vw - var(--CONTENT-WIDTH)),
 			var(--MAX-CONTENT-PADDING)
 		)
 	);
@@ -151,6 +152,9 @@ header {
 	min-height: calc(var(--ratio) * var(--MAX-CONTENT-PADDING));
 
 	& > h1 {
+		font-weight: 800;
+		letter-spacing: 0.025em;
+		font-variant-caps: petite-caps;
 		margin: 0;
 		text-shadow:
 			var(--DARK, 0 -2px 2px #000)
