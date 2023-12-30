@@ -85,6 +85,18 @@ html {
 	}
 }
 
+html:has(#theme-light:checked) {
+	--LIGHT: initial;
+	--DARK: ;
+	color-scheme: light;
+}
+
+html:has(#theme-dark:checked) {
+	--LIGHT: ;
+	--DARK: initial;
+	color-scheme: dark;
+}
+
 body {
 	position: relative;
 	z-index: 0;
@@ -488,7 +500,28 @@ figure > pre:nth-child(1 of :not(style)) {
 	border-start-end-radius: calc(var(--BORDER-RADIUS) + 1px);
 }
 
-pre{color:#657b83;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;text-align:left;white-space:pre-wrap;word-spacing:normal;word-break:normal;word-wrap:normal;overflow:auto;border-radius:var(--BORDER-RADIUS);background-color:#fdf6e3;& ::selection{background:#073642}}.token{&.cdata,&.comment,&.doctype,&.prolog{color:#93a1a1}&.punctuation{color:#586e75}&.namespace{opacity:.7}&.boolean,&.constant,&.deleted,&.number,&.property,&.symbol,&.tag{color:#268bd2}&.attr-name,&.builtin,&.char,&.inserted,&.selector,&.string,&.url{color:#2aa198}&.entity{color:#657b83;background:#eee8d5}&.atrule,&.attr-value,&.keyword{color:#859900}&.class-name,&.function{color:#b58900}&.important,&.regex,&.variable{color:#cb4b16}&.bold,&.important{font-weight:700}&.italic{font-style:italic}&.entity{cursor:help}}@media(prefers-color-scheme:dark){pre{color:#839496;background:#002b36;& ::selection{background:#073642}}.token{&.attr-name,&.cdata,&.comment,&.doctype,&.prolog{color:#93a1a1}&.punctuation{color:#657b83}&.boolean,&.constant,&.deleted,&.number,&.property,&.symbol{color:#d33682}&.attr-value,&.builtin,&.char,&.entity,&.inserted,&.selector,&.string,&.url{color:#2aa198}&.atrule,&.keyword{color:#859900}&.function,&.tag{color:#268bd2}&.important,&.regex,&.variable{color:#cb4b16}}}
+pre {
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	text-align: left;
+	white-space: pre-wrap;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	overflow: auto;
+	border-radius: var(--BORDER-RADIUS);
+}
+
+*[style*='--C:'] {
+	color: var(--C);
+}
+
+*[style*='--D:'] {
+	color: var(--LIGHT, var(--L)) var(--DARK, var(--D));
+}
+
+*[style*='--D-bg:'] {
+	background: var(--LIGHT, var(--L-bg)) var(--DARK, var(--D-bg));
+}
 
 [class*='require-']::before {
 	content:
