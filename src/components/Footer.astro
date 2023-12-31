@@ -11,7 +11,6 @@ const isHomePage = '/' === Astro.url.pathname;
 <footer class="h-card p-author">
 	<p>
 		&copy;
-		{today.getFullYear()}
 		{' '}
 		<a class={`u-url p-name${isHomePage ? ' is-inherited' : ''}`} rel="me author" href={Astro.site}>{AUTHOR}</a>
 		·
