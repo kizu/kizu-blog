@@ -1,0 +1,32 @@
+---
+import Base from '@layouts/Base.astro';
+import { tagInURL } from '@lib/tagInURL';
+import { getAllTags } from '@lib/getAllTags';
+import ArticlesList from '@components/ArticlesList.astro';
+
+export async function getStaticPaths() {
+	const tagsMap = await getAllTags();
+
+	return [...tagsMap.entries()].map(([key, tagPosts]) => ({
+		params: {
+			tag: tagInURL(key),
+		},
+		props: { posts: tagPosts, name: key },
+	}));
+}
+
+const { posts, name } = Astro.props;
+
+const title = `${name}: ${posts.length}`;
+
+---
+
+<Base title={title}>
+	<article>
+		<h1>{title}</h1>
+		<p>Below is a list of all posts in this category.</p>
+		<ArticlesList posts={posts} />
+		<hr />
+		<p>You can also look at a <a href="/tags">list of all tags</a>.</p>
+	</article>
+</BlogPost>

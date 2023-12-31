@@ -1,74 +1,68 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import MastodonPostInfo from '../components/MastodonPostInfo/MastodonPostInfo.astro';
-import MastodonPostInfoTemplate from '../components/MastodonPostInfo/MastodonPostInfoTemplate.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import Base from '@layouts/Base.astro';
+import FormattedDate from '@components/FormattedDate.astro';
+import { tagInURL } from '@lib/tagInURL';
+import { SITE_TITLE } from '@consts';
+import { getAllTags } from '@lib/getAllTags';
 
 type Props = Partial<CollectionEntry<'blog'>['data']>;
 
 const {
 	title = SITE_TITLE,
-	description = SITE_DESCRIPTION,
 	pubDate,
 	updatedDate,
 	heroImage,
-	mastodonPostId,
 	current,
 	tags = [],
 } = Astro.props;
 const { pathname } = Astro.url;
 
+const allTags = await getAllTags();
+
 ---
-
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-	</head>
-
-	<body class="h-entry">
-		<MastodonPostInfoTemplate />
-		<Header />
-		<main>
-			<article class="e-content">
-				{heroImage && <img width={720} height={360} src={heroImage} alt="" />}
-				{pathname !== '/' ? <>
-					<h1 class="p-name">{title}</h1>
-					<p>
-						{pubDate ? <>
-							Published on
-							<a
-								class="u-url u-uid is-inherited"
-								href={Astro.url}
-								aria-description="This post’s permalink."
-							><FormattedDate class="dt-published" date={pubDate} /></a>.</> : null}
-						{
-							updatedDate ? (
-								<span>
-									Last updated on <FormattedDate class="dt-updated" date={updatedDate} />.
-								</span>
-							) : null
-						}
-						{' '}
-						{
-							tags.length ?(<span class="is-inline-block">
-								Categories:
-								{tags.map((tag, index) => <>
+<Base bodyClass="h-entry" {...Astro.props}>
+	<article class="e-content">
+		{heroImage && <img width={720} height={360} src={heroImage} alt="" />}
+		{pathname !== '/' ? <>
+			<h1 class="p-name">{title}</h1>
+			<p>
+				{pubDate ? <>
+					Published on
+					<a
+						class="u-url u-uid is-inherited"
+						href={Astro.url}
+						aria-description="This post’s permalink."
+					><FormattedDate class="dt-published" date={pubDate} /></a>.</> : null}
+				{
+					updatedDate ? (
+						<span>
+							Last updated on <FormattedDate class="dt-updated" date={updatedDate} />.
+						</span>
+					) : null
+				}
+				{' '}
+				{
+					tags.length ?(<span class="is-inline-block">
+						Categories:
+						{tags.map((tag, index) => {
+							const tagCount = allTags.get(tag).length;
+							return (
+								<>
 									{index !== 0 ? ', ' : null}
-									<span class="p-category">{tag}</span></>)}.
-							</span>) : null
-						}
-					</p>
-					{current ? <dl>{Object.entries(current).filter(([_, value]) => value !== '').map(([key, value]) => (<><dt>Current {key}:</dt><dd>{value}</dd></>))}</dl> : ''}
-					<hr />
-				</> : null}
-				<slot />
-			</article>
-			<MastodonPostInfo mastodonPostId={mastodonPostId} />
-		</main>
-		<Footer />
-	</body>
-</html>
+									{tagCount > 1
+										? <a href={`/tags/${tagInURL(tag)}`} class="p-category">{tag}<sup class="nou"><span>{' '}{tagCount}</span></sup></a>
+										: <span class="p-category">{tag}</span>
+									}
+								</>
+							)
+						})}.
+					</span>) : null
+				}
+			</p>
+			{current ? <dl>{Object.entries(current).filter(([_, value]) => value !== '').map(([key, value]) => (<><dt>Current {key}:</dt><dd>{value}</dd></>))}</dl> : ''}
+			<hr />
+		</> : null}
+		<slot />
+	</article>
+</Base>

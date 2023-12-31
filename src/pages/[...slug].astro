@@ -1,8 +1,8 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
-import BlogPost from '../layouts/BlogPost.astro';
-import { betterSlug } from '../lib/betterSlug';
+import BlogPost from '@layouts/BlogPost.astro';
+import { betterSlug } from '@lib/betterSlug';
+import { getSortedPosts } from '@lib/getSortedPosts';
 
 import Link from '@components/mdx/Link.astro';
 import Paragraph from '@components/mdx/Paragraph.astro';
@@ -16,7 +16,8 @@ const components = {
 };
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
+	const posts = await getSortedPosts();
+
 	return posts.map((post) => ({
 		params: { slug: betterSlug(post.slug) },
 		props: post,

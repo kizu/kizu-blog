@@ -121,7 +121,9 @@ const href = getMastodonPostLink(mastodonPostId);
 			observer.observe(link);
 		}
 	}
-	customElements.define('mastodon-post-info', MastodonPostInfoComponent);
+	if (document.getElementById('mastodon-post-info-template')) {
+		customElements.define('mastodon-post-info', MastodonPostInfoComponent);
+	}
 </script>
 
 <mastodon-post-info {...Astro.props}>

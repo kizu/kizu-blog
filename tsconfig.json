@@ -10,6 +10,9 @@
 			"@lib/*": [
 				"src/lib/*"
 			],
+			"@layouts/*": [
+				"src/layouts/*"
+			],
 			"@consts": [
 				"src/consts.ts"
 			]

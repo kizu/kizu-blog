@@ -1,0 +1,15 @@
+---
+import Base from '@layouts/Base.astro';
+import { tagInURL } from '@lib/tagInURL';
+import { getAllTags } from '@lib/getAllTags';
+const allTags = await getAllTags();
+---
+
+<Base title="All Tags">
+	<article>
+		<h1>Tags</h1>
+		<ul>
+			{[...allTags.entries()].sort(([, { length: a }], [, { length: b }]) => b - a).map(([key, posts]) => <li><a href={`/tags/${tagInURL(key)}`}>{key}</a> — {posts.length}</li>)}
+		</ul>
+	</article>
+</Base>

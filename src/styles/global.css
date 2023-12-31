@@ -588,3 +588,23 @@ pre {
 		--require-timeline-scope: 'round()';
 	}
 }
+
+sup {
+    vertical-align: baseline;
+    position: relative;
+    font-size: .7em;
+    line-height: 1;
+	bottom: 1.4ex;
+}
+
+@supports (font-variant-position: super) {
+	sup {
+		bottom: 0.4ex;
+		font-size: 1em;
+		font-variant-position: super;
+	}
+}
+
+mastodon-post-info {
+	min-height: 9.25rem;
+}

@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '@components/BaseHead.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import MastodonPostInfo from '@components/MastodonPostInfo/MastodonPostInfo.astro';
+import MastodonPostInfoTemplate from '@components/MastodonPostInfo/MastodonPostInfoTemplate.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '@consts';
+
+interface Props extends Partial<CollectionEntry<'blog'>['data']> {
+	bodyClass?: string;
+}
+
+const {
+	bodyClass,
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+	mastodonPostId,
+} = Astro.props;
+
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+
+	<body class={bodyClass}>
+		{mastodonPostId ? <MastodonPostInfoTemplate /> : null}
+		<Header />
+		<main>
+			<slot />
+			<MastodonPostInfo mastodonPostId={mastodonPostId} />
+		</main>
+		<Footer />
+	</body>
+</html>
