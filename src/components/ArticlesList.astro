@@ -36,10 +36,10 @@ for (const post of posts) {
 
 {
 	[...years.entries()].map(([yearName, year]) => (<>
-		<h3>{yearName}</h3>
+		<h2>{yearName}</h2>
 		{
 			[...year.entries()].map(([monthName, month]) => (<>
-				<h4>{monthName}</h4>
+				<h3>{monthName}</h3>
 				<ol reversed>
 					{
 						month.map((post) => (
