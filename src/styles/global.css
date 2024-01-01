@@ -204,6 +204,11 @@ header {
 	}
 }
 
+footer {
+	color: var(--mix);
+	--mix-alpha: 0.8;
+}
+
 h1 {
 	font-size: 1.75em;
 	line-height: 1.2;
@@ -371,7 +376,7 @@ li:has(p) + li {
 }
 
 a[href] {
-	padding-block: 0.1em;
+	padding-block: 0.11em;
 	font-weight: 600; /* Slightly better contrast */
 
 	color: var(--BLUE);
@@ -438,6 +443,7 @@ a[href].is-inherited {
 
 	&:not(:hover, :focus-visible) {
 		all: unset;
+		font-variant-numeric: oldstyle-nums;
 		font-weight: 600;
 		color: inherit;
 	}
@@ -490,6 +496,13 @@ dl {
 	grid-template: "dt dd" / auto 1fr;
 	gap: 0 0.4em;
 	font-size: var(--FONT-SIZE--SMALL);
+	padding-inline-start: min(
+		var(--content-padding),
+		2lh
+	);
+
+	color: var(--mix);
+	--mix-alpha: 0.8;
 }
 
 dt {
@@ -517,7 +530,7 @@ dd {
 
 ul > li::marker {
 	color: var(--mix);
-	--mix-alpha: 0.75;
+	--mix-alpha: 0.8;
 	line-height: 1; /* It uses a diff font */
 }
 
