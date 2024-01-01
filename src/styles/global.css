@@ -192,9 +192,7 @@ header {
 	min-height: calc(var(--ratio) * var(--MAX-CONTENT-PADDING));
 
 	& > h1 {
-		font-weight: 800;
-		letter-spacing: 0.025em;
-		font-variant-caps: petite-caps;
+		font-size: 2em;
 		margin: 0;
 		text-shadow:
 			var(--DARK, 0 -2px 2px #000)
@@ -206,9 +204,46 @@ header {
 	}
 }
 
+h1 {
+	font-size: 1.75em;
+	line-height: 1.2;
+	font-weight: 800;
+	letter-spacing: 0.025em;
+	font-variant-caps: petite-caps;
+}
+
+h2 {
+	font-size: 1.25em;
+	margin-top: 1lh;
+}
+
+h3,
+h4,
+h5,
+h6 {
+	font-size: 1.1em;
+	font-weight: 900;
+	margin-top: 0.5lh;
+	margin-bottom: -0.5lh;
+}
+
+h4,
+h5,
+h6 {
+	font-size: 1em;
+	font-style: italic;
+	letter-spacing: 0.015em;
+}
+
+h5,
+h6 {
+	font-weight: 600;
+}
+
 main > article {
 	position: relative;
-	padding-block: calc(0.5 * var(--MAX-CONTENT-PADDING));
+	padding-block-start: calc(0.5 * var(--MAX-CONTENT-PADDING));
+	padding-block-end: var(--MAX-CONTENT-PADDING);
 }
 main > article::before {
 	content: "";
@@ -293,6 +328,24 @@ h1, h2, h3, h4, h5, h6 {
 p, li {
 	line-height: 1.6;
 	text-wrap: pretty;
+	font-variant-numeric: oldstyle-nums;
+
+	/* Inside links we often have capitalized contexts, so we want to restore the digits. */
+	& a[href],
+	/* We want the code blocks to have more recognizable numbers as well. */
+	& code,
+	/* Same for the first letter, so we won't start a paragraph from a small letter. Is there a way to extend this to sentences? */
+	&::first-letter {
+		font-variant-numeric: normal;
+	}
+}
+
+/* Optically adjust the right edge for most elements, balancing the ragged edge. */
+article > :not(figure, pre) {
+	margin-inline-end: max(
+		-1 * var(--MIN-CONTENT-PADDING),
+		var(--MIN-CONTENT-PADDING) - var(--content-padding)
+	);
 }
 
 article > p + p {
@@ -380,10 +433,14 @@ label:active {
 	}
 }
 
-a[href].is-inherited:not(:hover, :focus-visible) {
-	all: unset;
-	font-weight: 600;
-	color: inherit;
+a[href].is-inherited {
+	font-variant-numeric: oldstyle-nums;
+
+	&:not(:hover, :focus-visible) {
+		all: unset;
+		font-weight: 600;
+		color: inherit;
+	}
 }
 
 [hidden] {
