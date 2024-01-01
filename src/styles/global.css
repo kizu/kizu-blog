@@ -297,7 +297,7 @@ p, li {
 
 article > p + p {
 	margin-top: calc(-1 * var(--gap));
-	text-indent: 1lh;
+	text-indent: clamp(1em, var(--content-padding), 1lh);
 
 	/* Text-indent is inheritable, so we need to reset it. */
 	& > * {
