@@ -50,6 +50,34 @@ html {
 			var(--LIGHT, oklch(0.9 0.19 155.57))
 			var(--DARK, oklch(0.36 0.11 161.84))
 		);
+	--RED:
+		var(--SRGB,
+			var(--LIGHT, #e60000)
+			var(--DARK, #ff9f9f)
+		)
+		var(--OKLCH,
+			var(--LIGHT, oklch(0.57 0.26 29.49))
+			var(--DARK, oklch(0.82 0.13 18.64))
+		);
+
+	--BLUE:
+		var(--SRGB,
+			var(--LIGHT, #0068b7)
+			var(--DARK, #4dc4ff)
+		)
+		var(--OKLCH,
+			var(--LIGHT, oklch(0.5 0.16 244.86))
+			var(--DARK, oklch(0.78 0.14 236.26))
+		);
+	--PURPLE:
+		var(--SRGB,
+			var(--LIGHT, #48009e)
+			var(--DARK, #dcb3ff)
+		)
+		var(--OKLCH,
+			var(--LIGHT, oklch(0.36 0.21 292.21))
+			var(--DARK, oklch(0.83 0.12 306.88))
+		);
 
 	/* Space toggles for the dark/light mode. */
 	--LIGHT: initial;
@@ -198,7 +226,8 @@ article {
 	display: grid;
 	grid-template-columns: subgrid;
 	grid-column: --full;
-	gap: 1em 0;
+	--gap: 1em;
+	gap: var(--gap) 0;
 
 	:where(&) > *,
 	:where(&) > astro-island > * {
@@ -207,10 +236,10 @@ article {
 	}
 }
 
+/* Just make it present, but not be shown, resulting in an extra whitespace. */
 hr {
-	box-sizing: border-box;
-	width: 100%;
-	height: 0;
+	width: auto;
+	border: none;
 }
 
 code {
@@ -224,12 +253,28 @@ blockquote {
 	font-style: italic;
 }
 
+:not(pre) > code {
+	/* Slightly more readable */
+	letter-spacing: 0.015em;
+
+	/* Do not change the color when inside a link. */
+	&:not(a[href] *){
+		/* Trying to make it stand out a bit more, differentiating from `em`, and bringing a bit more attention than for a regular emphasis. */
+		color: var(--link-color, var(--RED));
+	}
+}
+
 :is(blockquote, figcaption) :is(code, em) {
 	font-style: normal;
+	letter-spacing: 0;
 }
 
 blockquote {
 	text-wrap: balance;
+	padding-inline-start: min(
+		var(--content-padding),
+		2lh
+	);
 }
 
 iframe {
@@ -250,6 +295,16 @@ p, li {
 	text-wrap: pretty;
 }
 
+article > p + p {
+	margin-top: calc(-1 * var(--gap));
+	text-indent: 1lh;
+
+	/* Text-indent is inheritable, so we need to reset it. */
+	& > * {
+		text-indent: 0;
+	}
+}
+
 li p {
 	margin: 0;
 }
@@ -266,14 +321,13 @@ a[href] {
 	padding-block: 0.1em;
 	font-weight: 600; /* Slightly better contrast */
 
-	color:
-		var(--LIGHT, hsl(200deg 100% 35%))
-		var(--DARK, hsl(200deg 100% 55%));
+	color: var(--BLUE);
+	--link-color: var(--BLUE);
 
 	&:visited:not(:hover, :focus-visible) {
-		color:
-			var(--LIGHT, hsl(270deg 35% 45%))
-			var(--DARK, hsl(270deg 95% 80%));
+		color: var(--PURPLE);
+		/* We can't just use the `--link-color` due to the security limitations, so we have to duplicate it. */
+		--link-color: var(--PURPLE);
 	}
 }
 
