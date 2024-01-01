@@ -167,7 +167,20 @@ body {
 	);
 	margin: 0;
 
-	font-size: 1.5rem;
+	--font-size--body: 1.5rem;
+	--line-height--body-unitless: 1.6;
+	--line-height--body: calc(
+		var(--font-size--body)
+		*
+		var(--line-height--body-unitless)
+	);
+	--text-indent: clamp(
+		var(--font-size--body),
+		var(--content-padding),
+		var(--line-height--body)
+	);
+
+	font-size: var(--font-size--body);
 	/* https://modernfontstacks.com/ */
 	font-family:
 		'Iowan Old Style',
@@ -311,10 +324,7 @@ blockquote {
 
 blockquote {
 	text-wrap: balance;
-	padding-inline-start: min(
-		var(--content-padding),
-		2lh
-	);
+	padding-inline-start: var(--text-indent);
 }
 
 iframe {
@@ -331,7 +341,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 p, li {
-	line-height: 1.6;
+	line-height: var(--line-height--body-unitless);
 	text-wrap: pretty;
 	font-variant-numeric: oldstyle-nums;
 
@@ -355,7 +365,7 @@ article > :not(figure, pre) {
 
 article > p + p {
 	margin-top: calc(-1 * var(--gap));
-	text-indent: clamp(1em, var(--content-padding), 1lh);
+	text-indent: var(--text-indent);
 
 	/* Text-indent is inheritable, so we need to reset it. */
 	& > * {
@@ -496,10 +506,7 @@ dl {
 	grid-template: "dt dd" / auto 1fr;
 	gap: 0 0.4em;
 	font-size: var(--FONT-SIZE--SMALL);
-	padding-inline-start: min(
-		var(--content-padding),
-		2lh
-	);
+	padding-inline-start: var(--text-indent);
 
 	color: var(--mix);
 	--mix-alpha: 0.8;
@@ -585,6 +592,10 @@ figcaption {
 	grid-row: 99;
 	margin-block-start: var(--padding);
 	padding-block-start: calc(0.5 * var(--MIN-CONTENT-PADDING));
+	padding-inline: min(
+		var(--MIN-CONTENT-PADDING),
+		var(--text-indent) - var(--padding)
+	);
 	text-wrap: balance;
 
 	& > p {
@@ -596,6 +607,11 @@ figcaption {
 pre {
 	max-width: 100cqw;
 	padding: var(--MIN-CONTENT-PADDING);
+	padding-inline: max(
+		var(--MIN-CONTENT-PADDING),
+		0.5 * var(--content-padding)
+	);
+	margin-inline: calc(-0.5 * var(--content-padding));
 	margin-block: var(--MIN-CONTENT-PADDING);
 	box-shadow: 0 0.1em 0.7rem -0.5rem var(--CODE-SHADOW);
 	font-size: 0.88em;
