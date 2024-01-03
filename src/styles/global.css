@@ -769,3 +769,8 @@ aside {
 		--aside-color: var(--RED);
 	}
 }
+
+/* Right now using because of a Firefox bug with hyphenation. */
+.no-ligatures {
+	font-feature-settings: "liga" 0, "dlig" 0;
+}

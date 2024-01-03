@@ -87,6 +87,12 @@ Occasionally, this method _might_ work, but in very rare cases where we’re ce
 
 So, if the `middle` value aligns things to the x-height, but we want the cap height, the only thing we need to do is just move the element by its difference! That’s where the `1ex - 1cap` comes from, and the element’s height is already accounted for by the `middle` value.
 
+<aside>
+If you’re wondering: if the `middle` aligns the _center_ of the x-height with the _center_ of the element, why are we using a margin with a _full_ value of the <span class="no-ligatures">difference</span>, and not a half of it?
+
+If we were using `position: relative` and `inset-block-start`, then yes, we’d have to do `calc(0.5ex - 0.5cap)`, but because we’re using `margin`, _it is accounted_ for the `vertical-align: middle`: by having a negative margin, we _reduce_ the size of our element by that value, and that means that the difference for the alignment will be half of that!
+</aside>
+
 ## Known Size, Just Vertical-Align
 
 The example above is nice but requires us to use a negative margin. There is a different way to achieve the same, but only if we know the height of the element we’re aligning:
