@@ -11,12 +11,12 @@ const { shouldHideHTML, caption, ...props } = Astro.props;
 
 // TODO: use a proper sanitizer, lol.
 let html = await Astro.slots.render('default');
-const foundHTML = html.match(/<pre[^>]*language-html[^>]*>([\s\S]+?)<\/pre>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')?.replaceAll('&amp;', '&')?.replaceAll('&#x3C;', '<')
+const foundHTML = html.match(/<pre[^>]*language-html[^>]*>([\s\S]+?)<\/pre>/i)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')?.replaceAll('&amp;', '&')?.replaceAll('&#x3C;', '<')
 
-const foundCSS = html.match(/<pre[^>]*language-css[^>]*>([\s\S]+?)<\/pre>/)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')?.replaceAll('&amp;', '&')
+const foundCSS = html.match(/<pre[^>]*language-css[^>]*>([\s\S]+?)<\/pre>/i)?.[1]?.replaceAll(/<[^>]+>/g, '')?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>')?.replaceAll('&quot;', '"')?.replaceAll('&amp;', '&')
 
 if (shouldHideHTML) {
-	html = html.replaceAll(/<pre[^>]*language-html[^>]*>([\s\S]+?)<\/pre>/g, '');
+	html = html.replaceAll(/<pre[^>]*language-html[^>]*>([\s\S]+?)<\/pre>/gi, '');
 }
 
 const captionHTML = caption ? (await markdown(caption)).toString().trim().replace(/^<p>(.+)<\/p>$/, '$1') : undefined;

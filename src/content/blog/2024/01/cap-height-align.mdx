@@ -1,0 +1,209 @@
+---
+title: 'Cap-Height Vertical Align'
+description: 'The new year is here, and, with it, a season where people put out their CSS wishlists for the future. I did already read two of them: December’s CSS wishlist from Sarah Gebauer, and today’s “Tyler’s CSS Wish List for 2024” from Tyler Sticka. One thing caught my attention in Tyler’s list: an ability to vertically align to the middle of the font’s cap-height. I am thrilled to report that there are at least two relatively ok workarounds available in the most recent browsers, courtesy of the new `cap` unit!'
+tags: ['Cap unit', 'CSS', 'Typography']
+pubDate: '2024-01-03'
+mastodonPostId: ''
+current: {
+	drink: 'Lapsang Souchong tea',
+	music: 'Ichiko Aoba — Sagu Palm’s Song',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+The new year is here, and, with it, a season where people put out their CSS wishlists for the future.
+I did already read two of them: December’s [CSS wishlist](https://www.sarahgebauer.com/post/day-25-css-wishlist/) from [Sarah Gebauer](https://www.sarahgebauer.com/), and today’s [“Tyler’s CSS Wish List for 2024”](https://cloudfour.com/thinks/tylers-css-wish-list-for-2024/) from [Tyler Sticka](https://tylersticka.com/).
+
+One thing I _love_ to do when I see these wishlists is to think of all the ways we can do the things from them already. It is always a good challenge, and quite often can result in some wild experiments.
+
+There are other things that I’d want to experiment on later, but one thing caught my attention in Tyler’s list: an ability to [vertically align to the middle of the font’s cap-height](https://github.com/w3c/csswg-drafts/issues/4707).
+
+This is something I did research in the past, and I am thrilled to report that there are at least two relatively ok workarounds available in the most recent browsers, courtesy of the new [`cap`](https://drafts.csswg.org/css-values/#cap) unit!
+
+<aside class="warning">
+In [“Baseline”](https://developer.mozilla.org/en-US/docs/Glossary/Baseline/Compatibility) terms, we can treat `cap` as “Newly Available”, with Safari 17.2 being the last major browser to implement it in December (see the [full browser compatibility table for it on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility)).
+
+While we must be careful when using it in production, we can do it with relatively simple fallbacks.
+</aside>
+
+## Two Techniques
+
+### Unknown Size, Negative Margin
+
+The simplest way we can utilize the `cap` to achieve alignment to the middle of the capital letter of the font (also known as “cap-height”) is by relying on `vertical-align: middle` and a simple calculation:
+
+<style>{`
+.example {
+    font-size: min(2em, 9vw);
+}
+.example,
+.example-flex {
+    padding: min(0.5em, 2.5vw);
+}
+.icon {
+    display: inline-block;
+    height: var(--size, min(2em, 10vw));
+    aspect-ratio: 1;
+    overflow: hidden;
+    resize: vertical;
+    background: var(--PINK)
+}
+`}</style>
+
+<LiveExample class="require-cap" caption="A live example showing a pink square centered over the font’s cap height. Resizing the square shows how the alignment stays the same." shouldHideHTML>
+```CSS
+.example1 .icon {
+    vertical-align: middle;
+    margin-block-start: calc(1ex - 1cap);
+}
+```
+```HTML
+<div class="example example1">
+    <span class="icon"></span>
+    Nicely Aligned
+</div>
+```
+</LiveExample>
+
+Why do we subtract cap height from the x-height? When we align things with `vertical-align` to `middle`, we’re aligning things to the _middle of the font’s x-height_. Here is an example of how things look without our technique:
+
+<LiveExample class="require-cap" caption="A live example showing a pink square centered over the font’s x-height. We can see that it aligns with the “x” letter, but does not with the capitalized text alongside." shouldHideHTML>
+```CSS
+.example-broken .icon {
+    vertical-align: middle;
+}
+```
+```HTML
+<div class="example example-broken">
+    x
+    <span class="icon"></span>
+    Not Nicely Aligned
+</div>
+```
+</LiveExample>
+
+Occasionally, this method _might_ work, but in very rare cases where we’re certain that we’re aligning things over the lowercase letters only, with not many ascenders on the letters. Otherwise, predominantly, we want to align things to the cap height.
+
+So, if the `middle` value aligns things to the x-height, but we want the cap height, the only thing we need to do is just move the element by its difference! That’s where the `1ex - 1cap` comes from, and the element’s height is already accounted for by the `middle` value.
+
+## Known Size, Just Vertical-Align
+
+The example above is nice but requires us to use a negative margin. There is a different way to achieve the same, but only if we know the height of the element we’re aligning:
+
+<LiveExample class="require-cap" caption="A live example showing a pink square centered over the font’s cap height. Resizing the square shows that only the initial height works and the element is misaligned when we change the height without adjusting the corresponding CSS variable." shouldHideHTML>
+```CSS
+.example2 .icon {
+    --size: min(2em, 10vw);
+    vertical-align: calc(0.5cap - 0.5 * var(--size));
+}
+```
+```HTML
+<div class="example example2">
+    <span class="icon"></span>
+    Nicely Aligned
+</div>
+```
+</LiveExample>
+
+Our formula here is `0.5cap - 0.5 * var(--size)`: half of the cap height minus half of our element’s height. How is this calculated? When the value of `vertical-align` is a `<length>`, an element is aligned in a way its bottom edge stays on the text’s _baseline_:
+
+<LiveExample class="require-cap" caption="A live example showing a pink square aligned over the font’s baseline. Resizing the square shows how it stays on the baseline regardless of the size." shouldHideHTML>
+```CSS
+.example-baseline .icon {
+    vertical-align: 0;
+}
+```
+```HTML
+<div class="example example-baseline">
+    <span class="icon"></span>
+    Baseline Alignment
+</div>
+```
+</LiveExample>
+
+You might ask: why use this method when it has the limitation of having to know the element’s height?
+
+The answer: sometimes we might not know the _context_ in which our element will be present, and if we will place our element in a context with `align-items: center`, it might not look good! We can easily demonstrate this by placing both examples inside a flex context:
+
+<LiveExample class="require-cap" caption="A live example showing two pink squares, where the first one is not aligned nicely.">
+```CSS
+.example-flex {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+
+    & > * {
+        display: contents;
+    }
+}
+```
+```HTML
+<div class="example-flex">
+    <div class="example example1">
+        <span class="icon"></span>
+        Not Nice
+    </div>
+    <div class="example example2">
+        <span class="icon"></span>
+        Nice
+    </div>
+</div>
+```
+</LiveExample>
+
+Because in this case, we’re relying on the flex alignment, the `vertical-align` stops working. For our second technique, it is not relevant, as it was the only thing that handled the alignment (which is now handled by flex), but for the first technique, the margin stays, resulting in misalignment.
+
+That means, that if we’re sure our element will _always_ be in a regular inline flow, we can rely on the negative margin. But if we know the element’s size, then it might be beneficial to use the method that only uses `vertical-align`.
+
+## The Fallbacks
+
+As I mentioned at the beginning of this post, while the `cap` is newly available, we should not use it in production as is. Too soon.
+
+However, usually, it is not super complicated to work around it, at least partially.
+
+The way to go could be to use a CSS variable and `@supports`, below is the same technique as in the first example, but modified to work without `cap` support:
+
+<LiveExample caption="A live example showing a pink square centered over the font’s cap height. Resizing the square shows how the alignment stays the same." shouldHideHTML>
+```CSS
+html {
+    /* Adjusted for Iowan Old Style */
+    --cap: 0.704583em;
+}
+
+@supports (height: 1cap) {
+    html {
+        --cap: 1cap;
+    }
+}
+
+.example-fallback .icon {
+    vertical-align: middle;
+    margin-block-start: calc(1ex - var(--cap));
+}
+```
+```HTML
+<div class="example example-fallback">
+    <span class="icon"></span>
+    Nicely Aligned
+</div>
+```
+</LiveExample>
+
+The only thing we have to do is to replace all our `cap` units with a `var(--cap)` variable and set it via `@supports` to `1cap` while setting it to the necessary value in `em` based on the font’s metrics.
+
+How did I determine the value `0.704583em`? It is simple! Now, with `cap` being available in the browsers, it is effortless to get the proportions of any font. What I did was get a square with a font-size of `1000px`, and set its height to `1cap`, which resulted in `704.583px`, which, when divided by `1000` results in our value!
+
+<aside>
+You can also try using the [Capsize](https://seek-oss.github.io/capsize/) tool by [Michael Taranto](https://github.com/michaeltaranto) to retrieve the metrics of your font — you’ll need to divide the “Cap Height” value by “Em square” value to get the value you’ll use in `em`.
+</aside>
+
+Of course, it will work perfectly only for the font I did test it with — “Iowan Old Style” in my case, which I can see on my macOS as I’m using a stack with the built-in fonts. If you’re looking at this example in a browser that does not support `cap` and does not have Iowan Old Style installed, the alignment could break a bit. Which, in most cases, could be fine if this is only a visual alignment issue, and should not result in the content being inaccessible.
+
+And if you’re using a custom web font, then it is more likely it will be always present, so it is safer to embed its metrics in this way.
+
+## In Conclusion
+
+I’m delighted that browsers improve the ways we can work with web typography. Maybe progress is not as fast as I would’ve liked (there are so many things I’d want to have!), but the arrival of `cap` (alongside other very helpful units like `ic` and `lh`) unlocks many doors.
+
+As demonstrated, both techniques involving the `cap` rely on calculations and have their issues — that’s why I will still recommend going over the [Tyler’s CSSWG issue](https://github.com/w3c/csswg-drafts/issues/4707) and voting for it, optionally providing your use cases or thoughts on the desired syntax in the comments. And maybe one day we could solve this just by using a single declaration involving `vertical-align`!

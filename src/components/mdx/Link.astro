@@ -14,7 +14,7 @@ const extraClasses: string[] = [];
 // or other symbols that look better without an underline,
 // wrap the the symbols with `.nou` to enable a better link display.
 const modifiedHTML =
-	html?.replace(/^([“‘\(]?)(\S*)(.+?)([”’\)]?)$/, (m, p1, p2, p3, p4) => {
+	html?.replace(/^([“‘\(]?)(\S*)(.*?[^”’\)])([”’\)]?)$/, (m, p1, p2, p3, p4) => {
 		if (!p1 && !p4) {
 			return m;
 		}

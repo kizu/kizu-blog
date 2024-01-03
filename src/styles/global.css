@@ -356,7 +356,7 @@ p, li {
 }
 
 /* Optically adjust the right edge for most elements, balancing the ragged edge. */
-article > :not(figure, pre) {
+article > :not(figure, pre, aside) {
 	margin-inline-end: max(
 		-1 * var(--MIN-CONTENT-PADDING),
 		var(--MIN-CONTENT-PADDING) - var(--content-padding)
@@ -504,7 +504,7 @@ li.starts-with-tag:has(
 dl {
 	display: grid;
 	grid-template: "dt dd" / auto 1fr;
-	gap: 0 0.4em;
+	gap: 0 var(--text-indent);
 	font-size: var(--FONT-SIZE--SMALL);
 	padding-inline-start: var(--text-indent);
 
@@ -576,7 +576,7 @@ figure {
 		inset-block: calc(-1 * var(--padding));
 		inset-inline: 0;
 		grid-row: 1 / 99;
-		outline: 1px solid;
+		outline: 1px solid var(--BLUE);
 		border-radius: var(--BORDER-RADIUS);
 		opacity: 0.5;
 	}
@@ -614,7 +614,7 @@ pre {
 	margin-inline: calc(-0.5 * var(--content-padding));
 	margin-block: var(--MIN-CONTENT-PADDING);
 	box-shadow: 0 0.1em 0.7rem -0.5rem var(--CODE-SHADOW);
-	font-size: 0.88em;
+	font-size: clamp(0.5em, 3vw + 0.25em, 0.88em);
 	line-height: 1.5;
 }
 
@@ -670,7 +670,8 @@ pre {
 			var(--require-animation-range,
 				var(--require-timeline-scope,
 					var(--require-at-scope,
-						var(--require-style-queries)))))
+						var(--require-cap,
+							var(--require-style-queries))))))
 		'`';
 	display: block;
 	border: 2px dashed #FFCA51;
@@ -729,6 +730,12 @@ pre {
 	}
 }
 
+@supports not (margin: 1cap) {
+	.require-cap {
+		--require-cap: 'cap';
+	}
+}
+
 sup {
     vertical-align: baseline;
     position: relative;
@@ -747,4 +754,18 @@ sup {
 
 mastodon-post-info {
 	min-height: 9.25rem;
+}
+
+aside {
+	position: relative;
+	padding-inline: var(--text-indent);
+	font-size: var(--FONT-SIZE--SMALL);
+	--aside-color: var(--GREEN);
+	background: color-mix(in srgb, var(--aside-color) 10%, transparent);
+	border-radius: var(--BORDER-RADIUS);
+	box-shadow: inset 0 0 0 2px var(--aside-color);
+
+	&.warning {
+		--aside-color: var(--RED);
+	}
 }
