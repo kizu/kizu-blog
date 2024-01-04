@@ -436,10 +436,9 @@ label:active {
 .nou {
 	white-space: nowrap;
 
-	/* Required for Chrome */
 	&::before,
 	&::after {
-		content: "\200b"; /* zero-width space */
+		content: "\200d"; /* zero-width joiner */
 	}
 
 	/* A good case for `::content` */
