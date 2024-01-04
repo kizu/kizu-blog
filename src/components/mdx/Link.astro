@@ -14,17 +14,17 @@ const extraClasses: string[] = [];
 // or other symbols that look better without an underline,
 // wrap the the symbols with `.nou` to enable a better link display.
 const modifiedHTML =
-	html?.replace(/^([“‘\(]?)(\S*)(.*?[^”’\)])([”’\)]?)$/, (m, p1, p2, p3, p4) => {
-		if (!p1 && !p4) {
+	html?.replace(/^([“‘\(]?)(.+?)([”’\)]?)$/, (m, p1, p2, p3) => {
+		if (!p1 && !p3) {
 			return m;
 		}
 		if (p1) {
 			extraClasses.push('has-left-overhang')
 		}
-		if (p4) {
+		if (p3) {
 			extraClasses.push('has-right-overhang')
 		}
-		return `<span class="nou"><span>${p1}</span>${p2}</span>${p3}<span class="nou"><span>${p4}</span></span>`;
+		return `<span class="nou"><span>${p1}</span></span>${p2}<span class="nou"><span>${p3}</span></span>`;
 	});
 
 ---
