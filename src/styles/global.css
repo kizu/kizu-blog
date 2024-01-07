@@ -325,6 +325,10 @@ blockquote {
 blockquote {
 	text-wrap: balance;
 	padding-inline-start: var(--text-indent);
+
+	& > *:only-child {
+		margin: 0;
+	}
 }
 
 iframe {

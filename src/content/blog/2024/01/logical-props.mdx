@@ -1,0 +1,59 @@
+---
+title: 'Notes on Using Logical Properties and Values'
+description: 'Adam Argyle asked today: “is it time to forget about physical properties like margin-top and left?” I have some thoughts occasionally on this, and decided to write them down as a list: maybe I’ll update it later with other related things, we’ll see. At the bottom of this post, I’ll also list several useful resources — don’t forget to check them out!'
+tags: ['Logical CSS', 'CSS', 'Notes']
+pubDate: '2024-01-07'
+mastodonPostId: ''
+current: {
+    drink: 'Yunnan Tea',
+    music: 'The Album Leaf — Eastern Glow',
+}
+---
+
+[Adam Argyle](https://nerdy.dev/) [asked today](https://nerdy.dev/is-it-time-to-throw-out-physical-properties):
+
+> is it time to forget about physical properties like margin-top and left?
+
+I have some thoughts occasionally on this, and decided to write them down as a list: maybe I’ll update it later with other related things, we’ll see. At the bottom of this post, I’ll also list several useful resources — don’t forget to check them out!
+
+1. If you’re new to [logical properties and values in CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values), it might be overwhelming to start using them: so much to learn! I will suggest starting slow, do not attempt to learn _everything at the same time_.
+
+2. For myself, I found the best way to get used to how logical keywords work was to first start using only logical shorthands: `margin-block`, `margin-inline`, `padding-block`, `padding-inline` and so on. They’re tremendously useful on their own! Through the years, I often wanted to have these kinds of shortcuts like `margin-x`, and these logical shortcuts fulfil this. By starting using them, you will cover some of your use cases, and will get used to differentiating `block` and `inline` directions as a muscle memory, without thinking.
+
+3. One way to think of the `block` and `inline` directions would be to imagine two lists: one where all elements have `display: block`, and another where all elements have `display: inline`. By default, _block_ elements go vertically, and _inline_ go horizontally — the same way the logical directions work as well.
+
+4. After starting to distinguish between the block and inline directions, understanding `start` and `end` should be, hopefully, much easier! When looking at these keywords, the only thing we need to think about is the positions of the elements or content inside of them: what goes earlier, what goes later? The axis will be handles by `block` or `inline`, and I found that separating the parts in this way helps a lot.
+
+5. While I’m mentioning trying different properties separately and getting to learn them slowly, I won’t recommend learning them this way _in production_. Very often, logical keywords should be all-or-nothing: by mixing them, it might be possible to break things in unexpected ways. It is always a good idea to test how things will actually work by flipping the `direction` or `writing-mode`, and seeing _what happens_. It is easy to make content inaccessible when you expect things to align: when one element flips its direction, and another does not — like when positioning something absolutely.
+
+6. Speaking of absolute positioning: after margins, paddings, and borders it might be time to look at more “complex” (in terms of naming) properties: `inset-` group of properties as a logical alternative for `top`, `right`, `bottom` and `left`, and `-size` group of properties as an alternative for `width` and `height`.
+
+    - For `inset` the shorthands are _very handy_: the `inset` itself, with the `inset:0` being the staple in a lot of CSS I write, and the `inset-block` and `inset-inline` joining the other directional shorthands that make it easier to learn the directions.
+    - The `block-size`, `inline-size`, and their `min-` and `max-` variations, on the other hand, do not bring any new capabilities, but it is important to learn them when you need to match them with other logical properties.
+
+7. The names of some logical properties might be rather frightening: `border-start-start-radius`, `border-start-end-radius`, what? The way to remember which is which in this case is to remember how the two-value shorthands for `margin` and `padding` work (even though they’re physical): the first value in such shorthand is for the vertical direction, and the second is for the horizontal. If those were logical, with the default mapping of vertical&thinsp;–&thinsp;block and horizontal&thinsp;–&thinsp;inline, then for `border-radius` logical properties it is the same: the first keyword is for the block direction, the second is for the inline! So, in `border-start-end-radius` the `start` is in the block direction, and `end` is in the inline one.
+
+8. On the other hand, some other cases, especially when only the values are involved, are easier: `text-align: start` and `text-align: end` are simple to remember.
+
+9. We need to always check out the support of the keywords we’d want to try using with logical values. While the basic margins and paddings are [well-supported](https://caniuse.com/css-logical-props), other properties could either be just arriving to the browsers (`inline-start` and `inline-end` for `float` and `clear` are supported in Chrome only from October 2023), or not well-supported (`overflow-block` and `overflow-inline` are available only for Firefox at the moment of writing this article). It is better to always check for the support yourself, and, if you have to support older browsers, provide fallbacks.
+
+10. While it might be a good idea to approach CSS with logical keywords first, there are cases where we could want to use physical properties and values. For example, when we want to match something with the positions on an image, which won’t change based on the writing mode. And not _everything_ is yet available in logical forms: transforms, backgrounds, some other cases — when there is a need to match our styles with the physical-only cases, sometimes there is no other choice than to use the physical properties and values alongside, to not create a mismatch.
+
+11. However, as it is often with CSS, there are workarounds, like when using a [`:dir()` pseudo-class](https://developer.mozilla.org/en-US/docs/Web/CSS/:dir) (warning: started being available in Chromium-based browsers only from December 2023) and overriding things that are physical-only based on the direction.
+
+## Related Articles
+
+Final thing: the above are just my thoughts on this, and I’m far from being an expert on this topic! There are many other resources and people who are much more familiar with it, and with other writing systems, who could provide more insights. I highly recommend checking out the following links (starting from references, and then listed in published order).
+
+- [“CSS Logical Properties and Values Level 1”](https://drafts.csswg.org/css-logical-1/) specification.
+- [“CSS logical properties and values”](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values) — MDN page containing a list of most logical properties and values.
+- [“CSS Logical Properties”](https://adrianroselli.com/2019/11/css-logical-properties.html) by [Adrian Roselli](https://adrianroselli.com/)
+- [“CSS for internationalisation”](https://chenhuijing.com/blog/css-for-i18n/) by [Chen Hui Jing](https://chenhuijing.com/).
+- [“Digging Into CSS Logical Properties”](https://ishadeed.com/article/css-logical-properties/) by [Ahmad Shadeed](https://ishadeed.com/).
+- [“Logical Properties for Useful Shorthands”](https://css-irl.info/logical-properties-for-useful-shorthands/) by [Michelle Barker](https://css-irl.info/).
+- [“Let’s get logical”](https://adactio.com/journal/19457) by [Jeremy Keith](https://adactio.com/)
+- [“A long-term plan for logical properties?”](https://www.miriamsuzanne.com/2022/09/16/tpac-logical/) by [Miriam Suzanne](https://www.miriamsuzanne.com/)
+
+- - -
+
+If you’ll have any thoughts, corrections or additions — please let me know!
