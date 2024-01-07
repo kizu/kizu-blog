@@ -46,7 +46,7 @@ const allTags = await getAllTags();
 							<>
 								{index !== 0 ? ', ' : null}
 								{tagCount > 1
-									? <a href={`/tags/${tagInURL(tag)}`} class="p-category">{tag}<sup class="nou"><span>{' '}{tagCount}</span></sup></a>
+									? <a href={`/tags/${tagInURL(tag)}`} class="p-category">{tag}<sup class="nou"><span>&VeryThinSpace;{tagCount}</span></sup></a>
 									: <span class="p-category">{tag}</span>
 								}
 							</>

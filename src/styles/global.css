@@ -749,7 +749,7 @@ sup {
 
 @supports (font-variant-position: super) {
 	sup {
-		bottom: 0.4ex;
+		bottom: 0px;
 		font-size: 1em;
 		font-variant-position: super;
 	}
