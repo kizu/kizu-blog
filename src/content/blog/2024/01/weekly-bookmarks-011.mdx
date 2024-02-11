@@ -1,0 +1,166 @@
+---
+title: 'Weekly Bookmarks 11: The Backlog'
+description: 'I did take a break from writing anything for the most of January. During this time, many people published tons of things, so this post will be very long. 50+ articles long.'
+tags: ['CSS', 'weekly']
+pubDate: '2024-02-11'
+mastodonPostId: ''
+
+current: {
+    drink: 'Ginger & apple tea',
+}
+---
+
+I did take a break from writing anything for the most of January. During this time, many people published tons of things, so this post will be very long. When I started compiling this list (and actually reading all the content I’m linking to), it ended up a bigger task than I anticipated, so I did also skip publishing over the first week of February. But I’m happy that so many people are writing about CSS!
+
+Because the list of links is so long this time, I did put them into various categories: [Interop 2024](#interop-2024), [Scroll-Driven Animations](#scroll-driven-animations), [Style Encapsulation](#style-encapsulation), [Forms and Interactions](#forms-and-interactions), [Layout](#layout), [Typography](#typography), [Thoughts and Opinions](#thoughts-and-opinions), [Theming](#theming), [Other Articles](#other-articles), [My Posts](#my-posts) — feel free to skip to what you find more interesting, as there are more than 50 articles combined!
+
+## Interop 2024
+
+Ok, the first thing I’m sharing is not from January, really. The list of focus areas was just been finalized!
+
+- [“Celebrate a more interoperable web with Interop 2023”](https://web.dev/blog/interop-2023-wrapup) by [Rachel Andrew](https://rachelandrew.co.uk/) — a post about the results of the previous year of the Interop initiative. It is very gratifying to see the possible progress when multiple browser vendors are working on the same goals.
+
+- [“Interop 2024 Dashboard”](https://wpt.fyi/interop-2024) — the dashboard to keep an eye on as a way to track the progress throughout the whole 2024.
+
+- All the stakeholders for this year’s initiative did post the introductory posts about it:
+
+    - [“The web just gets better with Interop 2024”](https://webkit.org/blog/14955/the-web-just-gets-better-with-interop/) by [Jen Simmons](https://jensimmons.com/) from Apple.
+
+    - [“Interop 2024 Launch”](https://bocoup.com/blog/interop-2024) by [Lola Odelola](https://lolaodelola.dev/) and [Lazarus Letcher](https://www.lazarusletcher.com/) from Bocoup.
+
+    - [“Interop 2024”](https://web.dev/blog/interop-2024) by [Rachel Andrew](https://rachelandrew.co.uk/) from Google.
+
+    - [“Interop 2024 Launches”](https://www.igalia.com/2024/interop-2024-launches.html) by [Igalia](https://www.igalia.com/).
+
+    - [“Microsoft Edge and Interop 2024”](https://blogs.windows.com/msedgedev/2024/02/01/microsoft-edge-and-interop-2024/) by [Patrick Brosset](https://patrickbrosset.com/) and [Dan Clark](https://github.com/dandclark) from Microsoft.
+
+    - [“Announcing Interop 2024”](https://hacks.mozilla.org/2024/02/announcing-interop-2024/) by [James Graham](https://hoppipolla.co.uk/) from Mozilla.
+
+- Some people did write about what got into the Interop 2024 list and their thoughts regarding this:
+
+    - [“Interop 2024”](https://piccalil.li/blog/interop-2024/) by [Andy Bell](https://andy-bell.co.uk/) — a post about the focus areas from the initiative Andy looks forward to most.
+    - [“Comparing Interop 2024 Choices to the Popular Vote”](https://frontendmasters.com/blog/comparing-interop-2024-choices-to-the-popular-vote/) by [Chris Coyier](https://chriscoyier.net/) — a post looking at the differences between what was chosen and what people voting for the issues on GitHub wanted to be included. Personally, I think there might be a misconception over what the Interop initiative is, but that might be a topic for a separate blog post, not a sidenote in this long list of links.
+
+
+## Scroll-Driven Animations
+
+While scroll-driven animations were not selected for the Interop 2024, I truly hope Safari and Firefox will ship them sooner rather than later: there are so many use cases for them!
+
+- [“A Practical Introduction to Scroll-Driven Animations with CSS `scroll()` and `view()`”](https://tympanus.net/codrops/2024/01/17/a-practical-introduction-to-scroll-driven-animations-with-css-scroll-and-view/) by [Adam Argyle](https://nerdy.dev/) — a tutorial covering the basics of the scroll-driven animations (for more traditional effects on scroll, unlike [the weird stuff I tend to do](https://kizu.dev/tags/scroll_driven_animations/)).
+
+- [“Highlight Text When a User Scrolls Down to That Piece of Text”](https://frontendmasters.com/blog/highlight-text-when-a-user-scrolls-down-to-that-piece-of-text/) by [Chris Coyier](https://chriscoyier.net/) — a case-study of implementing an effect used by [Lene Saile](https://www.lenesaile.com/) in her blog, but implemented using scroll-driven animations.
+
+- [“CSS Scroll-triggered Animations with Style Queries”](https://ryanmulligan.dev/blog/scroll-triggered-animations-style-queries/) by [Ryan Mulligan](https://ryanmulligan.dev/) — an exploration of one way to have scroll-triggered animations, based initially on an observation it in [Jhey Tompkins’](https://jhey.dev/) [CodePen](https://codepen.io/jh3y/pen/qBgRLxb) which implemented an effect similar to the one in the previous article, but with an addition of style container queries.
+
+
+## Style Encapsulation
+
+There are many discussions about web components recently, specifically about Shadow DOM, style encapsulation, and other related topics. Here are some of the things I found interesting.
+
+- [“Shadow DOM and the problem of encapsulation”](https://nolanlawson.com/2023/12/30/shadow-dom-and-the-problem-of-encapsulation/) by [Nolan Lawson](https://nolanlawson.com/) — an article looking at the problem of Shadow DOM style encapsulation, the tradeoffs of it, and some existing workarounds.
+
+- [“So, You Want to Encapsulate Your Styles?”](https://knowler.dev/blog/so-you-want-to-encapsulate-your-styles) by [Nathan Knowler](https://knowler.dev/) — an article looking at the ways styles can cross the Shadow DOM boundary, and how we could use CSS layers, especially `revert-layer` keyword, to achieve encapsulation without it.
+
+- [“Some use cases for `revert-layer`”](https://www.mayank.co/blog/revert-layer) by [Mayank](https://www.mayank.co/) — a more precise look into the `revert-layer` keyword and its other use cases. Very fascinating techniques showcasing the uniqueness of this keyword and the powers of the custom cascade layers.
+
+- [“half-light”](https://github.com/bkardell/half-light) by [Brian Kardell](https://bkardell.com/) — a small experimental library which allows writing special custom media-queries to inject some styles into the Shadow DOM from the outside.
+
+
+## Forms and Interactions
+
+- [“Designing better target sizes”](https://ishadeed.com/article/target-size) by [Ahmad Shadeed](https://ishadeed.com/) — a long and very detailed article with many interactive examples about the target area of interactive elements, and some other related concepts like spacing and safe triangle areas for dropdown menus.
+
+- [“Field-sizing just works!”](https://polypane.app/blog/field-sizing-just-works/) by [Kilian Valkhof](https://kilianvalkhof.com/) — a practical overview of the experimental `field-sizing` property.
+
+- [“Big, beautiful, beefy focus states with `:focus-visible`”](https://daverupert.com/2024/01/focus-visible-love/) by [Dave Rupert](https://daverupert.com/) — a post about how we can make the keyboard-only focus state much more prominent than the one that is also applied when using a regular `:focus`.
+
+- [“When will Apple focus on Safari?”](https://www.mayank.co/blog/safari-focus) by [Mayank](https://www.mayank.co/) — an article about how Safari mistreats the focus in CSS, where users have to jump through countless hoops to make it work, and how this is a serious accessibility and interoperability issue.
+
+- [“The Most Underused CSS Media Queries: Hover & Any-Hover”](https://jacobpadilla.com/articles/hover-media-query) by [Jacob Padilla](https://jacobpadilla.com/) — a brief look at the `hover` and `any-hover` media queries.
+
+- [“CSS knows about your mouse”](https://www.sarahgebauer.com/post/css-knows-about-your-mouse/) by [Sarah Gebauer](https://www.sarahgebauer.com) — a similar post which also touches on the `pointer` media queries in addition to the `hover` ones.
+
+Also, a reminder from me: `cursor: pointer` is a good default for any buttons. Just saying.
+
+
+## Layout
+
+In this section, we have articles covering almost every layout possible in some way, maybe except for the flex layout.
+
+- [“Tutorial: Four CSS Layout Modes and Their Use Cases”](https://www.scale.at/blog/css-layout-modes) by [Lara Aigmüller](https://github.com/lara-amalia) — a brief overview of four older layout algorithms: flow, float, multi-column and positioned.
+
+- [“A Guide to Styling Tables”](https://dev.to/madsstoumann/a-guide-to-styling-tables-28d2) by [Mads Stoumann](https://stoumann.dk/) — an article covering various ways we can style the tables.
+
+- [“‘Inheriting’ grid dimensions from siblings with subgrid”](https://www.lenesaile.com/en/blog/inheriting-grid-dimensions-from-siblings-with-subgrid/) by [Lene Saile](https://www.lenesaile.com/) — an article about how subgrid children can affect the parent grid’s dimensions.
+
+- [“Reality Check #3: Building out a layered hero grid layout from Dribbble”](https://piccalil.li/blog/reality-check-3-building-out-a-layered-hero-grid-layout-from-dribbble/) by [Andy Bell](https://andy-bell.co.uk/) — a deep dive into an implementation of an interesting layout using CSS grids.
+
+- [“Always great grid - CSS grid + `:has()` + view transitions”](https://nerdy.dev/neue-bento-layouts-with-grid-has-and-container-queries) by [Adam Argyle](https://nerdy.dev/) — an experiment showing how we can use `:has()` in a way similar to [quantity queries](https://alistapart.com/article/quantity-queries-for-css/) but when applied to the parent.
+
+
+
+## Typography
+
+- [“Web typography: baseline grids made easy (finally!)”](https://maketypework.com/web-typography-baseline-grids-made-easy/) by [Jake Giltsoff](https://maketypework.com/) — an article about how the `cap` unit could help with implementing designs with vertical rhythm.
+
+- [“Webfonts and layout shifting”](https://httpster.io/article/webfonts-and-layout-shifting/) by [Sami Mäkelä](https://httpster.io/) — a post outlining how it might be possible to reduce the cumulative layout shift coming from the mismatch of the web font with its fallback, with a few useful resources that can help with it linked inside.
+
+- [“Going beyond pixels and (r)ems in CSS - Relative length units based on font”](https://techhub.iodigital.com/articles/going-beyond-pixels-and-rems-in-css/relative-length-units-based-on-font) by [Brecht De Ruyte](https://utilitybend.com/) — a detailed article about font-relative units. While they can be used for non-typography related tasks, for obvious reasons typography is where they will be the most useful, and many examples in the article show this. The [second part](https://techhub.iodigital.com/articles/going-beyond-pixels-and-rems-in-css/relative-length-units-based-on-the-viewport) of the series looks into the viewport-relative units, which could also be used for typography, but less so.
+
+- [“Using Font Variant Numeric”](https://textlab.dev/posts/font-variant-numeric) by [Mandy Michael](https://mandy.dev/) — an article about `font-variant-numeric` and all the different ways it can help in making numbers look good in text and tables by unlocking the alternative glyphs for the digits that might be present in the fonts you’re using.
+
+- [“Nicer Text Wrapping with CSS `text-wrap`”](https://codersblock.com/blog/nicer-text-wrapping-with-css-text-wrap/) by [Will Boyd](https://codersblock.com/) — an article about `text-wrap` and its two values: `balance` and `pretty`.
+
+
+## Thoughts and Opinions
+
+- [“What’s Good?”](https://bkardell.com/blog/WhatsGood.html) by [Brian Kardell](https://bkardell.com/) — a question following some Interop 2024 discussions, where Brian asks us to look at things from a different angle and find what we have today and which awesome web platform features we got in the past few years.
+
+- [“What’s Too Good to Be True?”](https://matthiasott.com/notes/whats-too-good-to-be-true) by [Matthias Ott](https://matthiasott.com/) — a response to the previous question.
+
+- [“Is CSS alive?”](https://cssence.com/2024/is-css-alive/) by [Matthias Zöchling](https://cssence.com/) — a related article with some thoughts about various recent CSS features and how useful Matthias finds them.
+
+- [“A Call for Consensus on HTML Semantics”](https://thinkdobecreate.com/articles/a-call-for-consensus-on-html-semantics/) by [Stephanie Eckles](https://thinkdobecreate.com/) — a glimpse over how HTML semantics are not as simple and clear-cut, with many nuances making us think about the code we write.
+
+
+## Theming
+
+Nothing too new in this section, but a few small things that are worth it to remember.
+
+- [“Nested Dark Mode via CSS Proximity”](https://jwdallas.com/posts/nesteddarkmode) by [Jonathan Dallas](https://jwdallas.com/) — a post about how inheritance of custom properties makes them a good fit for theming.
+
+- [“Use CSS `accent-color` to style your inputs”](https://blog.cassidoo.co/post/css-accent-color/) by [Cassidy Williams](https://cassidoo.co/) — a reminder that we can use the `accent-color` property as a low-effort way to style the native inputs.
+
+- [“Easy Theming with OKLCH colors”](https://manuel-strehl.de/easy_theming_with_oklch) by [Manuel Strehl](https://manuel-strehl.de/) — a demonstration of how we can use custom property inside an `oklch()` for theming purposes, achieving a similar effect as for the `accent-color`, but for any custom styles.
+
+
+## Other Articles
+
+There were other articles, which I couldn’t categorize into more specific groups.
+
+- [“Taking a closer look at `@property` in CSS”](https://utilitybend.com/blog/taking-a-closer-look-at-property-in-css/) by [Brecht De Ruyte](https://utilitybend.com/) — an article about the basics of `@property` and how it can help with animations for custom properties.
+
+- [“12 Modern CSS One-Line Upgrades”](https://moderncss.dev/12-modern-css-one-line-upgrades/) by [Stephanie Eckles](https://thinkdobecreate.com/) — a great collection of simple and powerful CSS techniques.
+
+- [“My CSS resets”](https://keithjgrant.com/posts/2024/01/my-css-resets/) by [Keith J. Grant](https://keithjgrant.com/) — an article, in which Keith showcases his CSS reset, explaining the decisions behind its various parts.
+
+- [“The Complex But Awesome CSS `border-image` Property”](https://www.smashingmagazine.com/2024/01/css-border-image-property/) by [Temani Afif](https://css-articles.com/) — a deep dive into the `border-image`, and various use cases it allows us to achieve.
+
+    Temani did publish many other articles and tips, I won’t list them all — follow him yourself! But I will add two of his other recent posts that I did found the most useful:
+
+    - [“When to use the `min()` or `max()` function”](https://css-tip.com/min-max/) — a nice way to look and understand the differences between `min()`, `max()` and `clamp()`.
+
+    - [“Triangle shape with rounded corners”](https://css-tip.com/triangle-rounded-corner/) — a nice way to have rounded rectangles by using masks, `clip-path` and CSS variables.
+
+- [“My take on fading content using transparent gradients in CSS”](https://polypane.app/blog/my-take-on-fading-content-using-transparent-gradients-in-css/) by [Kilian Valkhof](https://kilianvalkhof.com/) — an article outlining two techniques for achieving an effect of fading lines of text.
+
+
+## My Posts
+
+Since [last weekly](/weekly-bookmarks-010/), I did write just four blog posts, here they are:
+
+- [“A Christmas Tree Selector: Prototyping the `:nth-sibling()` with CSS Nesting”](https://blog.kizu.dev/nth-sibling-christmas-tree/)
+- [“Cap-Height Vertical Align”](https://blog.kizu.dev/cap-height-align/)
+- [“Notes on Using Logical Properties and Values”](https://blog.kizu.dev/logical-props/)
+- [“My year in CSS”](https://blog.kizu.dev/my-2023-in-css/)
+
