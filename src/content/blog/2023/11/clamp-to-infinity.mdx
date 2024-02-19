@@ -3,6 +3,7 @@ title: 'Observation: Clamp to Infinity'
 description: 'After another time of me using `min()` (or was it `max()`?), I wondered: could I just always use `clamp()`, even if I need to have only the lower or the upper bound?'
 tags: ['CSS Clamp', 'CSS', 'Observation']
 pubDate: '2023-11-13'
+updatedDate: '2024-02-19'
 mastodonPostId: '111402891311203006'
 
 current: {
@@ -23,6 +24,11 @@ That’s why I really like the [`clamp()` function](https://drafts.csswg.org/cs
 After another time of me using `min()` (or was it `max()`?), I wondered: could I just always use `clamp()`, even if I need to have only the lower or the upper bound?
 
 The function itself does not provide a simple way to omit one of the bounds — all the arguments are required, and there is no `none` value that could be used instead of a value.
+
+### Update from 2024-02-19
+
+- On December 15, 2023, [Lea Verou](https://lea.verou.me/) [proposed](https://github.com/w3c/csswg-drafts/issues/9713) a `none` keyword that could be used to achieve the same result that I’m referring to in this article.
+- On February 14, 2024, CSSWG [resolved](https://github.com/w3c/csswg-drafts/issues/9713#issuecomment-1944449961) to add it to the specs!
 
 ### Looking for a Solution
 

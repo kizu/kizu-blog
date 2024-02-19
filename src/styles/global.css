@@ -344,7 +344,7 @@ h1, h2, h3, h4, h5, h6 {
 	line-height: 1.1;
 }
 
-p, li {
+p, li, dd {
 	line-height: var(--line-height--body-unitless);
 	text-wrap: pretty;
 	font-variant-numeric: oldstyle-nums;

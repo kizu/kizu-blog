@@ -1,0 +1,43 @@
+---
+title: 'Weekly Bookmarks 12'
+description: 'I had a lot of fun reading this last week’s articles and posts about CSS: I’m so happy we have so many people sharing their findings!'
+tags: ['CSS', 'weekly']
+pubDate: '2024-02-19'
+mastodonPostId: ''
+
+current: {
+    drink: 'Yunnan tea',
+}
+---
+
+I had a lot of fun reading this last week’s articles and posts about CSS: I’m so happy we have so many people sharing their findings!
+
+- [“How To Center a Div”](https://www.joshwcomeau.com/css/center-a-div/) by [Josh W. Comeau](https://www.joshwcomeau.com/) — a detailed explanation of various ways we can center things in CSS, with many interactive examples.
+
+- [“Dynamic text color contrast based on background lightness with CSS/SVG filters”](https://miunau.com/posts/dynamic-text-contrast-in-css/) by [miunau](https://miunau.com/) — an experiment about trying to get the contrasting color automatically for some other given color. Basically, what we might eventually get with the [`color-contrast()`](https://drafts.csswg.org/css-color-6/#colorcontrast), but via using CSS or SVG filters instead.
+
+- [“How I Solved My Font Rendering Problem”](https://css-irl.info/how-i-solved-my-font-rendering-problem/) by [Michelle Barker](https://css-irl.info/) — a post about how it is important to explicitly mention the font-weight range in the `@font-face` rule of a variable font.
+
+- [“How to fix the invisible scrollbar issue in iOS browsers”](https://frontendmasters.com/blog/how-to-fix-the-invisible-scrollbar-issue-in-ios/) by [Šime Vidas](https://šime.eu/) — an article about how iOS uses the top-level background color as the thing that defines the color of the overlay scrollbars, sometimes resulting in lack of contrast.
+
+- [“The chaotic neutral nature of font-size”](https://phloe.co/dev/font-size) by [Rasmus Fløe](https://phloe.co/) — an article about adjusting the size of the fonts to be more logical with `font-size-adjust` or its workarounds, and a few related issues.
+
+- [“Scroll-Driven Animations: You want `overflow: clip`, not `overflow: hidden`”](https://www.bram.us/2024/02/14/scroll-driven-animations-you-want-overflow-clip-not-overflow-hidden/) by [Bramus](https://www.bram.us/) — a post about how `overflow: hidden` could interact with scroll-driven animations and about one workaround for this.
+
+- [“CSS-only Auto-Collapsing Mobile Menu”](https://codepen.io/giana/pen/gOEQmVW) by [Georgiana Blantin](https://codepen.io/giana) — an article about discovering a technique to detect (and use) the position of some elements in a container by using scroll-driven animations, a bit similar to the technique that I called [“Position-Driven Styles”](https://kizu.dev/position-driven-styles/).
+
+- [“The Fifty-Fifty Split and Overflow”](https://ryanmulligan.dev/blog/50-50-overflow/) by [Ryan Mulligan](https://ryanmulligan.dev/) — an article about one way to achieve a certain type of layout with two side-by-side columns, only one of which dictates the overall height of both.
+
+- [“Playing with Infinity in CSS”](https://codersblock.com/blog/playing-with-infinity-in-css/) by [Will Boyd](https://codersblock.com/) — an exploration of the CSS `infinity` constant, with a few curious notes about how it works. Last November, I explored how it could be used in `clamp()` as a way to remove one of the boundaries in my [“Observation: Clamp to Infinity”](/clamp-to-infinity/) post, though just a few days ago we got [a CSSWG resolution](https://github.com/w3c/csswg-drafts/issues/9713#issuecomment-1944449961) to have a native ability to define `none` to achieve the same effect, thanks to [Lea Verou](https://lea.verou.me/)'s [proposal](https://github.com/w3c/csswg-drafts/issues/9713).
+
+- [“Making the most of ligatures”](https://textlab.dev/posts/font-variant-ligatures) by [Mandy Michael](https://mandy.dev/) — an article about the way we can control the rendering of ligatures in CSS.
+
+- [“The New CSS Math: `pow()`, `sqrt()`, and exponential friends”](https://danielcwilson.com/posts/mathematicss-powers/) by [Daniel C. Wilson](https://danielcwilson.com/) — a quick overview of a few newly available CSS math functions.
+
+- [“Accent Color Access, Revisited”](https://cssence.com/2024/accent-color-is-no-css-variable-revisited/) by [Matthias Zöchling](https://cssence.com/) — a shot post inspired by [a Mastodon post](https://front-end.social/@mia/111922702873228540) by [Miriam Suzanne](https://www.miriamsuzanne.com/) about the differences between `accent-color` and `accentColor`.
+
+- - -
+
+There were also a few articles about Tailwind and utility-first approach last week, but I don’t want to share them as is without providing my own opinion alongside, and I didn’t have an opportunity to fully work on it.
+
+One thing, as a semi-spoiler for it: look at the above list of articles people did write about CSS in a span of a week, and think about how many things described in them are possible to achieve with today’s utility-first approaches.
