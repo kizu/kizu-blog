@@ -12,4 +12,7 @@ export default defineConfig({
 		syntaxHighlight: false
 	},
 	integrations: [mdx(), sitemap(), preact()],
+	redirects: {
+		'/weekly-boolmarks-013': '/weekly-bookmarks-013'
+	},
 });
