@@ -13,7 +13,7 @@ export async function get(context: APIContext) {
 	for (const post of posts) {
 		// Do not use weekly or non-CSS/HTML posts for the latest.
 		if (
-			post.data.tags.includes('weekly') ||
+			post.data.tags.includes('bookmarks') ||
 			!post.data.tags.some(tag => ['CSS', 'HTML'].includes(tag))
 		) {
 			continue;

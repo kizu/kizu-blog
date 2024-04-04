@@ -1,0 +1,100 @@
+---
+title: 'Recent CSS Bookmarks 15'
+description: 'A compilation of 23 articles and posts about various topics: colors and themes, container queries, accesibility, grids, future CSS, and more.'
+tags: ['CSS', 'bookmarks']
+pubDate: '2024-04-04'
+mastodonPostId: ''
+
+current: {
+    drink: 'Yunnan tea',
+	music: 'Follow The Compass — Mountains'
+}
+---
+
+First things first:
+
+1. I think it is obvious that the “weekly” format just doesn’t work for me: sometimes there are gaps, I don’t want to always publish on the same day, and so on. Moreover, I ended up sharing predominantly the more recent articles and posts I read, rather than some of the more archived ones, so replacing the “weekly” with “recent” makes sense.
+
+2. While it _was_ a month since [the last bookmarks post](/weekly-bookmarks-014/), I don't want it to be _monthly_, but something that I post more often.
+
+3. Almost always, my bookmarks are all about CSS. This will continue, and it should be ok to just put this into the “series” name. I could still include other topics, but the main topic will be CSS. And for bigger compilations like this one, I could always add sub-categories.
+
+4. Some other people have a separate category on their sites where they share bookmarks one by one, or automatically publish groups of them. For me, at least for now, it is more enjoyable to have a more curated list in the way I’m doing it. Maybe I _will_ do something differently in the future, we’ll see.
+
+Now, to the bookmarks themselves, 23 of them this time.
+
+
+## Colors and Themes
+
+I gathered four links about colors and themes that compliment each other.
+
+- [“Using relative colors”](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_colors/Relative_colors) by [Chris Mills](https://millsdocs.com/) — a new MDN guide to relative colors in CSS, which are currently available in Chrome and Safari, but not in Firefox.
+
+- [“Creating color palettes with the CSS `color-mix()` function”](https://developer.mozilla.org/en-US/blog/color-palettes-css-color-mix/) by [Michelle Barker](https://michellebarker.co.uk/) — in contrast to the previous guide, this article is about `color-mix()` which is newly available in all major browsers for around a year already.
+
+- [“CSS color-scheme-dependent colors with `light-dark()`”](https://web.dev/articles/light-dark) by [Bramus](https://www.bram.us/) — a post about two ways to handle light and dark colors: via `Canvas` and `CanvasText` keywords, and via a `light-dark()` function.
+
+- [“Setting And Persisting Color Scheme Preferences With CSS And A ‘Touch’ Of JavaScript”](https://www.smashingmagazine.com/2024/03/setting-persisting-color-scheme-preferences-css-javascript/) by [Henry Bley-Vroman](https://www.olets.dev/) — an article about using `:has()` for `:checked` `<select>`'s `<option>`s as a way to change the page’s color scheme.
+
+
+## Container Queries
+
+All aspects of them, including container query length units and style queries!
+
+- [“An Interactive Guide to CSS Container Queries”](https://ishadeed.com/article/css-container-query-guide) by [Ahmad Shadeed](https://ishadeed.com/) — a detailed article about the basics of container queries with many interactive examples. And multiple non-card use cases! I particularly liked [one timeline example](https://ishadeed.com/article/css-container-query-guide#dynamic-timeline-layout) that combines a regular container query with a style query applied via a `:has()` quantity selector.
+
+- [“Add Superpowers to Your CSS Variables with Style Queries”](https://thathtml.blog/2024/03/superpowered-container-style-queries/) by [Jared White](https://thathtml.blog/) — a post about one use case for container style queries, where we could use them for reusable media query values, among other things.
+
+- [“Algorithmic Functional CSS”](https://knowler.dev/blog/algorithmic-functional-css) by [Nathan Knowler](https://knowler.dev/) — a post about using algorithms that let the browsers provide inputs to them, with an example of a dynamic spacing scale based on container query length units.
+
+
+## Accessibility
+
+A few articles about various aspects of CSS in relation to accessibility.
+
+- [“On popover accessibility: what the browser does and doesn’t do”](https://hidde.blog/popover-accessibility/) by [Hidde de Vries](https://hidde.blog/) — an article about the ways Popover API interacts with accessibility of the popovers and their associated buttons.
+
+- [“The problem with data-attributes for text effects”](https://textlab.dev/posts/data-attributes-and-text-effects) by [Mandy Michael](https://mandy.dev/) — a post advising against using `content` property with `attr()` to get a duplicated text due to potential accessibility issues.
+
+- [“You Want `border-color: transparent`, Not `border: none`”](https://frontendmasters.com/blog/you-want-border-color-transparent-not-border-none/) by [Dave Rupert](https://daverupert.com/) — a post about an important aspect of styling borders (or absence of them) accessibly with the `forced-colors` mode in mind.
+
+- [“The Case for Defining Base Font-size”](https://mikemai.net/blog/2024/03/25/the-case-for-defining-base-font-size.html) by [Mike Mai](https://mikemai.net/) — a post about _not_ using absolute units for the `font-size` on the root of your document, and a way to ensure this with CSS layers.
+
+
+## Grids
+
+Ok, just two articles, but I just wanted to have a section for them. Grids are cool.
+
+- [“Building a Rock Solid Auto Grid”](https://9elements.com/blog/building-a-rock-solid-auto-grid/) by [Nils Binder](https://ichimnetz.com/) — an article that goes step-by-step over a creation of a customizable grid, combining multiple CSS grid aspects.
+
+- [“Making room for long list markers with subgrid”](https://noahliebman.net/2024/03/making-room-for-long-list-markers-with-subgrid/) by [Noah Liebman](https://noahliebman.net/) — a post about how we can use subgrids to style lists in a way that will accommodate markers of any length.
+
+
+## Future CSS
+
+Things that are not available in all browsers, but, hopefully, will be soon. Some of them could be used as a progressive enhancement, some of them — not.
+
+- [“What You Need to Know about Modern CSS (Spring 2024 Edition)”](https://frontendmasters.com/blog/what-you-need-to-know-about-modern-css-spring-2024-edition/) by [Chris Coyier](https://chriscoyier.net/) — while this compilation contains some things that are newly available in all major browsers today, many of these can be still tricky to use in production. Overall, a good summary of what CSS will allow us to do in the future.
+
+- [“Steal this popover code”](https://nerdy.dev/steal-this-popover-starter-kit) by [Adam Argyle](https://nerdy.dev/) — a post about a way to animate the entry and exit states of a popover via discrete display and overlay transitions, as well as a `@starting-style` rule.
+
+- [“How to Kill the Cascade”](https://robinrendle.com/the-cascade/017-how-to-kill-the-cascade/) by [Robin Rendle](https://robinrendle.com/) — an article describing one way to isolate the styles of some element in the light DOM by using an implicit `@scope` and `all: revert-layer`.
+
+- [“Animating clip paths on scroll with `@property` in CSS”](https://utilitybend.com/blog/animating-clip-paths-on-scroll-with-at-property-in-css) by [Brecht De Ruyte](https://utilitybend.com/) — an article about using scroll-driven animations for complex `clip-path()` that use multiple CSS variables.
+
+
+## Everything Else
+
+These cover so many topics! I could probably spend more time thinking about how I could put these into different boxes as well, but oh well!
+
+- [“Modern CSS Tooltips And Speech Bubbles (Part 2)”](https://www.smashingmagazine.com/2024/03/modern-css-tooltips-speech-bubbles-part2/) by [Temani Afif](https://css-articles.com/) — a continuation of the article about doing speech bubbles with `border-image` and `clip-path`, this time making things more complicating as a way to solve having a border on the tooltips that goes continuously around the tooltip’s tip, solves via pseudo-elements and some math.
+
+- [“Some little ways I’m using CSS `:has()` in the real world”](https://piccalil.li/blog/some-little-ways-im-using-css-has-in-the-real-world/) by [Andy Bell](https://andy-bell.co.uk/) — a post with several examples of how `:has()` can be used to solve various practical problems.
+
+- [“CSS Button Styles You Might Not Know”](https://dbushell.com/2024/03/10/css-button-styles-you-might-not-know/) by [David Bushell](https://dbushell.com/) — a post about a few not very common things that can be used to adjust the button styles.
+
+- [“Creating 3x5.pics”](https://weblog.anniegreens.lol/2024/03/creating-3x5-pics) by [Anne Sturdivant](https://anniegreens.lol/) — a case study for a specific index card blog design, using properties as `aspect-ratio`, `text-orientation` among more regular flex and grids, and describing the thought process behind some design and tech decisions.
+
+- [“Pure CSS element distortion (flattened 3D skew with `matrix3d()`)”](https://front-end.social/@anatudor@mastodon.social/112138741731168637) by [Ana Tudor](https://thebabydino.github.io/) — a StackOverflow answer and a CodePen demonstration of a way to get a trapezoid transformation for an element by using a flattened 3D transform.
+
+- [“`aspect-ratio` Gotcha!”](https://cssence.com/2024/aspect-ratio-gotcha/) by [Matthias Zöchling](https://cssence.com/) — a blog post about `aspect-ratio` in relation to images, and one aspect of it related to their dimensions explicitly set in the HTML attributes.

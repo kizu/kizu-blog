@@ -13,6 +13,7 @@ export default defineConfig({
 	},
 	integrations: [mdx(), sitemap(), preact()],
 	redirects: {
-		'/weekly-boolmarks-013': '/weekly-bookmarks-013'
+		'/weekly-boolmarks-013': '/weekly-bookmarks-013',
+		'/tags/weekly': '/tags/bookmarks'
 	},
 });
