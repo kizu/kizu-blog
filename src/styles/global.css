@@ -413,6 +413,12 @@ u {
 	--mix-alpha: 0.5;
 }
 
+a[href^='#'],
+summary {
+	text-decoration-style: dotted;
+	--mix-alpha: 0.75;
+}
+
 :is(a[href], summary):is(:hover, :focus-visible),
 :is(a[href], summary):is(:hover, :focus-visible) > u {
 	--mix-alpha: 1;
