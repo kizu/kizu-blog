@@ -1,0 +1,97 @@
+---
+title: 'Custom Properties and CSS-Wide Keywords'
+description: 'I did some tests with custom properties in CSS, and how they work (or don’t) with the CSS-Wide Keywords (`initial`, `inherit`, `unset`, `revert` and `revert-layer`). As the result, I did create a PR adding a few Web Platform Tests, and opened two bugs in Safari and Firefox.'
+tags: ['CSS Variables', 'CSS Layers', 'CSS', 'Web Platform Tests']
+pubDate: '2024-06-19'
+mastodonPostId: ''
+
+current: {
+	drink: 'Yunnan tea',
+	music: 'Husking Bee — カナリア',
+}
+---
+
+Recently, my blog feels a bit lonely and sad, I need to write more things that are not [“Recent CSS Bookmarks”](https://blog.kizu.dev/tags/bookmarks/) (although, I need to get to the next post of those).
+
+What I want to try (will it work? Who knows!) is to write about things I do more. I did some of that during the last November, but then kinda burnt out on writing so much. Let’s try not to make a schedule out of this, but just write about things that, I think, could be interesting. Here is what I did at the beginning of this week!
+
+I did some tests with [custom properties in CSS](https://drafts.csswg.org/css-variables/), and how they work (or don’t) with the [CSS-Wide Keywords](https://drafts.csswg.org/css-cascade-5/#defaulting-keywords) ([`initial`, `inherit` and `unset`](https://www.w3.org/TR/css-values-3/#common-keywords), [`revert`](https://drafts.csswg.org/css-cascade/#valdef-all-revert) and [`revert-layer`](https://drafts.csswg.org/css-cascade-5/#revert-layer)).
+
+## The Specs
+
+I invite you to read all the related specs yourself, but I will note a few things related to what I tested:
+
+- In theory, there should be no difference if we use a CSS-wide keyword for a regular property, or for a custom one. Here is a quote from [the `css-variables` spec](https://drafts.csswg.org/css-variables/#ref-for-css-wide-keywords%E2%91%A0):
+
+    > The CSS-wide keywords can be used in custom properties, with the same meaning as in any another property.
+
+- The note right after this paragraph points towards one important aspect: how we cannot really _pass down_ such keyword through a custom property — it will be applied when the custom property will be defined:
+
+    > Note: That is, they’re interpreted at cascaded-value time as normal, and are not preserved as the custom property’s value, and thus are not substituted in by the corresponding variable.
+
+- The only way we could apply such a keyword conditionally is via the fallback value of a `var()`. Here is [how the spec defines it](https://drafts.csswg.org/css-variables/#ref-for-funcdef-var%E2%91%A2%E2%91%A6):
+
+    > If a declaration, once all `var()` functions are substituted in, contains only a CSS-wide keyword (and possibly whitespace), its value is determined as if that keyword were its specified value all along.
+
+    It also provides an example showing the fallback behavior (though with a less-useful `initial` value):
+
+    > Example 14: While a `var()` function can’t get a CSS-wide keyword from the custom property itself—​if you tried to specify that, like <span class="nowrap">`--foo: initial; `</span>, it would just trigger explicit defaulting for the custom property—​it can have a CSS-wide keyword in its fallback:
+    >
+    > ```CSS
+    > p { color: var(--does-not-exist, initial); }
+    > ```
+
+## The Tests
+
+Initially, I did my tests as [a CodePen](https://codepen.io/kizu/pen/rNgpXwL), but then when I saw the results, I decided to write some Web Platform Tests, and opened [a PR adding them](https://github.com/web-platform-tests/wpt/pull/46814) (and also [fixed](https://github.com/web-platform-tests/wpt/pull/46810) some minor test descriptions that I found when looking for existing tests).
+
+Here is a summary of the results:
+
+- **Chrome** handles all the cases as expected and as specified.
+
+- **Firefox** failed in 5 out of 30 tests I wrote in WPT. I did open [a bug about these in Mozilla’s Bugzilla](https://bugzilla.mozilla.org/show_bug.cgi?id=1903397). I did test in Firefox Nightly — in the current stable version of Firefox there are eleven failures, but as it does not support registered custom properties at all, this is expected (though there as a failure with a `revert-layer` fallback in an unregistered custom property as well). Notably, all the Nightly failures are related to registered custom properties.
+
+- **Safari** failed in 8 out of 30 tests I wrote in WPT. I did open [a bug about these in WebKit’s Bugzilla](https://bugs.webkit.org/show_bug.cgi?id=275629). There was no difference between the stable version of Safari I tried and its latest Safari Technology Preview. Five of those tests were related to the fallbacks of the unregistered custom properties (basically, all CSS-wide keywords do not work there), and the rest were related to `revert-layer`.
+
+- If we were to count tests that succeed in all the latest versions of three major browsers, then it will be 19 out of 30 tests, with 11 total tests failing in at least one browser, two of them failing in both. So, the “Interop” score for this will be around **63%**.
+
+## What Does It Mean?
+
+1. Main thing: `revert-layer` is currently cross-browser only when used for non-registered custom properties directly, like `--foo: revert-layer`. This is still good news, as this means my [“Layered Toggles: Optional CSS Mixins”](https://kizu.dev/layered-toggles/) technique works!
+
+2. Fallbacks are very unreliable right now for CSS-wide keywords. _However_, we can use the `unset`, `revert` and `inherit` values, but only if we will register our variables with `inherits: true`. Doing so will make them work in Safari, and for stable Firefox it won’t make a difference, as those fallbacks work with unregistered properties anyway.
+
+3. CSS-wide keywords apart from `revert-layer` work fine for non-registered custom properties, but that’s a rather obvious thing.
+
+Overall, I hope browsers will fix the bugs they currently have, so we will unlock more of the use cases for both the `revert-layer` keyword, and for registered custom properties.
+
+## Some Context
+
+In one of the CSS Working Group’s latest face-to-face meetings last week, we did resolve to start working on a native conditional `if()` function in CSS. I recommend reading the [“Inline conditionals in CSS?”](https://lea.verou.me/blog/2024/css-conditionals/) article by [Lea Verou](https://lea.verou.me/) if you want to know about it, but an important part in relation to my tests is that as the result we’re focusing more on custom properties, as they will be a big part of those conditionals.
+
+Lea did ask me to look into one weird issue with how fallbacks are applied, and as a result of it she did open an [“Are fallbacks provided for registered properties validated by the CP syntax?”](https://github.com/w3c/csswg-drafts/issues/10455) issue in CSSWG GitHub.
+
+Most of my tests were in response to her inquiry (and partially continued some of my earlier tests for my Layered Toggles article).
+
+## A Future Technique
+
+Initially, I wanted to open another CSSWG issue about adding some way to pass down the CSS-wide keywords and then somehow apply them in-place on either regular properties or on variables, as right now, it is not possible to do it.
+
+However, thinking about it more, the `if()` could be a viable solution for this: instead of passing a CSS-wide keyword itself, we could pass some ident, like `--revert-layer`, and then use `if()` to apply it when necessary!
+
+```CSS
+.foo {
+    background: if(
+        style(--foo: --revert-layer)
+            ? revert-layer
+            : var(--foo)
+    );
+}
+```
+
+A condition like this will check if the variable’s value is some dashed ident, and will apply the actual CSS-wide keyword in-place!
+
+Of course, given all browsers will implement the CSS-wide keywords inside the conditions in the same way they should work with custom properties — and if they won’t, I will write some Web Platform Tests.
+
+And you should try [doing so too](https://blog.kizu.dev/my-first-web-platform-tests/)!
+
