@@ -381,7 +381,7 @@ article > :not(figure, pre, aside) {
 	);
 }
 
-article > p + p {
+article > p:not(.starts-with-tag:has(> img:only-child)) + p:not(.starts-with-tag:has(> img:only-child)) {
 	margin-top: calc(-1 * var(--gap));
 	text-indent: var(--text-indent);
 
@@ -581,11 +581,11 @@ img {
 	height: auto;
 }
 
-p > img:only-child {
+p.starts-with-tag > img:only-child {
 	display: block;
 }
 
-p:has(> img:only-child) {
+p.starts-with-tag:has(> img:only-child) {
 	margin-inline: calc(-1 * var(--content-padding));
 }
 
