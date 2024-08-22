@@ -1,12 +1,13 @@
 import type { APIContext } from 'astro';
-import rss, { RSSOptions } from '@astrojs/rss';
+import type { RSSOptions } from '@astrojs/rss';
+import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import { SITE_TITLE, SITE_DESCRIPTION } from '@consts';
 import { betterSlug } from '@lib/betterSlug';
 import { markdown } from '@lib/markdown'
 import { getMastodonPostLink } from '@lib/getMastodonPostLink';
 
-export async function get(context: APIContext) {
+export async function GET(context: APIContext) {
 	const posts = await getCollection('blog');
 	const items: RSSOptions['items'] = [];
 	for (const post of posts) {
@@ -32,7 +33,7 @@ export async function get(context: APIContext) {
 		description: SITE_DESCRIPTION,
 		site: String(context.site),
 		xmlns: { atom: 'http://www.w3.org/2005/Atom' },
-    customData: `
+		customData: `
 			<language>en</language>
 			<atom:link href="${context.site}rss.xml" rel="self" type="application/rss+xml" />
 		`,

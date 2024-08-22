@@ -52,13 +52,13 @@ The simplest way we can utilize the `cap` to achieve alignment to the middle 
 `}</style>
 
 <LiveExample class="require-cap" caption="A live example showing a pink square centered over the font’s cap height. Resizing the square shows how the alignment stays the same." shouldHideHTML>
-```CSS
+```css
 .example1 .icon {
 	vertical-align: middle;
 	margin-block-start: calc(1ex - 1cap);
 }
 ```
-```HTML
+```html
 <div class="example example1">
 	<span class="icon"></span>
 	Nicely Aligned
@@ -69,12 +69,12 @@ The simplest way we can utilize the `cap` to achieve alignment to the middle 
 Why do we subtract cap height from the x-height? When we align things with `vertical-align` to `middle`, we’re aligning things to the _middle of the font’s x-height_. Here is an example of how things look without our technique:
 
 <LiveExample class="require-cap" caption="A live example showing a pink square centered over the font’s x-height. We can see that it aligns with the “x” letter, but does not with the capitalized text alongside." shouldHideHTML>
-```CSS
+```css
 .example-broken .icon {
 	vertical-align: middle;
 }
 ```
-```HTML
+```html
 <div class="example example-broken">
 	x
 	<span class="icon"></span>
@@ -98,13 +98,13 @@ If we were using `position: relative` and `inset-block-start`, then yes, we’
 The example above is nice but requires us to use a negative margin. There is a different way to achieve the same, but only if we know the height of the element we’re aligning:
 
 <LiveExample class="require-cap" caption="A live example showing a pink square centered over the font’s cap height. Resizing the square shows that only the initial height works and the element is misaligned when we change the height without adjusting the corresponding CSS variable." shouldHideHTML>
-```CSS
+```css
 .example2 .icon {
 	--size: min(2em, 10vw);
 	vertical-align: calc(0.5cap - 0.5 * var(--size));
 }
 ```
-```HTML
+```html
 <div class="example example2">
 	<span class="icon"></span>
 	Nicely Aligned
@@ -115,12 +115,12 @@ The example above is nice but requires us to use a negative margin. There is
 Our formula here is `0.5cap - 0.5 * var(--size)`: half of the cap height minus half of our element’s height. How is this calculated? When the value of `vertical-align` is a `<length>`, an element is aligned in a way its bottom edge stays on the text’s _baseline_:
 
 <LiveExample class="require-cap" caption="A live example showing a pink square aligned over the font’s baseline. Resizing the square shows how it stays on the baseline regardless of the size." shouldHideHTML>
-```CSS
+```css
 .example-baseline .icon {
 	vertical-align: 0;
 }
 ```
-```HTML
+```html
 <div class="example example-baseline">
 	<span class="icon"></span>
 	Baseline Alignment
@@ -133,7 +133,7 @@ You might ask: why use this method when it has the limitation of having to kn
 The answer: sometimes we might not know the _context_ in which our element will be present, and if we will place our element in a context with `align-items: center`, it might not look good! We can easily demonstrate this by placing both examples inside a flex context:
 
 <LiveExample class="require-cap" caption="A live example showing two pink squares, where the first one is not aligned nicely.">
-```CSS
+```css
 .example-flex {
 	display: flex;
 	gap: 0.5em;
@@ -144,7 +144,7 @@ The answer: sometimes we might not know the _context_ in which our element wil
 	}
 }
 ```
-```HTML
+```html
 <div class="example-flex">
 	<div class="example example1">
 		<span class="icon"></span>
@@ -171,7 +171,7 @@ However, usually, it is not super complicated to work around it, at least pa
 The way to go could be to use a CSS variable and `@supports`, below is the same technique as in the first example, but modified to work without `cap` support:
 
 <LiveExample caption="A live example showing a pink square centered over the font’s cap height. Resizing the square shows how the alignment stays the same." shouldHideHTML>
-```CSS
+```css
 html {
 	/* Adjusted for Iowan Old Style */
 	--cap: 0.704583em;
@@ -188,7 +188,7 @@ html {
 	margin-block-start: calc(1ex - var(--cap));
 }
 ```
-```HTML
+```html
 <div class="example example-fallback">
 	<span class="icon"></span>
 	Nicely Aligned
