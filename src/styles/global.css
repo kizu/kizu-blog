@@ -404,7 +404,7 @@ li:has(p) + li {
 }
 
 a[href] {
-	padding-block: 0.11em;
+	padding-block: 0.115em;
 	font-weight: 600; /* Slightly better contrast */
 
 	color: var(--BLUE);
