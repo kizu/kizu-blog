@@ -11,6 +11,10 @@ current: {
 }
 ---
 
+## Table of Contents
+
+## Introduction
+
 Recently, my blog feels a bit lonely and sad, I need to write more things that are not [“Recent CSS Bookmarks”](https://blog.kizu.dev/tags/bookmarks/) (although, I need to get to the next post of those).
 
 What I want to try (will it work? Who knows!) is to write about things I do more. I did some of that during the last November, but then kinda burnt out on writing so much. Let’s try not to make a schedule out of this, but just write about things that, I think, could be interesting. Here is what I did at the beginning of this week!
@@ -37,7 +41,7 @@ I invite you to read all the related specs yourself, but I will note a few thing
 
     > Example 14: While a `var()` function can’t get a CSS-wide keyword from the custom property itself—​if you tried to specify that, like <span class="nowrap">`--foo: initial; `</span>, it would just trigger explicit defaulting for the custom property—​it can have a CSS-wide keyword in its fallback:
     >
-    > ```CSS
+    > ```css
     > p { color: var(--does-not-exist, initial); }
     > ```
 
@@ -79,7 +83,7 @@ Initially, I wanted to open another CSSWG issue about adding some way to pass do
 
 However, thinking about it more, the `if()` could be a viable solution for this: instead of passing a CSS-wide keyword itself, we could pass some ident, like `--revert-layer`, and then use `if()` to apply it when necessary!
 
-```CSS
+```css
 .foo {
     background: if(
         style(--foo: --revert-layer)

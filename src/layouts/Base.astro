@@ -26,12 +26,16 @@ const {
 	</head>
 
 	<body class={bodyClass}>
-		{mastodonPostId ? <MastodonPostInfoTemplate /> : null}
-		<Header />
-		<main>
-			<slot />
-			<MastodonPostInfo mastodonPostId={mastodonPostId} />
-		</main>
-		<Footer />
+		<div class="root-container">
+			<div class="root-grid">
+				{mastodonPostId ? <MastodonPostInfoTemplate /> : null}
+				<Header />
+				<main>
+					<slot />
+					<MastodonPostInfo mastodonPostId={mastodonPostId} />
+				</main>
+				<Footer />
+			</div>
+		</div>
 	</body>
 </html>

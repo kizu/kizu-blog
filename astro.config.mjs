@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import remarkToC from 'remark-toc';
 
 import preact from "@astrojs/preact";
 
@@ -9,7 +10,10 @@ export default defineConfig({
 	site: 'https://blog.kizu.dev',
 	markdown: {
 		// Done manually using Astro's Code component and some overrides
-		syntaxHighlight: false
+		syntaxHighlight: false,
+		remarkPlugins: [ [remarkToC, {
+			heading: "table of contents",
+		} ] ]
 	},
 	integrations: [mdx(), sitemap(), preact()],
 	redirects: {

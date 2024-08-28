@@ -1,9 +1,14 @@
+@import './features/scroll-markers.css';
+
 html {
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
 	font-synthesis: none;
+	scroll-padding: var(--MIN-CONTENT-PADDING);
 
 	--CONTENT-WIDTH: 48rem;
+	--MAX-LAYOUT-WIDTH: calc(2.5 * var(--CONTENT-WIDTH));
+	--ASIDE-WIDTH: 16rem;
 	--MIN-CONTENT-PADDING: 16px;
 	--DOUBLE-PADDING: calc(2 * var(--MIN-CONTENT-PADDING));
 	--MAX-CONTENT-PADDING: 6rem;
@@ -27,7 +32,7 @@ html {
 		var(--DARK, oklch(0.67 0.15 190.98));
 	--TEXT-COLOR:
 		var(--LIGHT, oklch(0.3 0.09 43.54))
-		var(--DARK, oklch(0.99 0.04 106.07));
+		var(--DARK, oklch(0.87 0.04 106.07));
 
 	--CODE-SHADOW: oklch(0.43 0.2 339.3);
 
@@ -68,7 +73,7 @@ html {
 		)
 		var(--OKLCH,
 			var(--LIGHT, oklch(0.5 0.16 244.86))
-			var(--DARK, oklch(0.78 0.14 236.26))
+			var(--DARK, oklch(0.76 0.14 236.26))
 		);
 	--PURPLE:
 		var(--SRGB,
@@ -87,6 +92,8 @@ html {
 	/* Space toggles for the oklch support. */
 	--SRGB: initial;
 	--OKLCH: ;
+
+	--min-aside-width: 0px;
 
 	background-image: radial-gradient(
 		farthest-corner circle at 50% 50%
@@ -114,6 +121,8 @@ html {
 	}
 }
 
+/* Not implemented yet */
+/*
 html:has(#theme-light:checked) {
 	--LIGHT: initial;
 	--DARK: ;
@@ -125,31 +134,38 @@ html:has(#theme-dark:checked) {
 	--DARK: initial;
 	color-scheme: dark;
 }
+*/
 
-body {
+.root-container {
+	container: --root / inline-size;
+}
+
+.root-grid {
 	position: relative;
 	z-index: 0;
 	display: grid;
-	grid-template-columns:
-		[--full-start]
-				minmax(0px, 1fr)
-				[--page-start]
-					var(--content-padding)
-					[--content-start]
-						minmax(
-							0px,
-							calc(
-								var(--MAX-PAGE-WIDTH)
-								-
-								2 * var(--content-padding)
-							)
-						)
-					[--content-end]
-					var(--content-padding)
-				[--page-end]
-				minmax(0px, 1fr)
-		[--full-end]
-	;
+	max-width: var(--MAX-LAYOUT-WIDTH);
+	margin-inline: auto;
+	--left-col: minmax(0px, 1fr);
+	--content-col: minmax(
+		0px,
+		calc(
+			var(--MAX-PAGE-WIDTH)
+			-
+			2 * var(--content-padding)
+		)
+	);
+	--right-col: minmax(var(--min-aside-width), 1fr);
+	grid-template:
+		" --full --full --full    --full --full "
+		" .      --page --page    --page .      "
+		" .      .      --content .      .      "
+		/ var(--left-col)
+		         var(--content-padding)
+				        var(--content-col)
+						          var(--content-padding)
+		                                 var(--right-col);
+		;
 	box-sizing: border-box;
 	min-height: 100vh;
 	--content-padding: calc(
@@ -166,7 +182,6 @@ body {
 		var(--content-padding) - var(--MIN-CONTENT-PADDING),
 		0.5em
 	);
-	margin: 0;
 
 	--font-size--body: 1.5rem;
 	--line-height--body-unitless: 1.6;
@@ -200,18 +215,82 @@ body {
 
 	color: var(--TEXT-COLOR);
 
+	--aside-limit: max(0px, var(--MAX-PAGE-WIDTH) + var(--ASIDE-WIDTH) - 100cqw);
+	--captured-length: calc(var(--aside-limit));
+	--captured-number: min(1, round(up, tan(atan2(var(--captured-length), 1px))));
+	--has-no-aside: var(--captured-number);
+	--has-aside: calc(1 - var(--has-no-aside));
+
+	--toc-limit: max(0px, var(--MAX-PAGE-WIDTH) + (var(--ASIDE-WIDTH) * 1.75) - 100cqw);
+	--captured-length2: calc(var(--toc-limit));
+	--captured-number2: min(1, round(up, tan(atan2(var(--captured-length2), 1px))));
+	--has-no-toc: var(--captured-number2);
+	--has-toc: calc(1 - var(--has-no-toc));
+
+	--aside-column-start: calc(4 - 1 * var(--has-no-aside));
+	--aside-column-end: calc(6 - 2 * var(--has-no-aside));
+	--aside-column:
+		var(--aside-column-start) /
+		var(--aside-column-end);
+
+	--toc-column-start: calc(1 + 2 * var(--has-no-toc));
+	--toc-column-end: calc(3 + 1 * var(--has-no-toc));
+	--toc-column:
+		calc(
+			var(--toc-column-start)*var(--has-toc)
+			+
+			var(--aside-column-start)*var(--has-no-toc)
+		) /
+		calc(
+			var(--toc-column-end)*var(--has-toc)
+			+
+			var(--aside-column-end)*var(--has-no-toc)
+		);
+
 	:where(&) > *,
 	:where(&) > astro-island > * {
 		grid-column: --content;
 		margin: 0;
 	}
+
+	&:has(.aside-wrapper, aside > details) {
+		--min-aside-width: calc(var(--ASIDE-WIDTH) * var(--has-aside));
+	}
+}
+
+@property --captured-length {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}
+
+@property --captured-number {
+	syntax: "<number>";
+	initial-value: 1;
+	inherits: true;
+}
+
+@property --captured-length2 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}
+
+@property --captured-number2 {
+	syntax: "<number>";
+	initial-value: 1;
+	inherits: true;
+}
+
+body {
+	margin: 0;
 }
 
 header {
 	display: grid;
 	align-content: center;
 	--ratio: 0.5;
-	min-height: calc(var(--ratio) * var(--MAX-CONTENT-PADDING));
+	min-block-size: calc(var(--ratio) * var(--MAX-CONTENT-PADDING));
 
 	& > h1 {
 		font-size: 2em;
@@ -241,7 +320,7 @@ h1 {
 
 h2 {
 	font-size: 1.25em;
-	margin-top: 1lh;
+	margin-block-start: 1lh;
 }
 
 h3,
@@ -250,8 +329,8 @@ h5,
 h6 {
 	font-size: 1.1em;
 	font-weight: 900;
-	margin-top: 0.5lh;
-	margin-bottom: -0.5lh;
+	margin-block-start: 0.5lh;
+	margin-block-end: -0.5lh;
 }
 
 h4,
@@ -269,6 +348,7 @@ h6 {
 
 main > article {
 	position: relative;
+	z-index: 0;
 	padding-block-start: calc(0.5 * var(--MAX-CONTENT-PADDING));
 	padding-block-end: var(--MAX-CONTENT-PADDING);
 }
@@ -300,7 +380,7 @@ article {
 
 /* Just make it present, but not be shown, resulting in an extra whitespace. */
 hr {
-	width: auto;
+	inline-size: auto;
 	border: none;
 }
 
@@ -350,7 +430,7 @@ iframe {
 }
 
 video {
-	max-width: 100%;
+	max-inline-size: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -382,7 +462,7 @@ article > :not(figure, pre, aside) {
 }
 
 article > p:not(.starts-with-tag:has(> img:only-child)) + p:not(.starts-with-tag:has(> img:only-child)) {
-	margin-top: calc(-1 * var(--gap));
+	margin-block-start: calc(-1 * var(--gap));
 	text-indent: var(--text-indent);
 
 	/* Text-indent is inheritable, so we need to reset it. */
@@ -396,11 +476,11 @@ li p {
 }
 
 li + li {
-	margin-top: 0.25lh;
+	margin-block-start: 0.25lh;
 }
 
 li:has(p) + li {
-	margin-top: 0.5lh;
+	margin-block-start: 0.5lh;
 }
 
 a[href] {
@@ -423,7 +503,7 @@ u {
 	text-decoration-thickness: max(1px, 0.075em);
 	text-underline-offset: clamp(2px, 0.075em, 4px);
 	/* https://github.com/web-platform-tests/wpt/pull/42940 */
-	text-decoration-color: var(--mix);
+	text-decoration-color: color-mix(in srgb, var(--mix), transparent calc(100% - 100% * var(--decoration-thickness-override)));
 	--mix-alpha: 0.5;
 }
 
@@ -496,7 +576,7 @@ a[href].is-inherited {
 
 .is-inline-block {
 	display: inline-block;
-	max-width: 100%;
+	max-inline-size: 100%;
 }
 
 ul, ol {
@@ -577,7 +657,7 @@ ul ul > li::marker {
 }
 
 img {
-	max-width: 100%;
+	max-inline-size: 100%;
 	height: auto;
 }
 
@@ -636,7 +716,7 @@ figcaption {
 
 
 pre {
-	max-width: 100cqw;
+	max-inline-size: 100cqi;
 	padding: var(--MIN-CONTENT-PADDING);
 	padding-inline: max(
 		var(--MIN-CONTENT-PADDING),
@@ -650,12 +730,12 @@ pre {
 }
 
 :where(:not(figure)) > pre {
-	width: fit-content;
+	inline-size: fit-content;
 	justify-self: center;
 }
 
 li > pre {
-	max-width: 100%;
+	max-inline-size: 100%;
 	box-sizing: border-box;
 	--content-padding: var(--DOUBLE-PADDING);
 }
@@ -801,19 +881,134 @@ mastodon-post-info {
 
 aside {
 	position: relative;
-	padding-inline: var(--text-indent);
+	display: flow-root;
+	--aside-padding: var(--text-indent);
+	padding-inline: var(--aside-padding) calc(0.5 * var(--aside-padding));
 	font-size: var(--FONT-SIZE--SMALL);
 	--aside-color: var(--GREEN);
-	background: color-mix(in srgb, var(--aside-color) 10%, transparent);
+	background: color-mix(in srgb, var(--aside-color) var(--aside-color-alpha, 10%), var(--aside-backdrop, transparent));
 	border-radius: var(--BORDER-RADIUS);
-	box-shadow: inset 0 0 0 2px var(--aside-color);
+	box-shadow: inset 0 0 0 2px var(--aside-color), var(--aside-shadow, 0 0);
+
+	&:has(> details) {
+		z-index: calc(-2 * var(--has-aside));
+		opacity: calc(0.7 + 0.3 * var(--has-no-aside));
+		/* Make the left column if possible -> fallback to the aside column? */
+		grid-column: var(--toc-column);
+    	grid-row: 3 / span 6; /* TODO: make it not break the other aside? */
+		max-inline-size: max-content;
+		place-self: start;
+		position: sticky;
+		inset-block-start: calc(var(--MIN-CONTENT-PADDING) - 9999px * var(--has-no-aside));
+		--toc-margin: calc(var(--content-padding) + var(--MIN-CONTENT-PADDING));
+		margin-inline-start: calc(
+			var(--MIN-CONTENT-PADDING) * var(--has-toc)
+			+
+			var(--toc-margin) * var(--has-aside) * var(--has-no-toc)
+		);
+		margin-inline-end: calc(
+			var(--MIN-CONTENT-PADDING) * var(--has-aside) * var(--has-no-toc)
+			+
+			var(--toc-margin) * var(--has-toc)
+		);
+
+		--aside-color: var(--CONTENT-BG);
+		--aside-color-alpha: 0%;
+		--aside-backdrop: var(--CONTENT-BG);
+		box-shadow: 0 0 1rem -0.6rem var(--CONTENT-SHADOW);
+
+		overflow: auto;
+		max-height: calc(
+			(100vh - var(--MIN-CONTENT-PADDING)) * var(--has-aside)
+			+
+			9999px * var(--has-no-aside)
+		);
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset-block: 0;
+		}
+
+		&:hover,
+		&:has(:focus-visible) {
+			z-index: 1;
+			opacity: 1;
+		}
+	}
+
+	&:has(> details[open]) {
+		--toc-margin: var(--DOUBLE-PADDING);
+
+		transform: translateX(calc(
+			(var(--content-padding) - var(--MIN-CONTENT-PADDING)) * var(--has-aside) * var(--has-no-toc)
+		));
+
+		&:hover,
+		&:has(:focus-visible) {
+			transform: translateX(calc(var(--MIN-CONTENT-PADDING) * var(--has-aside) * var(--has-no-toc)));
+		}
+	}
 
 	&.warning {
 		--aside-color: var(--RED);
+	}
+
+	& > details > ul {
+		margin-top: 0;
+
+		& li {
+			line-height: 1.25;
+			text-wrap: balance;
+		}
+	}
+
+	& > details > summary {
+		margin-inline: calc(-1 * var(--aside-padding)) calc(-0.5 * var(--aside-padding));
+		padding-block: 0.5lh;
+		padding-inline: calc(0.5 * var(--aside-padding));
+
+		&:is([open] > *) {
+			border-bottom: 1px solid var(--aside-color);
+		}
+	}
+}
+
+/* We need to have a wrapper, so the sticky positionined aside will be contained. Do we need some built-in way to contain a sticky element to its area when inside a grid? */
+.aside-wrapper {
+	grid-column: var(--aside-column);
+
+	--aside-backdrop: var(--CONTENT-BG);
+	box-sizing: border-box;
+	inline-size: 100%;
+	max-inline-size: max(var(--CONTENT-WIDTH) / 1.5, 100% * var(--has-no-aside));
+	min-inline-size: var(--min-aside-width);
+	padding-inline: calc(var(--MIN-CONTENT-PADDING) * var(--has-aside));
+	pointer-events: none;
+
+	& > aside {
+		pointer-events: auto;
+		position: sticky;
+		inset-block-start: 0;
+		--aside-padding: calc(
+			var(--DOUBLE-PADDING) * var(--has-aside)
+			+
+			var(--text-indent) * var(--has-no-aside)
+		);
+		overflow: auto;
+		max-height: calc(
+			100vh * var(--has-aside)
+			+
+			9999px * var(--has-no-aside)
+		);
 	}
 }
 
 /* Right now using because of a Firefox bug with hyphenation. */
 .no-ligatures {
 	font-feature-settings: "liga" 0, "dlig" 0;
+}
+
+#table-of-contents + ul {
+	font-size: var(--FONT-SIZE--SMALL);
 }
