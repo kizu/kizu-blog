@@ -40,7 +40,7 @@ const allTags = await getAllTags();
 				</>) : null }
 				{tags.length ?(<>
 					<dt>Categories:</dt>
-					<dd>{tags.map((tag, index) => {
+					<dd>{tags.map((tag: string, index: number) => {
 						const tagCount = allTags.get(tag).length;
 						return (
 							<>

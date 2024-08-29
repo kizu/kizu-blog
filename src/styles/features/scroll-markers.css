@@ -1,0 +1,131 @@
+/*
+	External dependency: List.astro, which applies an
+	style with `--i` to all the `<li>` inside the ToC.
+
+	Exposes: --decoration-thickness-override as 1 or 0,
+	  can be used to control the underline of the ToC.
+
+	Could be potentially replaced in the future with the `:checked` of
+	the native scroll markers, see https://github.com/w3c/csswg-drafts/issues/10720.
+*/
+
+.root-container {
+	/* Applying the scope, via a custom property, which will
+	   be reused later _twice_. */
+   --header-scopes:
+		--h-1, --h-2, --h-3, --h-4, --h-5,
+		--h-6, --h-7, --h-8, --h-9, --h-10,
+		--h-11, --h-12, --h-13, --h-14, --h-15,
+		--h-16, --h-17, --h-18, --h-19;
+	timeline-scope: var(--header-scopes);
+}
+
+article {
+	& > * {
+		/* These could use the sibling-index() in the future,
+		   but only if we could create idents from it and use the selector
+		   in the parenthesis. */
+		&:is(h2, h3, h4, h5, h6) {
+			/* 50% is the inset — an easy way to specify the point where
+			   the switch between headers will be. */
+			view-timeline: var(--_name) 50%;
+		}
+		/* Using nth-child with the “n of s” allows to not care
+		   which header it is, making all headers essentially equal. */
+		&:nth-child(1 of :is(h2, h3, h4, h5, h6)) { --_name: --h-1 }
+		&:nth-child(2 of :is(h2, h3, h4, h5, h6)) { --_name: --h-2 }
+		&:nth-child(3 of :is(h2, h3, h4, h5, h6)) { --_name: --h-3 }
+		&:nth-child(4 of :is(h2, h3, h4, h5, h6)) { --_name: --h-4 }
+		&:nth-child(5 of :is(h2, h3, h4, h5, h6)) { --_name: --h-5 }
+		&:nth-child(6 of :is(h2, h3, h4, h5, h6)) { --_name: --h-6 }
+		&:nth-child(7 of :is(h2, h3, h4, h5, h6)) { --_name: --h-7 }
+		&:nth-child(8 of :is(h2, h3, h4, h5, h6)) { --_name: --h-8 }
+		&:nth-child(9 of :is(h2, h3, h4, h5, h6)) { --_name: --h-9 }
+		&:nth-child(10 of :is(h2, h3, h4, h5, h6)) { --_name: --h-10 }
+		&:nth-child(11 of :is(h2, h3, h4, h5, h6)) { --_name: --h-11 }
+		&:nth-child(12 of :is(h2, h3, h4, h5, h6)) { --_name: --h-12 }
+		&:nth-child(13 of :is(h2, h3, h4, h5, h6)) { --_name: --h-13 }
+		&:nth-child(14 of :is(h2, h3, h4, h5, h6)) { --_name: --h-14 }
+		&:nth-child(15 of :is(h2, h3, h4, h5, h6)) { --_name: --h-15 }
+		&:nth-child(16 of :is(h2, h3, h4, h5, h6)) { --_name: --h-16 }
+		&:nth-child(17 of :is(h2, h3, h4, h5, h6)) { --_name: --h-17 }
+		&:nth-child(18 of :is(h2, h3, h4, h5, h6)) { --_name: --h-18 }
+		&:nth-child(19 of :is(h2, h3, h4, h5, h6)) { --_name: --h-19 }
+	}
+
+	& > aside {
+		/* Ok to be mandatory, as the actual snapping property will
+		   be applied conditionally. */
+		scroll-snap-type: y mandatory;
+	}
+
+	& > aside > details > ul {
+		/* We can reuse the same list of names both for the timeline,
+		   and the list of applied animations, reusing the ident names. */
+		animation: var(--header-scopes);
+		animation-timeline: var(--header-scopes);
+		animation-fill-mode: both;
+
+		/* We assign the `--i` through List.astro, as we need to have a flat
+		   list of items, and we can't do this via CSS (at all?). */
+		& li {
+			/* abs() workaround */
+			--abs: max(
+				var(--i) - var(--current-header),
+				var(--current-header) - var(--i)
+			);
+			--is-selected: min(1, var(--abs));
+			/* We can toggle the animation via using different values of the
+			   `--is-selected` variable, but only if it is registered. */
+			animation: --selected 0s calc(1s * var(--is-selected)) linear both;
+			animation-play-state: paused;
+
+			/* Only apply the snapping if we're not interacting with the
+			   scrolling box. */
+			&:not(aside:is(:hover, :focus-within) *) {
+				/* The `--snap` will come from the keyframes, allowing us to
+				   apply it conditionally without thinking about specificity. */
+				scroll-snap-align: var(--snap);
+				--decoration-thickness-override: var(--is-selected);
+			}
+		}
+	}
+}
+
+@keyframes --selected { to {
+	/* We're using regular markers, so we can just override them. */
+	list-style-type: "☞ ";
+    --snap: center;
+} }
+
+/* This is not possible to do via nth-sibling.
+   Could the scroll-markers help us in the future? */
+/* The way it works: all the animations will be applied at the
+   same time, the later ones overriding the previous ones,
+   but only if they take effect, allowing us to manipulate
+   the same custom property. */
+@keyframes --h-1 { to { --current-header: 1 } }
+@keyframes --h-2 { to { --current-header: 2 } }
+@keyframes --h-3 { to { --current-header: 3 } }
+@keyframes --h-4 { to { --current-header: 4 } }
+@keyframes --h-5 { to { --current-header: 5 } }
+@keyframes --h-6 { to { --current-header: 6 } }
+@keyframes --h-7 { to { --current-header: 7 } }
+@keyframes --h-8 { to { --current-header: 8 } }
+@keyframes --h-9 { to { --current-header: 9 } }
+@keyframes --h-10 { to { --current-header: 10 } }
+@keyframes --h-11 { to { --current-header: 11 } }
+@keyframes --h-12 { to { --current-header: 12 } }
+@keyframes --h-13 { to { --current-header: 13 } }
+@keyframes --h-14 { to { --current-header: 14 } }
+@keyframes --h-15 { to { --current-header: 15 } }
+@keyframes --h-16 { to { --current-header: 16 } }
+@keyframes --h-17 { to { --current-header: 17 } }
+@keyframes --h-18 { to { --current-header: 18 } }
+@keyframes --h-19 { to { --current-header: 19 } }
+
+/* The only two custom properties we need to register:
+   - one for the current header, so it could be animated
+   - another for the selected state, so we can work around animation tainting */
+@property --current-header { syntax: "<integer>"; initial-value: 0; inherits: true; }
+@property --is-selected { syntax: "<integer>"; initial-value: 0; inherits: true; }

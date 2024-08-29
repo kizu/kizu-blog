@@ -1,0 +1,246 @@
+---
+title: 'Querying the Color Scheme'
+description: 'Media queries are nice, but for many things, we don’t even need them: there is this great CSS property `color-scheme`, which allows us to make various things adapt to the current color scheme. We can even set it on a per-element basis. This post describes how we can use registered custom properties and style queries to read the current value of a `light-dark()` color.'
+tags: ['Style Queries', 'color-scheme', 'CSS Variables', 'CSS']
+pubDate: '2024-08-29'
+mastodonPostId: ''
+
+current: {
+    drink: 'Lemongrass, Ginger & Black Pepper tea',
+    music: 'The Album Leaf — Dust Collects',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## Introduction
+
+Media queries are nice: they allow us to query different features, like the [`prefers-color-scheme`](https://drafts.csswg.org/mediaqueries-5/#prefers-color-scheme) one, which allows us to get the user preference and switch some styles between light and dark themes.
+
+For many things, we don’t even need the media queries themselves: there is this great CSS property [`color-scheme`](https://drafts.csswg.org/css-color-adjust/#color-scheme-prop). If we set it on the root like this:
+
+```css
+:root {
+    color-scheme: light dark;
+}
+```
+
+Many things in our page will automatically adapt to the user’s color-scheme:
+
+<div class="aside-wrapper" style="grid-row-end: span 3">
+<aside>
+If you would like to learn more, I can recommend reading these articles that I previously shared in my [bookmarks posts](/tags/bookmarks/):
+- [“CSS color-scheme-dependent colors with `light-dark()`”](https://web.dev/articles/light-dark) by [Bramus](https://www.bram.us/).
+- [“What I’ve learned about CSS `color-scheme` and friends”](https://weblog.anniegreens.lol/2024/04/what-ive-learned-about-css-color-scheme-and-system-color) by [Anne Sturdivant](https://anniegreens.lol/).
+</aside>
+</div>
+
+- Built-in UI elements: scrollbars, inputs, buttons.
+- Some [system colors](https://drafts.csswg.org/css-color/#css-system-colors): for example, `Canvas` and `CanvasText`.
+- The built-in [`light-dark()`](https://drafts.csswg.org/css-color-5/#light-dark) function, which accepts two colors and returns the first one when the theme is light, and the second one otherwise.
+
+## Adapting to the User Preference
+
+By providing both possible schemes: “`light dark`” to the `color-scheme`, we tell the browser that it is ok to adapt to one of those themes that matches the user preference. The example below should adapt to the color-scheme you’re using in your browser:
+
+<style>{`
+figure p {
+    margin: 0;
+}
+`}</style>
+
+<LiveExample shouldHideHTML>
+```css
+.example1 {
+    color-scheme: light dark;
+
+    & p {
+        padding: 1em;
+        background: Canvas;
+        color: CanvasText;
+        border: 2px solid light-dark(hotpink, pink);
+    }
+
+    @media (prefers-color-scheme: light) {
+        .dark-only {
+            display: none;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .light-only {
+            display: none;
+        }
+    }
+}
+```
+```html
+<div class="example1">
+    <p>I should adapt. Current scheme: <em class="light-only">light</em><em class="dark-only">dark</em>.</p>
+</div>
+```
+</LiveExample>
+
+We can see how everything — the `light-dark()`, the `Canvas` & `CanvasText` and the media queries — adapts to the current scheme.
+
+## Enforcing a `color-scheme`
+
+But what if we will set only one value?
+
+<LiveExample shouldHideHTML>
+```css
+.example2--light {
+    &,
+    & *  {
+        color-scheme: light;
+    }
+}
+
+.example2--dark {
+    &,
+    & *  {
+        color-scheme: dark;
+    }
+}
+
+.example2 {
+    & p {
+        padding: 1em;
+        background: Canvas;
+        color: CanvasText;
+        border: 2px solid light-dark(hotpink, pink);
+    }
+
+    @media (prefers-color-scheme: light) {
+        .dark-only {
+            display: none;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .light-only {
+            display: none;
+        }
+    }
+}
+```
+```html
+<div class="example2 example2--light">
+    <p>I should be always light. Current scheme: <em class="light-only">light</em><em class="dark-only">dark</em>.</p>
+</div>
+<div class="example2 example2--dark">
+    <p>I should be always dark. Current scheme: <em class="light-only">light</em><em class="dark-only">dark</em>.</p>
+</div>
+```
+</LiveExample>
+
+<div class="aside-wrapper">
+<aside class="warning">
+Two notes about browser compatibility here:
+
+- Firefox has [a bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1914735) where it does not apply the `color-scheme` correctly for consecutive elements, so we have to specify it not just on the wrapper, but also for everything nested inside. Note that this workaround makes it so we can’t nest our themes. But, in general, it would work if not for the Firefox.
+- Safari supports `light-dark()` only starting from 17.5, so the border won’t be visible in the current stable version.
+</aside>
+</div>
+
+While system colors and `light-dark()` applied according to our `color-scheme`, we can’t change the media query from our CSS. It just tells us what is the _user preference_.
+
+The `light-dark()` itself is very useful, but can only be used for things that expect an actual CSS `<color>` type. But what if we’d want to adapt other, non-color things?
+
+We can work around this by using something different as the source of truth, like CSS scopes or style queries. I recommend reading the recent [“Page and Component Adaptive Light/Dark”](https://nerdy.dev/page-and-component-light-dark-strategies) post by [Adam Argyle](https://nerdy.dev/) about these.
+
+But what if we’d want to use the `color-scheme` as the source of truth?
+
+## Single Source of Truth
+
+With the [style queries](https://drafts.csswg.org/css-conditional-5/#style-container) and [registered custom properties](https://drafts.css-houdini.org/css-properties-values-api/#at-property-rule), we could! Here is how:
+
+<LiveExample class="require-style-queries" shouldHideHTML>
+```css
+.example3--light {
+    color-scheme: light;
+}
+
+.example3--dark {
+    color-scheme: dark;
+}
+
+@property --captured-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: white;
+}
+
+.example3 {
+    --captured-color: light-dark(white, black);
+
+    & p {
+        padding: 1em;
+        background: Canvas;
+        color: CanvasText;
+        border: 2px solid light-dark(hotpink, pink);
+    }
+
+    @container style(--captured-color: white) {
+        .dark-only {
+            display: none;
+        }
+    }
+    @container style(--captured-color: black) {
+        .light-only {
+            display: none;
+        }
+    }
+}
+```
+```html
+<div class="example3 example3--light">
+    <p>I should be always light. Current scheme: <em class="light-only">light</em><em class="dark-only">dark</em>.</p>
+</div>
+<div class="example3 example3--dark">
+    <p>I should be always dark. Current scheme: <em class="light-only">light</em><em class="dark-only">dark</em>.</p>
+</div>
+```
+</LiveExample>
+
+<div class="aside-wrapper">
+<aside class="warning">
+Note that style queries are only available in Chrome and Safari Technology Preview currently, do not rely on them in production.
+
+I am also not using the fix for the Firefox, as style queries do not work there anyway right now.
+</aside>
+</div>
+
+Here, instead of using media queries, we register a `--captured-color` custom property, then assign two different values to it using the `light-dark()` function. Because the property is registered, the function is properly applied, resulting in the corresponding color changing based on the `color-scheme`.
+
+Then, instead of relying on the `prefers-color-scheme`, we use a container style query to query this registered custom property, which allows us setting _any_ properties for anything inside the element that defines the `color-scheme`!
+
+<aside>
+When I first tested this, only Safari Technology Preview was handling this case correctly! I [had to open a bug](https://issues.chromium.org/issues/335383222) for Chromium about it, and it was fixed rather quickly.
+</aside>
+
+### Downsides
+
+The main downside of this method (outside the browser support) is the fact that the style queries apply to the elements inside the element with the `color-scheme`, but the `color-scheme` changes the styles on the element itself. Unless we’ll get some way to conditionally apply styles on the element itself, we will need to make sure we never style anything on the element with the `color-scheme`.
+
+And, of course, it is not as intuitive with the container style queries targeting some variable with some abstract values.
+
+### Not the User Preference
+
+In the most recent [“Web-Standards podcast”](https://web-standards.ru/podcast/437/) (in Russian), [Vadim Makeev](https://pepelsbey.dev/) mentioned a good point: there is a big difference between the user preference and a `color-scheme` property. Occasionally, it might be alluring to use the `color-scheme` as a switch for the _components'_ theme, but we need to consider that even when we do so, we could still want to listen to the `prefers-color-scheme` to understand which theme the user prefers, and make adjustments to both the light and dark themes we’re applying via `color-scheme`.
+
+For example, if the user prefers the `dark` color-scheme, and we’re overriding it to `light` on some inner component, we could want to not just invert the colors there, but also make them not as bright, as in not to make it stand out too much. We might even want to adjust the overall theme based on it if we have the built-in color scheme switch: dim the `light` one when the user prefers the `dark` color scheme, and make the `dark` more contrast if the user has it as `light`, as otherwise UI elements could be overshined by the bright browser chrome.
+
+## The Future
+
+I did not find a dedicated issue about this yet, but in [one of the other issues](https://github.com/w3c/csswg-drafts/issues/10249) about `color-scheme` many people did express their desire to have a dedicated style query for this. I imagine it will work very similarly, and potentially have the same downside of not matching with the `color-scheme`, unless there will be some specific handling implemented that will prevent any circular dependency issues.
+
+The abovementioned issue itself is about the problem where a `<meta name=color-scheme>` in HTML does not reflect on the `prefers-color-scheme` `@media`. In my opinion, this is the way it should work: I think the _user preferences_ should stay that way, and it is not correct to change it based on the current color scheme, regardless of where it is defined — in HTML or CSS.
+
+This technique (or a potential style query) will solve the issue described in the issue well enough: just apply it on the `html` or `body` element and use it instead of the `@media` itself.
+
+## Conclusion
+
+Registered custom properties are powerful in their ability to capture some value on the element itself, rather than passing it down to be applied later. I got the idea to apply it to the `light-dark()` function when playing with the `tan(atan2())` technique as a part of my experiments for the [“Fit-to-Width Text: A New Technique”](https://kizu.dev/fit-to-width/) article, and after playing with the style queries for my [“Self-Modifying Variables: the `inherit()` Workaround”](https://kizu.dev/self-modifying-variables/) article.
+
+As always, I am fascinated by what we can achieve by combining different CSS features: in this case we rely on three of them together. I hope this post will encourage you to experiment with all the new things in CSS as well, and will give you ideas about how we could use them in other unusual ways.

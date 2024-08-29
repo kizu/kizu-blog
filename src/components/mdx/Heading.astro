@@ -1,0 +1,17 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'h2'> {}
+
+const html = await Astro.slots.render('default');
+
+const props = Astro.props;
+
+// When rendering a table of contents, we will override the List component, so we don't need to render the actual header.
+const isToC = props.id === 'table-of-contents';
+---
+
+{isToC
+	? null
+	: <h2 {...props} set:html={html} />
+}
