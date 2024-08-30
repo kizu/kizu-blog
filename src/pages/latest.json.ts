@@ -5,7 +5,7 @@ import { betterSlug } from '@lib/betterSlug';
 interface Item {
 	url: string;
 }
-export async function get(context: APIContext) {
+export async function GET(context: APIContext) {
 	const posts = (await getCollection('blog')).sort(
 		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 	);
@@ -27,8 +27,8 @@ export async function get(context: APIContext) {
 			break;
 		}
 	}
-	return {
+	return Response.json({
 		body: JSON.stringify(items),
 		// body: JSON.stringify(items, null, 2),
-	};
+	});
 }
