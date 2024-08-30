@@ -27,8 +27,5 @@ export async function GET(context: APIContext) {
 			break;
 		}
 	}
-	return Response.json({
-		body: JSON.stringify(items),
-		// body: JSON.stringify(items, null, 2),
-	});
+	return Response.json(items);
 }
