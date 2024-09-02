@@ -1,0 +1,336 @@
+---
+title: 'Captured Custom Properties'
+description: 'In a few of my latest experiments and articles, I used one naming pattern for registered custom properties that I think worth highlighting in a separate blog post.'
+tags: ['CSS Variables', 'CSS']
+pubDate: '2024-09-02'
+mastodonPostId: ''
+
+current: {
+    drink: 'Yunnan tea',
+    music: 'toe — 風と記憶',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## Introduction
+
+In a few of my latest experiments and articles ([“Fit-to-Width Text: A New Technique”](https://kizu.dev/fit-to-width/) and [“Querying the Color Scheme”](https://blog.kizu.dev/querying-the-color-scheme/)), I used one naming pattern for registered custom properties that I think worth highlighting in a separate blog post.
+
+Registered custom properties are invaluable, as they unlock many things previously not possible.
+
+Among other use cases (I recommend reading the [Providing Type Definitions for CSS with @property](https://moderncss.dev/providing-type-definitions-for-css-with-at-property/) article by [Stephanie Eckles](https://thinkdobecreate.com/)), there are two useful effects we can use registered custom properties for:
+
+- Enabling animations of some custom property.
+- _Capturing_ the value of the custom property on the element itself.
+
+The use case for animations is rather obvious, but the capturing one can be harder to wrap your head around.
+
+### Regular Custom Properties
+
+By default, regular custom properties have their computed value as “[specified value](https://drafts.csswg.org/css-cascade-5/#specified) with variables substituted”. The [serialization rules](https://drafts.csswg.org/css-variables/#serializing-custom-props) for custom properties state:
+
+> Custom property names must be serialized as the exact code point sequence provided by the author, including not altering the case.
+>
+> Specified values of custom properties must be serialized exactly as specified by the author. Simplifications that might occur in other properties, such as dropping comments, normalizing whitespace, reserializing numeric tokens from their value, etc., must not occur.
+>
+> Computed values of custom properties must similarly be serialized exactly as specified by the author, save for the replacement of any `var()` functions.
+
+So, when we define some custom property, the only thing that happens is the substitution of variables inside. But the actual values will be evaluated only when _used_ on particular elements.
+
+Here is a simple example:
+
+<LiveExample>
+```css
+.example1 {
+    font-size: 0.666em;
+    --font-size: 1.5em;
+
+    & span {
+        font-size: var(--font-size);
+    }
+    & .inner {
+        font-size: 2em;
+    }
+}
+```
+```html
+<div class="example1">
+    <em>Outer:</em> <span>Foo</span>
+    <div class="inner">
+        <em>Inner:</em> <span>Bar</span>
+    </div>
+</div>
+```
+</LiveExample>
+
+Here we can see how we _define_ the `--font-size` on the wrapper, and then _use_ it on different children. One `<span>` is placed right inside our wrapper, but another have an `.inner` wrapper that changes the font-size to be bigger.
+
+The `1.5em` from the `--font-size` custom property is evaluated on the `<span>` itself. When it is defined, it does not calculate the `em` inside, and just passes the value as a code sequence to be applied when it will be used.
+
+Let’s see what will happen if we will register a custom property.
+
+### Registered Custom Properties
+
+The only difference in this example is that we register our custom property, note the font-size of the `.inner > span` element compared to the regular custom property example.
+
+<LiveExample shouldHideHTML>
+```css
+@property --registered-font-size {
+    syntax: "<length>";
+    initial-value: 0px;
+    inherits: true;
+}
+
+.example2 {
+    font-size: 0.666em;
+    --registered-font-size: 1.5em;
+
+    & span {
+        font-size: var(--registered-font-size);
+    }
+    & .inner {
+        font-size: 2em;
+    }
+}
+```
+```html
+<div class="example2">
+    <em>Outer:</em> <span>Foo</span>
+    <div class="inner">
+        <em>Inner:</em> <span>Bar</span>
+    </div>
+</div>
+```
+</LiveExample>
+
+By registering our custom property, the value is now evaluated _at the definition_, so instead of passing down the abstract `1.5em`, we now pass down the exact value of the `1.5em` as calculated on the `.example2` element!
+
+This is defined in [the spec for the registered custom properties](https://drafts.css-houdini.org/css-properties-values-api/), in a [“Computed Value-Time Behavior”](https://drafts.css-houdini.org/css-properties-values-api/#calculation-of-computed-values).
+
+Many other things will be evaluated in the same way, like almost any calculations (they can’t involve a percentage) or colors. And, as we will see from the [use cases](#use-cases), this can be useful not only when using the inheritance.
+
+## The Naming Pattern
+
+In the above example, I named the custom property `--registered-font-size`. But is it the best way to name this property? Naming it based on the property it is used for does limit how we can use it. What if we could make it more generic?
+
+In my latest experiments, what I ended up doing is creating a _reusable_ registered custom property, at least one per _type_.
+
+In this case, the custom property is responsible for capturing the `<length>` value, so a better name could be `--captured-length`:
+
+```css
+@property --captured-length {
+    syntax: "<length>";
+    initial-value: 0px;
+    inherits: true;
+}
+```
+
+And if we’d want to capture a color, then it would be `--captured-color`. Integer? `--captured-integer`, and so on.
+
+In my practice (see the [use cases](#use-cases)), most cases require having just a single registered custom property per type on an element. By having a generic reusable property, we make it much easier for us to work with the styles: we no longer need to register many custom properties with the same syntaxes and different names, most of which won’t be used at the same time.
+
+### Multiple Instances
+
+But edge cases exist: what if we’d want to capture not one `<length>` on an element, but multiples of them?
+
+My solution for this is simple: just introduce another registered custom property like `--captured-length2`.
+
+Of course, this will only work if you control all the styles for your project, as well as the way they’re applied. When designing independent components, we’d want to prefix these names with something related to the component itself, but I still think the best way to name these custom properties is by what they do.
+
+### Do We Need Inheritance?
+
+As a matter of habit, I was using `inherits: true` for these, but I was thinking for a while if we _really_ need to do so.
+
+A recent video [“Turning off inheritance on custom props is more useful than I’d thought”](https://www.youtube.com/watch?v=U8NykwZNbGs) by [Kevin Powell](https://www.kevinpowell.co/) did remind me of this, and, in our case, I think we can safely make these custom properties non-inheritable.
+
+In the example with the `--registered-font-size` we had `inherits` as `true` because we were using that value on a nested element, inheriting it there. But we can work around this. Here is the same example, but using a non-inheriting `--captured-length` custom property:
+
+<LiveExample shouldHideHTML>
+```css
+@property --captured-length {
+    syntax: "<length>";
+    initial-value: 0px;
+    inherits: false;
+}
+
+.example3 {
+    font-size: 0.666em;
+    --captured-length: 1.5em;
+    --example-font-size: var(--captured-length);
+
+    & span {
+        font-size: var(--example-font-size);
+    }
+    & .inner {
+        font-size: 2em;
+    }
+}
+```
+```html
+<div class="example3">
+    <em>Outer:</em> <span>Foo</span>
+    <div class="inner">
+        <em>Inner:</em> <span>Bar</span>
+    </div>
+</div>
+```
+</LiveExample>
+
+Here we are using the non-inheriting `--captured-length` as a way to retrieve the value, but then we save it to another, non-registered custom property that we are free to name as we want.
+
+Because custom properties are _replaced_ when serialized, the `--example-font-size` will get the computed value right away, and then will be inherited to the inner elements.
+
+This feature allows us to use the same `--captured-length` property on different nested elements, saving its value into various other custom properties (or using right away), without the need for it to be inherited.
+
+I am not sure if there is a big (if any) performance gain due to this, but I can see how the prevention of inheritance and requiring to save the value into a different custom property can be beneficial. It will reduce the potential confusion if any of the nested elements will be using the inherited `--captured-length`: where would it get from? A variable with a proper name will be more explicit and expressive.
+
+## Use Cases
+
+In my [“Fit-to-Width Text: A New Technique”](https://kizu.dev/fit-to-width/) article, I used this technique four times: `--captured-length` on three different elements, and also `--captured-length2` for the optional case fixing the optical adjustment.
+
+In my recent [“Querying the Color Scheme”](https://blog.kizu.dev/querying-the-color-scheme/) post, I used a single `--captured-color` custom property.
+
+Interestingly, there were four different reasons across these five use cases, demonstrating how crucial this technique can be.
+
+### Detecting `@property` Support
+
+For a more graceful fallback in my [“Fit-to-Width Text: A New Technique”](https://kizu.dev/fit-to-width/) article, I use a variation of the [“Feature detect CSS `@property` support”](https://www.bram.us/2024/07/03/feature-detect-css-property-support/) technique by [Bramus](https://www.bram.us/), but instead of registering the `--support-sentinel` custom property, I reused the `--captured-length` one:
+
+```css
+.text-fit {
+    --captured-length: initial;
+    --support-sentinel: var(--captured-length, 9999px);
+}
+```
+
+When the browser supports `@property`, the `--captured-length` will be registered with the `initial-value` equal to `0px`, making the `--support-sentinel` get that value.
+
+But if the browser does not support it, the `--support-sentinel` would get the value from its provided fallback — `9999px`.
+
+### Named Container Query Length Units Workaround
+
+In the same article, I used the `--captured-length` to store the value in container query length units, as I wanted to have two different nested containers, and thus couldn’t access the outer one from within:
+
+```css
+.text-fit {
+    container-type: inline-size;
+
+    & > :not([aria-hidden]) {
+        container-type: inline-size;
+        --captured-length: 100cqi;
+        --available-space: var(--captured-length);
+
+        & > * {
+            /* Also using the 100cqi */
+        }
+    }
+}
+```
+
+In the future, we will have a way to access the container query length units from any named container, see the [“Reference named containers for cq units”](https://github.com/w3c/csswg-drafts/issues/7858) issue by [Una Kravets](https://una.im/), but if we’d want to get them _today_, then registered custom properties do the job! I actually presented this use case [in the comments](https://github.com/w3c/csswg-drafts/issues/7858#issuecomment-1484103141) to this issue in March 2023, though at the time the browser support for registered custom properties was worse, so I did not write about it elsewhere.
+
+If you’re using container query length units often — take a note of this workaround, as you could find many use cases where it could be helpful.
+
+### Working Around Type Limitations
+
+The third time I used the `--captured-length` in the same article was to also assign `100cqi` to it — but for an entirely different reason.
+
+Instead of capturing the value to pass it to the descendant element, I used it as a workaround for the `tan(atan2())` technique’s issue: at least in Chrome, we cannot use container query length units directly inside the `tan(atan2())` for some reason.
+
+So, to use the `100cqi` there, we first had to _convert_ it to what `tan(atan2())` would understand, which allowed us to calculate the ratio based on it and the `--available-space` value which we inherited:
+
+```css
+.text-fit {
+    & > :not([aria-hidden]) {
+        --captured-length: 100cqi;
+        --available-space: var(--captured-length);
+
+        & > * {
+            --captured-length: 100cqi;
+            --ratio: tan(atan2(
+                var(--available-space),
+                var(--available-space) - var(--captured-length)
+            ));
+        }
+    }
+}
+```
+
+This example demonstrates how useful it is to have a generic registered custom property: it is used for different purposes, and we didn’t have to register it several times. The second time we used it, we also did not have to name it, as we could use it directly.
+
+The last usage in the same article was also for working around the type limitations when assigning a value to the `font-variation-settings` property, for which we also had to use the `tan(atan2())` technique:
+
+```css
+.text-fit {
+    & > :not([aria-hidden]) {
+        & > * {
+            --captured-length: 100cqi;
+            /* … */
+            --font-size: clamp(
+                1em,
+                1em * var(--ratio),
+                var(--max-font-size, infinity * 1px)
+                -
+                var(--support-sentinel)
+            );
+
+            &.text-fit {
+                --captured-length2: var(--font-size);
+                font-variation-settings:
+                    'opsz'
+                    tan(atan2(var(--captured-length2), 1px));
+            }
+        }
+    }
+}
+```
+
+Here we had to use it on the same element, so we had to introduce the `--captured-length2` property, and we could also use the value directly, without the name to inherit it or rename.
+
+There are many other similar use cases, where we can use a registered custom property to overcome the typing limitations. Knowing how to solve them effectively allows us to use this powerful `tan(atan2())` technique, so I will highly recommend you to read the original article about it by [Jane Ori](https://kizu.dev/fit-to-width/) — [“CSS Type Casting to Numeric: `tan(atan2())` Scalars”](https://dev.to/janeori/css-type-casting-to-numeric-tanatan2-scalars-582j). She also mentions this usage of registered custom properties in her article, but without creating a pattern out of it.
+
+### Unlocking Style Queries
+
+The last use case is from my other post — [“Querying the Color Scheme”](https://blog.kizu.dev/querying-the-color-scheme/).
+
+This time, I am defining a `--captured-color` as a way to convert the value returned by `light-dark()` function to something a container style query could accept:
+
+```css
+@property --captured-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: white;
+}
+
+.example3 {
+    --captured-color: light-dark(white, black);
+
+    @container style(--captured-color: white) {
+        /* … */
+    }
+    @container style(--captured-color: black) {
+        /* … */
+    }
+}
+```
+
+Although, in this case I did not rename the property, which could’ve been better (although, a bit more awkward: instead of comparing to the values of `white` and `black`, we would need to compare to `rgb(255, 255, 255)` and `rgb(0, 0, 0)` — the actual values the `--captured-color` will compute to).
+
+This kind of value conversion could be useful in many other cases involving style queries, normalizing different values, or calculating their value, allowing us to compare the computed values rather than strings of tokens.
+
+### Other Use Cases
+
+There might be many other use cases for this feature of registered custom properties, and for this technique, and I think I saw it in several recent articles, but can’t remember where exactly. If you’d know of any — throw them my way!
+
+One other potential use case (which I did not try) could be to have another set of generic custom properties for _animatable_ values. So, `--animatable-length`, `--animatable-color` and so on, allowing to create reusable `@keyframes` with them. I did not yet do so, but I feel there is a potential to craft something like that.
+
+## Conclusion
+
+I love custom properties, and I feel we’re only scratching the surface of what is possible with the registered version of them.
+
+While we probably should not use them in production just yet (Firefox [supports them](https://caniuse.com/mdn-css_at-rules_property) only from version 128), if your use cases work well with graceful degradation, or if you want to experiment with them — I highly recommend you to do so.
+
+I find myself reaching for this naming pattern more and more, and I hope you will find it useful as well. I can see a list of these registered custom properties be in the boilerplate for most of my future projects, and maybe libraries like [Open Props](https://open-props.style/) by [Adam Argyle](https://nerdy.dev/) would also eventually get something like them from the box.

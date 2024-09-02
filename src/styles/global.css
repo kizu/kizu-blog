@@ -461,7 +461,7 @@ article > :not(figure, pre, aside) {
 	);
 }
 
-article > p:not(.starts-with-tag:has(> img:only-child)) + p:not(.starts-with-tag:has(> img:only-child)) {
+:is(article, blockquote) > p:not(.starts-with-tag:has(> img:only-child)) + p:not(.starts-with-tag:has(> img:only-child)) {
 	margin-block-start: calc(-1 * var(--gap));
 	text-indent: var(--text-indent);
 
@@ -616,6 +616,7 @@ dl {
 	display: grid;
 	grid-template: "dt dd" / auto 1fr;
 	gap: 0 var(--text-indent);
+	align-items: baseline;
 	font-size: var(--FONT-SIZE--SMALL);
 	padding-inline-start: var(--text-indent);
 
