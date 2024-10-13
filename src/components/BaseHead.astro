@@ -9,7 +9,7 @@ export interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, AUTHOR, MASTODON_HANDLE } from '../consts';
 const { title = SITE_TITLE, description = SITE_DESCRIPTION, image } = Astro.props;
 ---
 
@@ -23,6 +23,8 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION, image } = Astro.prop
 <link rel="alternate" type="application/rss+xml" title="blog.kizu.dev RSS" href={`${Astro.site}rss.xml`} />
 
 <title>{title}{title !== SITE_TITLE ? ` — ${SITE_TITLE}` : null}</title>
+<meta name="author" content={AUTHOR} />
+<meta name="fediverse:creator" content={MASTODON_HANDLE} />
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 
