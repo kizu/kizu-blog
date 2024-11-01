@@ -3,7 +3,7 @@ title: 'Some Plans'
 description: 'Guess what? It is November. Last year, I went all out and published one post a day for the full month. On one hand, that was hard, and took its toll on me. On the other, I _did_ publish a bunch of stuff that would usually stay in the drafts. I don’t know if I will manage to do the same this month — but I want to try again.'
 tags: ['NaBloPoMo', 'Personal']
 pubDate: '2024-11-01'
-mastodonPostId: ''
+mastodonPostId: '113409393378203907'
 
 current: {
     drink: 'Peppermint Tea',
