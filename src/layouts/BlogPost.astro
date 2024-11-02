@@ -5,6 +5,8 @@ import FormattedDate from '@components/FormattedDate.astro';
 import { tagInURL } from '@lib/tagInURL';
 import { SITE_TITLE } from '@consts';
 import { getAllTags } from '@lib/getAllTags';
+import { getMusicTag } from "@lib/getMusicTag";
+import { getAllMusic } from '@lib/getAllMusic';
 
 type Props = Partial<CollectionEntry<'blog'>['data']>;
 
@@ -19,6 +21,7 @@ const {
 const { pathname } = Astro.url;
 
 const allTags = await getAllTags();
+const allMusic = await getAllMusic();
 
 ---
 <Base bodyClass="h-entry" {...Astro.props}>
@@ -41,11 +44,11 @@ const allTags = await getAllTags();
 				{tags.length ?(<>
 					<dt>Categories:</dt>
 					<dd>{tags.map((tag: string, index: number) => {
-						const tagCount = allTags.get(tag).length;
+						const tagCount = allTags.get(tag)?.length;
 						return (
 							<>
 								{index !== 0 ? ', ' : null}
-								{tagCount > 1
+								{tagCount && tagCount > 1
 									? <a href={`/tags/${tagInURL(tag)}`} class="p-category">{tag}<sup class="nou"><span>&VeryThinSpace;{tagCount}</span></sup></a>
 									: <span class="p-category">{tag}</span>
 								}
@@ -53,7 +56,24 @@ const allTags = await getAllTags();
 						)
 					})}</dd>
 				</>) : null }
-				{current ? Object.entries(current).filter(([_, value]) => value !== '').map(([key, value]) => (<><dt>Current {key}:</dt><dd>{value}</dd></>)) : null}
+				{current ? Object.entries(current).filter(([_, value]) => value !== '').map(([key, _value]) => {
+					let value = _value as string;
+					if (key === 'music') {
+						const [musicArtist, musicValue] = getMusicTag(value) || [];
+						if (musicArtist) {
+							const artistCount = allMusic.get(musicArtist)?.length;
+							if (artistCount && artistCount > 1) {
+								value = (<>
+									<a href={`/music/${tagInURL(musicArtist)}`}>{musicArtist}</a>{musicValue ? ` — ${musicValue}` : ''}
+								</>);
+							}
+						}
+					}
+					return (<>
+						<dt>Current {key}:</dt>
+						<dd>{value}</dd>
+					</>)
+				}) : null}
 			</dl>
 		</> : null}
 		<slot />
