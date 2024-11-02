@@ -1,9 +1,9 @@
 ---
 title: 'Current Music'
-description: ''
-tags: ['Personal']
+description: 'If you have read any posts in this blog, you might’ve noticed the “Current music” field at the top. This is something I adopted back from when I was using LiveJournal. Until today, it was displayed just as a string. Today, I made it into a proper “category”: if I shared some artist more than once, its name will become a link to the list of all posts that share it.'
+tags: ['Music', 'Personal', 'Update']
 pubDate: '2024-11-02'
-mastodonPostId: ''
+mastodonPostId: '113415365792868759'
 
 current: {
     drink: 'Peppermint Tea',
