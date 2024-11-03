@@ -1,0 +1,65 @@
+---
+title: 'Embedding Pixelfed, part 1'
+description: 'One of the things I planned for the November: to not do _a lot_ of coding on the weekends, and try to post more personal stuff, keeping more technical stuff for the weekdays. Well, for today’s post I wanted to share some photos, and I started to wonder how I should do this. In the end, it _will_ involve code, but today I was mostly doing some exploration and planning.'
+tags: ['Process', 'Photos', 'Pixelfed', 'IndieWeb', 'Astro']
+pubDate: '2024-11-03'
+mastodonPostId: ''
+
+current: {
+    drink: 'Peppermint Tea',
+    music: 'tricot — E',
+}
+---
+
+One of the things I planned for the November: to not do _a lot_ of coding on the weekends, and try to post more personal stuff, keeping more technical stuff for the weekdays.
+
+Well, for today’s post I wanted to share some photos, and I started to wonder how I should do this. In the end, it _will_ involve code, but today I was mostly doing some exploration and planning.
+
+I already have [a Pixelfed account](https://pixey.org/i/web/profile/546076540786363642), and I wondered if I want to implement some IndieWeb pattern like [“Publish Elsewhere, Syndicate (to your) Own Site”](https://indieweb.org/PESOS) or [“Publish (on your) Own Site, Syndicate Elsewhere”](https://indieweb.org/POSSE).
+
+In the end, I think I will go with neither: I don’t want to have _automation_ just yet, but I still would like to reuse what I post to Pixelfed in one way or another.
+
+My thought process: the photos are already uploaded to Pixelfed, alongside associated alt texts. I don’t need to duplicate the images to my site: I already have the source file locally and with a backup in the cloud. Can I just reuse some stuff from it by using its API, and build some kind of gallery locally as a part of my Astro blog?
+
+I don’t have anything ready just yet, but I wanted to demonstrate my process a bit, by documenting what I did and what I am planning to do.
+
+## What I Already Did
+
+1. One thing I want to do, if I can: hotlink the images from Pixelfed. I tested if it is possible: and, for now, it appears that it is. My blog won’t ever be that popular to make this an issue for my Pixelfed instance, and not having to duplicate the effort of storing the image in multiple places sounds good.
+
+2. I looked into Pixelfed API to understand if I could work easily with it. Unlike [Mastodon API](https://docs.joinmastodon.org/client/intro/), where many things are available without authorization, [Pixelfed API](https://beta-preview.pixelfed.io/) **requires** providing a “Personal Access Token” with each request. So, I’ll probably need to have some env variable for this.
+
+3. I tested if the API works by creating this token and requesting one of my posts' data via its API, while providing the token. I did something like this and it worked:
+
+    ```ts
+    fetch(`https://pixey.org/api/v1/statuses/${id}`, {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+    })
+    ```
+
+4. I definitely don’t want to access this API on the client side (due to this token requirement), and I don’t want to call it that often while building the blog locally. That means that I need some kind of caching solution. Looking quickly if there is anything built-in in Astro (or a plugin), I did not find anything aside from a few issues about it (like [“astro: cache core component”](https://github.com/withastro/roadmap/discussions/612)). I’ll probably implement the caching solution from scratch: it should be trivial enough.
+
+## Plans
+
+- Implement a way to store and use the API token as an environment variable. I don’t think I want to provide it in the CI, as I am planning to always just build things locally, even though Netlify which I am using [allows doing this easily](https://docs.netlify.com/configure-builds/environment-variables/).
+
+- Implement a wrapper around the Pixelfed API that would cache all the necessary data I need to cache. It should be trivial enough:
+
+    1. Check if I already have a cached `.json`, if so, just use it.
+    2. If there is no such cache yet, call the API, get all the data from it, store it as a file _near_ the source page. I _will_ add this cached info to source control: this will be a good way to back up at least some info, like the alt texts etc, making the content more _independent_ of Pixelfed.
+    3. That’s it?
+
+- Create an Astro component that would render an image with its alt in some way. I’ll need to come up with the design for it first, though.
+
+- I’ll likely want to include multiple images from multiple Pixelfed posts on one page, so I’ll need to also come up with a design for the gallery. And think if I need a separate whole category in my blog for this, or make it just a part of regular posts?
+
+## Just Starting
+
+Aside from some experimental code to try out the API, I did not write any code for this. But I already started thinking about it, and planning what I want to do — a good first step.
+
+I’ll continue working on this mini-project, and, hopefully, one day could start sharing my photos as a part of my blog (and backfill what I have published earlier in some form as well).
+

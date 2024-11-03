@@ -613,6 +613,11 @@ li.starts-with-tag:has(
 	padding-inline-start: calc(1.25 * var(--MIN-CONTENT-PADDING));
 }
 
+:is(ul, ol) ol {
+	padding-block: 0.5em;
+	padding-inline-start: calc(1.5 * var(--MIN-CONTENT-PADDING));
+}
+
 dl {
 	display: grid;
 	grid-template: "dt dd" / auto 1fr;
