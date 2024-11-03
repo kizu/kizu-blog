@@ -1,0 +1,75 @@
+---
+import type { ImageMetadata } from "astro";
+import type { HTMLAttributes } from 'astro/types';
+import { Image as AstroImage } from 'astro:assets';
+import { photoData } from '@content/photos/_photoData';
+
+interface Props extends Omit<HTMLAttributes<'img'>, 'src'> {
+	src: ImageMetadata | `pixelfed:${string}`,
+}
+
+const { src, alt = null } = Astro.props;
+
+const pixelfedUrlMatch =
+	typeof src === 'string' && src.match(/^pixelfed:(.+)$/) || undefined;
+const pixelfedId = pixelfedUrlMatch?.[1];
+
+const getPixelfedImage = (pixelfedSrc?: string) => {
+	if (!pixelfedSrc) {
+		return;
+	}
+	const [, lookup, num1, num2] =
+		pixelfedSrc.match(/^([^\/]+)(?:\/(\d+))?(?:\/(\d+))?$/) || [];
+	if (!lookup) {
+		return;
+	}
+
+	const flatPhotoList = photoData.flatMap(photoOrGroup => {
+		if (!photoOrGroup.photos) {
+			return photoOrGroup;
+		} else {
+			return [photoOrGroup, ...photoOrGroup.photos];
+		}
+	})
+
+	const foundItem =
+		// First, check if there is anything with the matching id.
+		flatPhotoList.find((photoOrGroup) => photoOrGroup.id === lookup)
+		// Else, check other fields
+		|| flatPhotoList.find((photoOrGroup) =>
+			photoOrGroup.date === lookup
+			|| photoOrGroup.url?.includes(lookup)
+			|| photoOrGroup.name?.includes(lookup)
+		);
+
+	const firstIndex = num1 ? Number(num1) - 1 : 0;
+	const secondIndex = num2 ? Number(num2) - 1 : 0;
+
+	if (!foundItem) {
+		return;
+	}
+
+	const foundPhoto = foundItem?.photos
+		? foundItem.photos[firstIndex].data?.photos[secondIndex]
+		: foundItem.data?.photos[firstIndex];
+
+	return foundPhoto;
+}
+
+const pixelfedPhoto = getPixelfedImage(pixelfedId);
+
+---
+
+{typeof src === 'string'
+	? pixelfedPhoto
+		? <img
+			class="photo"
+			src={pixelfedPhoto.url}
+			alt={pixelfedPhoto.alt}
+			width={pixelfedPhoto.width}
+			height={pixelfedPhoto.height}
+			loading="lazy"
+		/>
+		: <aside class="warning">There should’ve been an image, but something went wrong!</aside>
+	: <AstroImage src={src} alt={alt} />}
+

@@ -107,6 +107,8 @@ html {
 	);
 	background-attachment: fixed;
 	hyphens: auto;
+	/* Disabled, as I don't like how snapping works everywhere except Firefox */
+	scroll-snap-type: y proximity;
 }
 @media (prefers-color-scheme: dark) {
 	html {
@@ -304,6 +306,8 @@ header {
 	align-content: center;
 	--ratio: 0.5;
 	min-block-size: calc(var(--ratio) * var(--MAX-CONTENT-PADDING));
+	/* Disabled, as I don't like how snapping works everywhere except Firefox */
+	/* scroll-snap-align: start; */
 
 	& > h1 {
 		font-size: 2em;
@@ -316,6 +320,12 @@ header {
 	&:has(> h1) {
 		--ratio: 1;
 	}
+
+	/* Otherwise, on page load, if there is a photo on the page, the page will center on it. */
+	/* Disabled, as I don't like how snapping works everywhere except Firefox */
+	/* body:has(img.photo) > * > * > & {
+		scroll-snap-align: start;
+	} */
 }
 
 footer {
@@ -685,6 +695,19 @@ ul ul > li::marker {
 img {
 	max-inline-size: 100%;
 	height: auto;
+
+	&.photo {
+		display: block;
+		width: auto;
+		max-block-size: min(100vh, 100cqw);
+		margin-inline: auto;
+		/* Disabled, as I don't like how snapping works everywhere except Firefox */
+		/* scroll-snap-align: center; */
+
+		p:has(> &) {
+			container-type: inline-size;
+		}
+	}
 }
 
 p.starts-with-tag > img:only-child {
