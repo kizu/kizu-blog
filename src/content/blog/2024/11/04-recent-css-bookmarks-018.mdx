@@ -1,0 +1,79 @@
+---
+title: 'Recent CSS Bookmarks 18: 12 Days of Web CFP, CSS Resets, and Selectors'
+description: 'After a large gap, I am contining reading and sharing the recent bookmarks I gathered. I’ll mostly go through more recent ones, but I will try to include one section with a few older ones as well.'
+tags: ['CSS', 'CSS Resets', 'CSS Selectors', 'bookmarks']
+pubDate: '2024-11-04'
+mastodonPostId: ''
+
+current: {
+	drink: 'Ceylon tea',
+    music: 'Helios — Coast Off'
+}
+---
+
+After a large gap, I am contining reading and sharing the recent bookmarks I gathered. I’ll mostly go through more recent ones, but I will try to include one section with a few older ones as well.
+
+The order in every section is from the older to newer articles. Sorry if I missed something you posted!
+
+<aside>
+If you write something about CSS, I will always be happy to read it. The best way to reach me is through [Mastodon DMs](https://front-end.social/@kizu) or [email](mailto:kizmarh@gmail.com).
+
+So if I missed something you published — or you saw something that I did not write about — please, let me know!
+</aside>
+
+
+## 12 Days of Web CFP
+
+Speaking of new articles. For the first bookmark, I wanted to highlight this year’s [12 Days of Web](https://12daysofweb.dev/).
+
+[Stephanie Eckles](https://thinkdobecreate.com/) [opened](https://front-end.social/@5t3ph/113420562852461230) a [Call For Proposals](https://docs.google.com/forms/d/e/1FAIpQLScu7HiNcnxpYwEIJ_S93dWtYWuOzISuU7cgIeITX8d7G71KNQ/viewform), which will be open until November 10, with articles due by December 5.
+
+I highly recommend participating ([I did so last year](https://12daysofweb.dev/2023/anchor-positioning/)). If you don’t yet know the topic you’d want to write about: the CFP has a list of them for you to choose from.
+
+<aside>
+And if you’re not sure about your abilities or just anxious, please let me know! I’d love to see new writers participate in this and other similar projects, and I’ll always be happy to review your articles or help in any other way.
+</aside>
+
+
+## CSS Resets
+
+It is always interesting to look at what other people consider their best “default” styles. Recently, many authors shared theirs. Interestingly, I _do not_ use such a reset myself!
+
+- [“Introducing TODS – a typographic and OpenType default stylesheet”](https://clagnut.com/blog/2433/) by [Richard Rutter](https://clagnut.com/) — a detailed article about typography-focused CSS defaults, going through many OpenType features and proposing a better default value for some of them.
+
+- [“How I Built ‘The Monospace Web’”](https://wickstrom.tech/2024-09-26-how-i-built-the-monospace-web.html) by [Oskar Wickström](https://wickstrom.tech/) — a post with a few details about how the author built [“The Monospace Web”](https://github.com/owickstrom/the-monospace-web) exploration. It is not just a “reset”, but the main idea is very similar: to have some particular default styles for all elements.
+
+- [“My Modern CSS Reset”](https://jakelazaroff.com/words/my-modern-css-reset/) by [Jake Lazaroff](https://jakelazaroff.com/) — an article with an explanation of what and why goes into the author’s CSS reset, as well as what they put into a “classless framework”.
+
+- [“You are not a CSS dev if you have not made a CSS reset”](https://mikemai.net/blog/2024/11/01/you-are-not-a-css-dev-if-you-have-not-made-a-css-reset.html) by [Mike Mai](https://mikemai.net/) — another post about a CSS reset, with an inflammatory title, and a few other opinionated bits.
+
+- [“Your CSS reset should be layered”](https://www.mayank.co/blog/css-reset-layer) by [Mayank](https://www.mayank.co/) — a post with a simple advice to put your reset into an `@layer` and a few arguments for doing so.
+
+Many of these articles link to older articles by other authors about their resets, which could be a good read if you’re interested in reading even more about this topic.
+
+
+## Selectors
+
+Continuing from CSS resets — one of the main aspects of which are _selectors_ — I’ll also mention some bookmarks specifically about them. This section will contain a few “older” links from my backlog as well, as a way to try to manage its size.
+
+- [“Ignore and acknowledge `class` attribute on elements in CSS”](https://www.amitmerchant.com/ignore-and-acknowledge-class-attribute-on-elements-in-css/) by [Amit Merchant](https://www.amitmerchant.com/) — a short post that names a concept of _ignoring_ or _acknowledging_ the presence of some attribute, like the `[class]` one.
+
+- [“MacOS-like dock effect with a ‘previous-sibling combinator’”](https://crinkles.dev/writing/a-modern-css-previous-sibling-combinator/) by [Kevin Pennekamp](https://crinkles.dev/) — a post about how `:has()` selector allows us to select previous siblings with a dock-like effect as the example.
+
+- [“CSS `:has()`, the God Selector”](https://brucelawson.co.uk/2024/css-has-the-god-selector/) by [Bruce Lawson](https://brucelawson.co.uk/) — another post about how `:has()` could be used separately from the actual element we’re selecting, and how powerful this could be. If anyone remembers the [“subject selector”](https://www.w3.org/TR/2013/WD-selectors4-20130502/#subject) — it was replaced with `:has()`, which is, indeed, much more versatile.
+
+- [“CSS ‘Quantity Queries’ are a thing now”](https://fantinel.dev/quantity-queries) by [Matt Fantinel](https://fantinel.dev/) — a post that looks at how we can now use `:has()` for quantity queries. (Term [coined](https://alistapart.com/article/quantity-queries-for-css/) by [Heydon Pickering](https://heydonworks.com/).)
+
+- [“Day 108: the of S syntax in `:nth-child()`”](https://matuzo.at/blog/2024/100daysof-day108) by [Manuel Matuzović](https://matuzo.at/) — a post that focuses on the optional selector argument of `:nth-…` pseudo-classes, which is a mighty new feature of them.
+
+- [“Double your specificity with this one weird trick”](https://cirrus.twiddles.com/blog/2024/08/21/double-your-specificity-with-this-one-weird-trick/) by [James Nash](https://cirrus.twiddles.com/) — a post about how multiple mentions of the same `class` selector in CSS still bumps up the rule’s specificity. While using the same class _is_ a way to do so, in similar situations I prefer to use the before mentioned _acknowledgement_ selector. So, `.foo[class][class]` instead of `.foo.foo.foo`. Although, with `:where()` and `@layer`, hacks like these, hopefully, will eventually go away.
+
+- [“`:nth-next-sibling`? No need.”](https://chriskirknielsen.com/blog/nth-next-sibling-no-need/) by [Christopher Kirk-Nielsen](https://chriskirknielsen.com/) — a post about a neat hack with the selector argument of a `:nth-…` family of pseudo-classes. I disagree with the title: the hack itself allows us to only select a _finite_ span of elements, while a hypothetical `:nth-next-sibling()` would be able to select _repeated sequences_ of them — something I explored in my [“A Christmas Tree Selector: Prototyping the `:nth-sibling()` with CSS Nesting”](https://blog.kizu.dev/nth-sibling-christmas-tree/) post.
+
+- [“I wasted a day on CSS selector performance to make a website load 2ms faster”](https://www.trysmudford.com/blog/i-spent-a-day-making-the-website-go-2ms-faster/) by [Trys Mudford](https://www.trysmudford.com/) — a post about how Chrome performance profiler’s “CSS selector stats” can only show the relative performance of selectors, with the actual numbers it will show being impacted by all the added instrumentation.
+
+- [“Possible Future CSS: Tree-Counting Functions and Random Values”](https://kizu.dev/tree-counting-and-random/) by [me](https://kizu.dev/) — while the topic itself is about future _functions_, the article focuses on the way we can prototype them today by using complex selectors, including those based on quantity queries. Speaking of selectors’ performance: my experiments in this article crashed Safari. We must be careful when using both `:has()` and native CSS nesting.
+
+- [“Making content-aware components using CSS `:has()`, grid, and quantity queries”](https://piccalil.li/blog/making-content-aware-components-using-css-has-grid-and-quantity-queries/) by [Eric Bailey](https://ericwbailey.website/) — a post about a real-life use case for quantity queries based on `:has()` for switching a position of some elements inside a CSS grid. In my opinion, ideally, for cases like this one, we’ll need something that would allow us to detect when things wrap in CSS, like what I [prototyped](https://kizu.dev/position-driven-styles/#flex-wrap-detection) with scroll-driven animations in my [“Position-Driven Styles”](https://kizu.dev/position-driven-styles/) article.
+
+- [“Select the first occurrence of an element in the whole document”](https://css-tip.com/first-element-dom/) by [Temani Afif](https://css-articles.com/) — a clever trick that combines `:has()`, `:nth-child(of …)`, and `:not()` pseudo-classes for selecting a first or last element similar to the way `querySelector()` does it in JS. Based on my experience, I’ll be a bit wary of its potential performance implications, especially in Safari, so if you try using it, test it extensively.
