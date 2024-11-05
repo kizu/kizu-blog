@@ -1,0 +1,150 @@
+---
+title: 'Observation: Forced Wrapping'
+description: 'Back in August, I saw a Mastodon thread by Anne Sturdivant about how she was styling titles, in which she described a wish for a certain wrapping behavior. Curiously enough, I remembered one interesting aspect of flexbox that could help to achieve what she wanted, and shared it with her. For quite a while, I wanted to write an “observation” post about it — and, finally, here we are! Maybe you’ll find it useful one day too.'
+tags: ['CSS Flex', 'CSS', 'Observation']
+pubDate: '2024-11-05'
+mastodonPostId: ''
+
+current: {
+	drink: 'Plain Water',
+	music: 'Ling Tosite Sigure — キミトオク'
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## Introduction
+
+Back in August, I saw [a Mastodon thread](https://social.lol/@anniegreens/112890011461777367) by [Anne Sturdivant](https://anniegreens.lol/) about how she was styling titles, in which she [described a wish](https://social.lol/@anniegreens/112890024470894579) for a certain wrapping behavior:
+
+> I’m finding myself wanting a variant of `text-wrap: balance` where you can specify a minimum number of lines for the text to wrap so that it would never appear on one line without having to insert a `<br>` element.
+
+Curiously enough, I remembered one interesting aspect of flexbox that could help to achieve what she wanted, and [I shared it with her](https://front-end.social/@kizu/112893348038380451).
+
+For quite a while, I wanted to write an [“observation”](/tags/observation) post about it — and, finally, here we are! Maybe you’ll find it useful one day too.
+
+
+## The “Forced Wrapping” Technique
+
+The code behind this technique is very short:
+
+<style>{`
+.example {
+	display: grid;
+	gap: 1rem;
+}
+.example h3 {
+	margin: 0;
+	outline: 3px double hotpink;
+}
+`}</style>
+
+<LiveExample caption="Each header is shown with a double pink outline around its border-box area. A header with a single word does not wrap, while a header with two words wraps, with each word on a separate line. A longer title, at the same time, takes the same two lines (when there is enough space for them).">
+```css
+.forced-wrapping {
+	display: flex;
+	max-inline-size: max-content;
+
+	&::after {
+		content: "";
+		flex-basis: 0.1px;
+	}
+}
+```
+```html
+<div class="example">
+	<h3 class="forced-wrapping">Hello!</h3>
+	<h3 class="forced-wrapping">Some Title</h3>
+	<h3 class="forced-wrapping">And a Much Longer Title With Many Words That Would Wrap Anyway</h3>
+</div>
+```
+</LiveExample>
+
+Yep, that’s just four declarations, with one for adding a pseudo-element!
+
+1. `display: flex` — first, we must make our element a [flex container](https://drafts.csswg.org/css-flexbox/#flex-containers).
+2. `max-inline-size: max-content` — then, we need to tell our element that it should size itself in the inline axis based on the [maximum intrinsic size of its content](https://drafts.csswg.org/css-sizing-3/#max-content).
+3. `content: ""` — we need a pseudo-element that will go after our text content. That could be an actual element, the main requirement is for it to go _after_ the text. Otherwise, when the content wraps, it will take up the space at the beginning.
+5. `flex-basis: 0.1px` — finally, we make this pseudo-element to have some tiny positive `flex-basis` value. I found values less than `0.1px` to not work well with certain values of browser zoom, but `0.1px` seems to work consistently across all browsers.
+
+
+### Why Does It Work?
+
+So, what happens here? Let’s peek at some definitions. First, for [`max-inline-size: max-content`](https://drafts.csswg.org/css-sizing-3/#max-content-inline-size):
+
+> The box’s “ideal” size in the inline axis. Usually the narrowest inline size it could take while fitting around its contents if none of the soft wrap opportunities within the box were taken.
+
+In other words, if our text doesn’t wrap, and there is nothing else near it, our container will be sized to fit the text inside. Let’s look at two headers: one without the `forced-wrapping` class, and another with it:
+
+<LiveExample caption="The inline size of the two pink outlines is the same.">
+```html
+<div class="example">
+	<h3 style="max-inline-size: max-content">Some Title</h3>
+	<h3 class="forced-wrapping">Some Title</h3>
+</div>
+```
+</LiveExample>
+
+You might’ve noticed from the initial example that the second title had an unusual width. In this second example, you can see why: that _is_ the inner text’s `max-content` value!
+
+If we now look at the [“Flex Layout Algorithm”](https://drafts.csswg.org/css-flexbox/#layout-algorithm), specifically at the second step, [“Line Length Determination”](https://drafts.csswg.org/css-flexbox/#line-sizing), we will find this:
+
+> if that dimension of the flex container is being sized under a min or max-content constraint, the available space in that dimension is that constraint
+
+This means that the space available for all our flex items is calculated based on the `max-content` (in our case) _before_ any of the flex properties will be applied. So, when we calculate that `max-content`, we only look at the original, non-flex dimensions of our elements, and our `: before` is empty; thus it contributes `0px` to the “max-content constraint”, with the actual text being the only real contributor.
+
+The `flex-basis` on the pseudo-element enters the algorithm later. What happens next is that, with a positive value, it is subtracted from the available space from our text’s anonymous box. From the [`flex-basis`](https://drafts.csswg.org/css-flexbox/#propdef-flex-basis) description:
+
+> This component sets the flex-basis longhand, which specifies the flex basis: the initial main size of the flex item, before free space is distributed according to the flex factors.
+
+And, because our container was sized with our text’s size, subtracting _anything_ results in the text wrapping! Of course, unless it was wrapping already — in which case the tiny size of the `: before` won’t have any visible impact.
+
+
+### Things to Note
+
+As mentioned in the original thread, this looks the best with `text-wrap: balance`. It is not present in the code I showed, as it is not strictly required for the technique to work, but it is applied from my general blog’s CSS.
+
+If some of the text inside the title would need to have an additional element somewhere in the text, we’d need to wrap the whole text into a span, otherwise, due to the flex context, things won’t look as expected:
+
+<LiveExample caption="Without an extra wrapper, each part of text around the `<em>` becomes its anonymous box.">
+```html
+<div class="example">
+	<h3 class="forced-wrapping">
+		Some <em>Nice</em> Title
+	</h3>
+	<h3 class="forced-wrapping">
+		<span>Some <em>Nice</em> Title</span>
+	</h3>
+</div>
+```
+</LiveExample>
+
+So if you want to use this with unknown content, it might be better to have this extra wrapper present. But maybe one day we’ll have [the `:contents` pseudo-element](https://github.com/w3c/csswg-drafts/issues/2406) which we could use to add an explicit wrapper around everything.
+
+Sometimes, a title could look better when it stays on one line, in which case a non-breaking space could help:
+
+<LiveExample caption="Without an `&amp;nbsp;`, some titles could look worse when wrapping.">
+```html
+<div class="example">
+	<h3 class="forced-wrapping">
+ 		A Title
+	</h3>
+	<h3 class="forced-wrapping">
+		A&nbsp;Title
+	</h3>
+</div>
+```
+</LiveExample>
+
+
+## Conclusion
+
+There is a chance I explained something incorrectly. Still, the general idea should be clear: when working with a `flex-basis`, it does not have any impact on the intrinsic size of the flex container, so we can first size things based on the regular dimensions, and then adjust them.
+
+When I first encountered this, I treated it as a bug, until I noticed that this behavior is consistent across all browsers, and seems properly specified.
+
+It was fun finding an interesting use case for this behavior and applying it there. There are still areas of the flex algorithm that I do not understand completely, and I will need to return to it and explore it more.
+
+And if you find other curious use cases for this `flex-basis` behavior in tandem with intrinsic sizing — please, let me know!
