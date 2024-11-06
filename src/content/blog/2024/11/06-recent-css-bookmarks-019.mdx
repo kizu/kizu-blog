@@ -1,0 +1,50 @@
+---
+title: 'Recent CSS Bookmarks 19: Container Queries'
+description: ''
+tags: ['CSS', 'Container Queries', 'bookmarks']
+pubDate: '2024-11-06'
+mastodonPostId: ''
+
+current: {
+	drink: 'Hot Cocoa',
+    music: 'Phoebe Bridgers — I Know the End'
+}
+---
+
+I originally wanted to write about something else today but, for some reason, did not have any motivation for it.
+
+But hey, let me then do the best thing I could do otherwise: share some other people’s articles. It is always nice to think that there are others, who are interested in the same thing you are.
+
+In this post, I gathered 15 bookmarks about container queries (and some other queries as well). This time, the order is from the more recent to the older ones. I’m still playing around with how I want to do these bookmarks.
+
+- [“A Friendly Introduction to Container Queries”](https://www.joshwcomeau.com/css/container-queries-introduction/) by [Josh W. Comeau](https://www.joshwcomeau.com/) — a lengthy article with many interactive examples with an overview of container queries: why we need them and how to apply them.
+
+- [“Feature detect Style Queries Support in CSS”](https://www.bram.us/2024/10/06/feature-detect-style-queries-support-in-css/) by [Bramus](https://www.bram.us/) — a post about how we can use space toggles for the style query feature detection.
+
+- [“Resolving Issues from Unexpected Changes to `container-type: inline-size` in Chrome 129”](https://michaelcharl.es/aubrey/en/code/resolving-issues-from-unexpecged-css-changes-in-chrome-129) by [Michael Charles Aubrey](https://michaelcharl.es/aubrey) — a post about a recent change to layout containment (see [“Weaker form of layout containment for container queries”](https://github.com/w3c/csswg-drafts/issues/10544) CSSWG issue by [Ian Kilpatrick](https://github.com/bfgeek)), which is already shipped in Chrome, and is also present in the latest Firefox Nightly and Safari Technology Preview.
+
+- [“Is the sticky thing stuck? Is the snappy item snapped? A look at state queries in CSS”](https://utilitybend.com/blog/is-the-sticky-thing-stuck-is-the-snappy-item-snapped-a-look-at-state-queries-in-css) by [Brecht De Ruyte](https://utilitybend.com/) — an article with an overview of two experimental scroll-state queries which are currently available for testing in Chrome Canary. I, personally, still think that [scroll-driven animations produce a much better result](https://kizu.dev/scroll-driven-animations/#stuck-states-for-the-sticky-headers) for at least the “stuck” use case, but I can also agree that they’re much harder to work with, and for more simple use cases state queries will be much easier to apply.
+
+- [“Logical Properties in Size Queries”](https://css-irl.info/logical-properties-in-size-queries/) by [Michelle Barker](https://css-irl.info/) — a post about one difference between container queries from media queries when using logical properties in them.
+
+- [“Building a breakout element with container units”](https://piccalil.li/blog/building-a-breakout-element-with-container-units/) by [Andy Bell](https://andy-bell.co.uk/) — a short case study about how container query length units can be useful for implementing breakout layouts. I used a similar approach a few times and can attest that this is a good use for them.
+
+- [“Querying the Color Scheme”](https://blog.kizu.dev/querying-the-color-scheme/) by [me](https://kizu.dev/) — a post about how we could hack around the `light-dark ()` function, registered custom properties and style queries to implement a way to detect the `color-scheme` on children of any element.
+
+- [“‘Smart’ Layouts With Container Queries “](https://css-tricks.com/smart-layouts-with-container-queries/) by [Kevin Powell](https://www.kevinpowell.co/) — an article that shows just how much better container queries are compared to media queries, including showing some of their uncommon but useful aspects.
+
+- [“What if you used Container Units for… everything?”](https://frontendmasters.com/blog/what-if-you-used-container-units-for-everything/) by [Chris Coyier](https://chriscoyier.net/) — a post about an experiment with container query length units, and some things we can learn if we try to apply them to _everything_.
+
+- [“How to use container queries now”](https://web.dev/blog/how-to-use-container-queries-now) by [Philip Walton](https://philipwalton.com/) — an article with an extensive look over the different steps we can take if we need to support older browsers when using container queries, including working around their absence with a [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
+
+- [“Opting into CSS container queries for an existing design system”](https://hey.georgie.nu/container-queries-existing-design-system/) by [Georgie Cooke](https://hey.georgie.nu/) — a post that takes a banner example to demonstrate how container queries can be used in practice today, outlining one pitfall that we can fall in when applying container queries in a design system context.
+
+- [“Field Testing CSS Containment for Web Performance Optimization”](https://www.speedkit.com/blog/field-testing-css-containment-for-web-performance-optimization) by [Brian Louis Ramirez](https://screenspan.net/) — a post about using containment (without queries this time, but with `content-visibility`) as a way to improve the rendering performance of web pages, with a few field tests and their results.
+
+- [“What Are CSS Container Style Queries Good For?”](https://www.smashingmagazine.com/2024/06/what-are-css-container-style-queries-good-for/) by [Juan Diego Rodriguez](https://www.monknow.dev/en/) — an article with a basic overview of container queries and style container queries, with a few examples and explanations of how they work.
+
+- [“Responsive posters in CSS”](https://csscade.com/responsive-posters-in-css/) by [Robin Rendle](https://robinrendle.com/) — a post about how we could use `aspect-ratio` and container query length units to create fully resizable “posters”.
+
+- [“We’ve Got Container Queries Now, But Are We Actually Using Them?”](https://frontendmasters.com/blog/weve-got-container-queries-now-but-are-we-actually-using-them/) by [Chris Coyier](https://chriscoyier.net/) — an article looking at the current usage of container queries, arguing that we could want to start using them more, and presenting several good examples.
+
+That’s it for today. Be safe.
