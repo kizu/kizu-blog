@@ -217,13 +217,17 @@ html:has(#theme-dark:checked) {
 
 	--aside-limit: max(0px, var(--MAX-PAGE-WIDTH) + var(--ASIDE-WIDTH) - 100cqw);
 	--captured-length: calc(var(--aside-limit));
-	--captured-number: min(1, round(up, tan(atan2(var(--captured-length), 1px))));
+	--captured-number: min(1,
+		round(up, tan(atan2(var(--captured-length), 1px)), 1)
+	);
 	--has-no-aside: var(--captured-number);
 	--has-aside: calc(1 - var(--has-no-aside));
 
 	--toc-limit: max(0px, var(--MAX-PAGE-WIDTH) + (var(--ASIDE-WIDTH) * 1.75) - 100cqw);
 	--captured-length2: calc(var(--toc-limit));
-	--captured-number2: min(1, round(up, tan(atan2(var(--captured-length2), 1px))));
+	--captured-number2: min(1,
+		round(up, tan(atan2(var(--captured-length2), 1px)), 1)
+	);
 	--has-no-toc: var(--captured-number2);
 	--has-toc: calc(1 - var(--has-no-toc));
 
@@ -854,7 +858,7 @@ pre {
 	}
 }
 
-@supports not (opacity: round(5, 2)) {
+@supports not (opacity: round(5, 2, 1)) {
 	.require-round {
 		--require-timeline-scope: 'round()';
 	}
@@ -961,15 +965,6 @@ aside {
 		--aside-color: var(--RED);
 	}
 
-	& > details > ul {
-		margin-top: 0;
-
-		& li {
-			line-height: 1.25;
-			text-wrap: balance;
-		}
-	}
-
 	& > details > summary {
 		margin-inline: calc(-1 * var(--aside-padding)) calc(-0.5 * var(--aside-padding));
 		padding-block: 0.5lh;
@@ -980,6 +975,16 @@ aside {
 		}
 	}
 }
+
+scroll-markers > ul {
+	margin-top: 0;
+
+	& li {
+		line-height: 1.25;
+		text-wrap: balance;
+	}
+}
+
 
 /* We need to have a wrapper, so the sticky positionined aside will be contained. Do we need some built-in way to contain a sticky element to its area when inside a grid? */
 .aside-wrapper {

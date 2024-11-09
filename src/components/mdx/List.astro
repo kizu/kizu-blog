@@ -1,4 +1,5 @@
 ---
+import ScrollMarkers from '@components/ScrollMarkers.astro';
 import type { HTMLAttributes } from 'astro/types';
 
 interface Props extends HTMLAttributes<'ul'> {}
@@ -20,10 +21,12 @@ if (isToC) {
 
 {isToC
 	? (
-		<aside>
+		<aside class="scroll-markers-toc">
 			<details open>
 				<summary><u>Table of Contents</u></summary>
-				<ul {...props} set:html={html} />
+				<ScrollMarkers>
+					<ul {...props} set:html={html} />
+				</ScrollMarkers>
 			</details>
 		</aside>
 	)

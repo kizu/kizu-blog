@@ -9,7 +9,7 @@
 	the native scroll markers, see https://github.com/w3c/csswg-drafts/issues/10720.
 */
 
-.root-container {
+.scroll-markers-root {
 	/* Applying the scope, via a custom property, which will
 	   be reused later _twice_. */
    --header-scopes:
@@ -20,7 +20,14 @@
 	timeline-scope: var(--header-scopes);
 }
 
-article {
+@keyframes --unstuck {
+	from {
+		position: static;
+		top: 0;
+	}
+}
+
+.scroll-markers-content {
 	& > * {
 		/* These could use the sibling-index() in the future,
 		   but only if we could create idents from it and use the selector
@@ -29,6 +36,21 @@ article {
 			/* 50% is the inset — an easy way to specify the point where
 			   the switch between headers will be. */
 			view-timeline: var(--_name) 50%;
+
+			/* When SDA is not supported, we use intersection observer to
+			   ponyfill it, and for this we need the elements be sticky, but
+			   not in the view. */
+			@supports not (timeline-scope: --foo) {
+				position: sticky;
+				top: -200px;
+
+				/* However, when using ToC, we need to “unstuck” the target
+				   element, as otherwise the browser might scroll to an
+				   incorrect place. */
+				&:target {
+					animation: --unstuck 0.01s 0s both;
+				}
+			}
 		}
 		/* Using nth-child with the “n of s” allows to not care
 		   which header it is, making all headers essentially equal. */
@@ -52,44 +74,55 @@ article {
 		&:nth-child(18 of :is(h2, h3, h4, h5, h6)) { --_name: --h-18 }
 		&:nth-child(19 of :is(h2, h3, h4, h5, h6)) { --_name: --h-19 }
 	}
+}
 
-	& > aside {
-		/* Ok to be mandatory, as the actual snapping property will
-		   be applied conditionally. */
-		scroll-snap-type: y mandatory;
-	}
+scroll-markers {
+	display: block;
 
-	& > aside > details > ul {
+	/* Only apply the animations if we support the SDA scope */
+	@supports (timeline-scope: --foo) {
 		/* We can reuse the same list of names both for the timeline,
-		   and the list of applied animations, reusing the ident names. */
+			and the list of applied animations, reusing the ident names. */
 		animation: var(--header-scopes);
 		animation-timeline: var(--header-scopes);
 		animation-fill-mode: both;
-
-		/* We assign the `--i` through List.astro, as we need to have a flat
-		   list of items, and we can't do this via CSS (at all?). */
-		& li {
-			/* abs() workaround */
-			--abs: max(
-				var(--i) - var(--current-header),
-				var(--current-header) - var(--i)
-			);
-			--is-selected: min(1, var(--abs));
-			/* We can toggle the animation via using different values of the
-			   `--is-selected` variable, but only if it is registered. */
-			animation: --selected 0s calc(1s * var(--is-selected)) linear both;
-			animation-play-state: paused;
-
-			/* Only apply the snapping if we're not interacting with the
-			   scrolling box. */
-			&:not(aside:is(:hover, :focus-within) *) {
-				/* The `--snap` will come from the keyframes, allowing us to
-				   apply it conditionally without thinking about specificity. */
-				scroll-snap-align: var(--snap);
-				--decoration-thickness-override: var(--is-selected);
-			}
-		}
 	}
+}
+
+.scroll-markers-toc {
+	/* Ok to be mandatory, as the actual snapping property will
+		be applied conditionally. */
+	scroll-snap-type: y mandatory;
+}
+
+/* We assign the `--i` through List.astro, as we need to have a flat
+	list of items, and we can't do this via CSS (at all?). */
+scroll-markers li {
+	/* abs() workaround */
+	--abs: max(
+		var(--i) - var(--current-header),
+		var(--current-header) - var(--i)
+	);
+	--is-selected: min(1, var(--abs));
+	/* We can toggle the animation via using different values of the
+		`--is-selected` variable, but only if it is registered. */
+	animation: --selected 0s calc(1s * var(--is-selected)) linear both;
+	animation-play-state: paused;
+
+	/* Only apply the snapping if we're not interacting with the
+		scrolling box. */
+	&:not(aside:is(:hover, :focus-within) *) {
+		--decoration-thickness-override: var(--is-selected);
+		/* The `--snap` will come from the keyframes, allowing us to
+			apply it conditionally without thinking about specificity. */
+		scroll-snap-align: var(--snap);
+	}
+}
+
+@property --snap {
+	syntax: "none|center";
+	initial-value: none;
+	inherits: true;
 }
 
 @keyframes --selected { to {

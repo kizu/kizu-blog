@@ -1,0 +1,54 @@
+---
+let html = await Astro.slots.render('default');
+
+const hashCount = [...html.matchAll(/<li[^>]+><a href="#/g)].length;
+const nonHashCount = [...html.matchAll(/<a href="[^#]/g)].length;
+const isToC = hashCount >= 2 && !nonHashCount;
+
+if (isToC) {
+	let i = 1;
+	html = html.replaceAll('<li', () => `<li style="--i:${i++}"`)
+}
+---
+
+<script>
+	// This fixes the absent HTMLElement
+	let Element = globalThis.HTMLElement
+
+	class ScrollMarkers extends HTMLElement {
+		connectedCallback() {
+			const content = this.closest('.scroll-markers-content') || document.querySelector('.scroll-markers-content');
+			if (!content) {
+				return;
+			}
+			// Apply intersection observers to headers
+			// Do I need to have sticky position for an invisible content inside of them in order to replicate the always triggered mechanic of the SDA?
+			// Once I know the current header index, I apply it to `this`.
+			const headerMap: Set<Element> = new Set();
+			const headers = [...content.querySelectorAll(':scope > :is(h2, h3, h4, h5, h6)')];
+			const observer = new IntersectionObserver((entries) => {
+				for (const entry of entries) {
+					if (entry.isIntersecting) {
+						headerMap.add(entry.target);
+					} else {
+						headerMap.delete(entry.target);
+					}
+				}
+				const maxIndex = [...headerMap.values()].map(header => headers.indexOf(header)).toSorted((a, b) => b - a)[0] || 0;
+				this.style.setProperty('--current-header', String(maxIndex + 1));
+			}, {
+				// 200px is the same as in scroll-markers.css and is an abstract value.
+				// -275px should ideally be -50vh.
+				rootMargin: '200px 0px -275px 0px'
+			});
+			for (const header of headers) {
+				observer.observe(header);
+			}
+		}
+	}
+	if (!CSS.supports('timeline-scope', '--foo')) {
+		customElements.define('scroll-markers', ScrollMarkers);
+	}
+</script>
+
+<scroll-markers set:html={html}></scroll-markers>

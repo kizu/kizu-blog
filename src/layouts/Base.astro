@@ -31,7 +31,7 @@ const isBlogPost = tags !== undefined;
 	</head>
 
 	<body class={bodyClass}>
-		<div class="root-container">
+		<div class="root-container scroll-markers-root">
 			<div class="root-grid">
 				{isBlogPost ? <MastodonPostInfoTemplate /> : null}
 				<Header />
