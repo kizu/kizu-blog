@@ -23,6 +23,10 @@ footer a[href="#debug"] {
 			display: contents;
 			font-size: 0;
 		}
+		& details::details-content {
+			content-visibility: visible;
+			display: contents;
+		}
 		&:not(:has(a[href]:not([href^='#']))) {
 			display: none !important;
 		}

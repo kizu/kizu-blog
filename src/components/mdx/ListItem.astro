@@ -14,7 +14,7 @@ const { class: className, ...props } = Astro.props;
 	{...props}
 	class={classNames(
 		className,
-		{ ['starts-with-tag']: html.trim()[0] === '<'},
+		{ ['starts-with-tag']: html?.trim()[0] === '<'},
 	)}
 	set:html={html}
 />

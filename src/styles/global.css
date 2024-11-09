@@ -902,64 +902,8 @@ aside {
 	border-radius: var(--BORDER-RADIUS);
 	box-shadow: inset 0 0 0 2px var(--aside-color), var(--aside-shadow, 0 0);
 
-	&:has(> details) {
-		z-index: calc(-2 * var(--has-aside));
-		opacity: calc(0.7 + 0.3 * var(--has-no-aside));
-		/* Make the left column if possible -> fallback to the aside column? */
-		grid-column: var(--toc-column);
-    	grid-row: 3 / span 6; /* TODO: make it not break the other aside? */
-		max-inline-size: max-content;
-		place-self: start;
-		position: sticky;
-		inset-block-start: calc(var(--MIN-CONTENT-PADDING) - 9999px * var(--has-no-aside));
-		--toc-margin: calc(var(--content-padding) + var(--MIN-CONTENT-PADDING));
-		margin-inline-start: calc(
-			var(--MIN-CONTENT-PADDING) * var(--has-toc)
-			+
-			var(--toc-margin) * var(--has-aside) * var(--has-no-toc)
-		);
-		margin-inline-end: calc(
-			var(--MIN-CONTENT-PADDING) * var(--has-aside) * var(--has-no-toc)
-			+
-			var(--toc-margin) * var(--has-toc)
-		);
-
-		--aside-color: var(--CONTENT-BG);
-		--aside-color-alpha: 0%;
-		--aside-backdrop: var(--CONTENT-BG);
-		box-shadow: 0 0 1rem -0.6rem var(--CONTENT-SHADOW);
-
-		overflow: auto;
-		max-height: calc(
-			(100vh - var(--MIN-CONTENT-PADDING)) * var(--has-aside)
-			+
-			9999px * var(--has-no-aside)
-		);
-
-		&::before {
-			content: "";
-			position: absolute;
-			inset-block: 0;
-		}
-
-		&:hover,
-		&:has(:focus-visible) {
-			z-index: 1;
-			opacity: 1;
-		}
-	}
-
-	&:has(> details[open]) {
-		--toc-margin: var(--DOUBLE-PADDING);
-
-		transform: translateX(calc(
-			(var(--content-padding) - var(--MIN-CONTENT-PADDING)) * var(--has-aside) * var(--has-no-toc)
-		));
-
-		&:hover,
-		&:has(:focus-visible) {
-			transform: translateX(calc(var(--MIN-CONTENT-PADDING) * var(--has-aside) * var(--has-no-toc)));
-		}
+	& > :is(h2, h3, h4, h5, h6):first-child {
+		margin-block-start: 1em;
 	}
 
 	&.warning {
@@ -975,6 +919,67 @@ aside {
 			border-bottom: 1px solid var(--aside-color);
 		}
 	}
+}
+
+.table-of-contents {
+	z-index: calc(-2 * var(--has-aside));
+	opacity: calc(0.7 + 0.3 * var(--has-no-aside));
+	/* Make the left column if possible -> fallback to the aside column? */
+	grid-column: var(--toc-column);
+	grid-row: 3 / span 6; /* TODO: make it not break the other aside? */
+	max-inline-size: max-content;
+	place-self: start;
+	position: sticky;
+	inset-block-start: calc(var(--MIN-CONTENT-PADDING) - 9999px * var(--has-no-aside));
+	--toc-margin: calc(var(--content-padding) + var(--MIN-CONTENT-PADDING));
+	margin-inline-start: calc(
+		var(--MIN-CONTENT-PADDING) * var(--has-toc)
+		+
+		var(--toc-margin) * var(--has-aside) * var(--has-no-toc)
+	);
+	margin-inline-end: calc(
+		var(--MIN-CONTENT-PADDING) * var(--has-aside) * var(--has-no-toc)
+		+
+		var(--toc-margin) * var(--has-toc)
+	);
+
+	--aside-color: var(--CONTENT-BG);
+	--aside-color-alpha: 0%;
+	--aside-backdrop: var(--CONTENT-BG);
+	box-shadow: 0 0 1rem -0.6rem var(--CONTENT-SHADOW);
+
+	overflow: auto;
+	max-height: calc(
+		(100vh - var(--MIN-CONTENT-PADDING)) * var(--has-aside)
+		+
+		9999px * var(--has-no-aside)
+	);
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset-block: 0;
+	}
+
+	&:hover,
+	&:has(:focus-visible) {
+		z-index: 1;
+		opacity: 1;
+	}
+
+	&:has(> details[open]) {
+		--toc-margin: var(--DOUBLE-PADDING);
+
+		transform: translateX(calc(
+			(var(--content-padding) - var(--MIN-CONTENT-PADDING)) * var(--has-aside) * var(--has-no-toc)
+		));
+
+		&:hover,
+		&:has(:focus-visible) {
+			transform: translateX(calc(var(--MIN-CONTENT-PADDING) * var(--has-aside) * var(--has-no-toc)));
+		}
+	}
+
 }
 
 scroll-markers > ul {
