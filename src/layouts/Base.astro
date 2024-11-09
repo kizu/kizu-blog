@@ -16,7 +16,12 @@ const {
 	title = SITE_TITLE,
 	description = SITE_DESCRIPTION,
 	mastodonPostId,
+	tags,
 } = Astro.props;
+
+// FIXME: there is probably a better way, but good enough for now.
+// Used here to not use the link detection for a page without mastodon post id provided.
+const isBlogPost = tags !== undefined;
 
 ---
 
@@ -28,7 +33,7 @@ const {
 	<body class={bodyClass}>
 		<div class="root-container">
 			<div class="root-grid">
-				{mastodonPostId ? <MastodonPostInfoTemplate /> : null}
+				{isBlogPost ? <MastodonPostInfoTemplate /> : null}
 				<Header />
 				<main>
 					<slot />
