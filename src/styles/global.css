@@ -1,4 +1,5 @@
 @import './features/scroll-markers.css';
+@import './features/debug.css';
 
 html {
 	scrollbar-gutter: stable;
@@ -183,20 +184,20 @@ html:has(#theme-dark:checked) {
 		0.5em
 	);
 
-	--font-size--body: 1.5rem;
-	--line-height--body-unitless: 1.6;
+	--FONT-SIZE--BODY: 1.5rem;
+	--LINE-HEIGHT--BODY-UNITLESS: 1.6;
 	--line-height--body: calc(
-		var(--font-size--body)
+		var(--FONT-SIZE--BODY)
 		*
-		var(--line-height--body-unitless)
+		var(--LINE-HEIGHT--BODY-UNITLESS)
 	);
 	--text-indent: clamp(
-		var(--font-size--body),
+		var(--FONT-SIZE--BODY),
 		var(--content-padding),
 		var(--line-height--body)
 	);
 
-	font-size: var(--font-size--body);
+	font-size: var(--FONT-SIZE--BODY);
 	/* https://modernfontstacks.com/ */
 	font-family:
 		'Iowan Old Style',
@@ -444,7 +445,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 p, li, dd {
-	line-height: var(--line-height--body-unitless);
+	line-height: var(--LINE-HEIGHT--BODY-UNITLESS);
 	text-wrap: pretty;
 	font-variant-numeric: oldstyle-nums;
 
@@ -508,7 +509,7 @@ u {
 	text-decoration-thickness: max(1px, 0.075em);
 	text-underline-offset: clamp(2px, 0.075em, 4px);
 	/* https://github.com/web-platform-tests/wpt/pull/42940 */
-	text-decoration-color: color-mix(in srgb, var(--mix), transparent calc(100% - 100% * var(--decoration-thickness-override)));
+	text-decoration-color: color-mix(in srgb, var(--mix), transparent calc(100% - 100% * var(--decoration-thickness-override, 1)));
 	--mix-alpha: 0.5;
 }
 

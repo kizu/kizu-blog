@@ -31,6 +31,12 @@ const isBlogPost = tags !== undefined;
 	</head>
 
 	<body class={bodyClass}>
+		<fieldset id="debug">
+			<!-- Add `#debug` to the page's URL to see me! -->
+			<legend>Debug panel</legend>
+			<p><label><input id="debug-links" type="checkbox" /> Show only links</label></p>
+			<a href="#no-debug">Close debug panel</a>
+		</fieldset>
 		<div class="root-container scroll-markers-root">
 			<div class="root-grid">
 				{isBlogPost ? <MastodonPostInfoTemplate /> : null}

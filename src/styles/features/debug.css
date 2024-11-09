@@ -1,0 +1,55 @@
+footer a[href="#debug"] {
+	float: right;
+}
+
+#debug {
+	&:not(:target, :has(:target)) {
+		display: none;
+	}
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	z-index: 9;
+	background: var(--CONTENT-BG);
+}
+
+#debug:has(> * > * > #debug-links:is(:checked, :target:focus-visible)) + .root-container {
+	& > * {
+		counter-reset: --link-counter 0;
+	}
+	article > *:not(h1, h2, h3, h4, h5, h6, dl) {
+		&, & *:not(aside, a[href]:not([href^='#']), a[href] *) {
+			visibility: hidden;
+			display: contents;
+			font-size: 0;
+		}
+		&:not(:has(a[href]:not([href^='#']))) {
+			display: none !important;
+		}
+		& a[href] {
+			visibility: visible;
+			display: list-item;
+			padding-right: 50%;
+			grid-template: "a" / 50%;
+			font-size: var(--FONT-SIZE--BODY);
+			line-height: 1.2;
+			grid-column: --content;
+			margin: 0 !important;
+			counter-increment: --link-counter 1;
+
+			&::marker {
+				content: counter(--link-counter) ". ";
+			}
+
+			&::before {
+				float: right;
+				width: 100%;
+				margin-right: -100%;
+				content: attr(href);
+				content: attr(href) / "";
+				font-size: var(--FONT-SIZE--SMALL);
+				word-break: break-word;
+			}
+		}
+	}
+}
