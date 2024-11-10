@@ -1,9 +1,9 @@
 ---
 title: 'Updated Scroll Markers in the Table of Contents'
-description: ''
+description: 'I’ve spent most of the day inside the delayed and cancelled trains (thanks, Deutsche Bahn). I did not have an opportunity to come up with a good post for today, but both yesterday (and a bit today) I hacked on my blog, as a part of the IndieWebCamp. I did the thing I wanted to do during this weekend: update my blog’s Table of Contents to be similar to what I have on my main site.'
 tags: ['CSS', 'Blog', 'IndieWebCamp', 'Update']
 pubDate: '2024-11-10'
-mastodonPostId: ''
+mastodonPostId: '113461136166848833'
 
 current: {
 	drink: 'Peppermint Tea',
@@ -17,36 +17,36 @@ import Video from '@components/Video.astro';
 
 ## Quick Update
 
-I've spent most of the day inside the delayed and cancelled trains (thanks, Deutsche Bahn). I did not have an opportunity to come up with a good post for today, but both yesterday (and a bit today) I hacked on this blog, as a part of the IndieWebCamp.
+I’ve spent most of the day inside the delayed and cancelled trains (thanks, Deutsche Bahn). I did not have an opportunity to come up with a good post for today, but both yesterday (and a bit today) I hacked on this blog, as a part of the IndieWebCamp.
 
-I did the thing I wanted to do during this weekend: update my blog's Table of Contents to be similar to what I have on my [main site](https://kizu.dev/). Actually, it was already working like that, but only in Chrome.
+I did the thing I wanted to do during this weekend: update my blog’s Table of Contents to be similar to what I have on my [main site](https://kizu.dev/). Actually, it was already working like that, but only in Chrome.
 
 ## What I Had
 
-What I am talking about: the small finger marker that appears in the Table of Contents, pointing to the current section:
+What I am talking about: the small finger marker that appears in the Table of Contents, pointing to the current section:
 
 import demoVideo from './_demo.mp4';
 import demoPoster from './demo.jpg';
 
-<Video src={demoVideo} poster={demoPoster} caption="The list marker is replaced with a pointing hand symbol for a ToC item when its section is on the screen." />
+<Video src={demoVideo} poster={demoPoster} caption="The list marker is replaced with a pointing hand symbol for a ToC item when its section is on the screen." />
 
-Before this update, it worked only in Chrome: I was using a heavily modified variation of [my scroll-driven animations experiment](https://kizu.dev/scroll-driven-animations/#table-ofcontents-with-highlighted-current-sections) for scroll markers.
+Before this update, it worked only in Chrome: I was using a heavily modified variation of [my scroll-driven animations experiment](https://kizu.dev/scroll-driven-animations/#table-ofcontents-with-highlighted-current-sections) for scroll markers.
 
 ## The Update
 
-Now — it is all the same, but also works in Firefox and Safari!
+Now — it is all the same, but also works in Firefox and Safari!
 
-All thanks to some JS, delivered via a custom element. This is something I briefly mentioned in [my CSS Day talk](https://www.youtube.com/watch?v=ZC_WS05t2lI): instead of trying to cover the whole technology, like scroll-driven animations, with a polyfill, we can only [ponyfill](https://github.com/sindresorhus/ponyfill) a single technique with a custom element and implement only the missing parts.
+All thanks to some JS, delivered via a custom element. This is something I briefly mentioned in [my CSS Day talk](https://www.youtube.com/watch?v=ZC_WS05t2lI): instead of trying to cover the whole technology, like scroll-driven animations, with a polyfill, we can only [ponyfill](https://github.com/sindresorhus/ponyfill) a single technique with a custom element and implement only the missing parts.
 
-This is what I did: the technique requires scroll-driven animations, particularly, `timeline-scope`, which Firefox Nightly does not yet support in its outdated experimental implementation of them.
+This is what I did: the technique requires scroll-driven animations, particularly, `timeline-scope`, which Firefox Nightly does not yet support in its outdated experimental implementation of them.
 
-I used an intersection observer and a window resize event to implement what is missing, while keeping most of the styles intact.
+I used an intersection observer and a window resize event to implement what is missing, while keeping most of the styles intact.
 
-I won't go into the details of the implementation today. Maybe the code behind it could be polished and published as a package? Maybe, one day. Maybe, not. Let me know.
+I won’t go into the details of the implementation today. Maybe the code behind it could be polished and published as a package? Maybe, one day. Maybe, not. Let me know.
 
 ## The Specs
 
-Interestingly, [Robert Flack](https://github.com/flackr) opened a [CSSWG issue](https://github.com/w3c/csswg-drafts/issues/10720) about scroll-markers as a part of the work they did alongside [Miriam Suzanne](https://www.miriamsuzanne.com/) and [Nicole Sullivan](https://www.stubbornella.org/) on the “carousels” — [“CSS Overflow - Broad Research”](https://css.oddbird.net/overflow/explainer/).
+Interestingly, [Robert Flack](https://github.com/flackr) opened a [CSSWG issue](https://github.com/w3c/csswg-drafts/issues/10720) about scroll-markers as a part of the work they did alongside [Miriam Suzanne](https://www.miriamsuzanne.com/) and [Nicole Sullivan](https://www.stubbornella.org/) on the “carousels” — [“CSS Overflow - Broad Research”](https://css.oddbird.net/overflow/explainer/).
 
-With it, things like that will become _trivial_, and I cannot wait for it to be specified and in the browsers.
+With it, things like that will become _trivial_, and I cannot wait for it to be specified and in the browsers.
 
