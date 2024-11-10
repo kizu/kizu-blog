@@ -11,12 +11,6 @@ const props = Astro.props;
 const hashCount = [...html.matchAll(/<li[^>]+><a href="#/g)].length;
 const nonHashCount = [...html.matchAll(/<a href="[^#]/g)].length;
 const isToC = hashCount >= 2 && !nonHashCount;
-
-if (isToC) {
-	let i = 1;
-	html = html.replaceAll('<li', () => `<li style="--i:${i++}"`)
-}
-
 ---
 
 {isToC

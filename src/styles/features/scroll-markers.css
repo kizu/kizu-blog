@@ -1,12 +1,21 @@
 /*
-	External dependency: List.astro, which applies an
+	External dependency: ScrollMarkers.astro, which applies an
 	style with `--i` to all the `<li>` inside the ToC.
+	It also adds a custom element that ponyfills the SDA technique
+	for browsers that do not support it.
+
+	Requires:
+	- `<scroll-markers>` custom element around the ToC.
+	- `.scroll-markers-toc` on the ToC or other scrollable container around it.
+	- `.scroll-markers-root` on the root (for the `timeline-scope`).
+	- `.scroll-markers-content` on the immediate parent of the headers.
 
 	Exposes: --decoration-thickness-override as 1 or 0,
-	  can be used to control the underline of the ToC.
+	can be used to control the underline of the ToC.
 
-	Could be potentially replaced in the future with the `:checked` of
-	the native scroll markers, see https://github.com/w3c/csswg-drafts/issues/10720.
+	Could be potentially replaced in the future with something like
+	the `:checked` of the native scroll markers,
+	see https://github.com/w3c/csswg-drafts/issues/10720.
 */
 
 .scroll-markers-root {
@@ -20,6 +29,7 @@
 	timeline-scope: var(--header-scopes);
 }
 
+/* Needed for the ponyfill. */
 @keyframes --unstuck {
 	from {
 		position: static;
