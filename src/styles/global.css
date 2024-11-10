@@ -437,6 +437,7 @@ iframe {
 
 video {
 	max-inline-size: 100%;
+	block-size: auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -689,6 +690,7 @@ figure {
 	padding: var(--padding);
 	margin: 0;
 	container-type: inline-size;
+	max-inline-size: calc(1px * var(--width) / 2 + 2 * var(--padding));
 
 	--content-padding: 0px;
 

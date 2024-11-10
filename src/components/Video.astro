@@ -5,24 +5,43 @@ import type { HTMLAttributes } from 'astro/types';
 interface Props extends Omit<HTMLAttributes<'video'>, 'poster'> {
   src: HTMLAttributes<'source'>['src'];
   poster?: ImageMetadata;
+  caption?: string;
 }
 
-const { src, poster: { src: poster, width, height } = {}, ...props } = Astro.props;
+const {
+	src,
+	poster: { src: poster, width, height } = {},
+	caption,
+	...props
+} = Astro.props;
 
 ---
 
-<video
-  controls
-  muted
-  playsinline
-  preload="none"
-  poster={poster}
-  width={width}
-  height={height}
-  {...props}
->
-  <source
-    src={src}
-    type="video/mp4"
-  />
-</video>
+{
+	((jsx) =>
+		caption ? (
+			<figure
+				style={`--width: ${width}`}
+			>
+				{jsx}
+				<figcaption>{caption}</figcaption>
+			</figure>
+		) : jsx
+	)(
+		<video
+		controls
+		muted
+		playsinline
+		preload="none"
+		poster={poster}
+		width={width}
+		height={height}
+		{...props}
+		>
+		<source
+			src={src}
+			type="video/mp4"
+		/>
+		</video>
+	)
+}
