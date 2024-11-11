@@ -1,0 +1,70 @@
+---
+title: 'Managing Bookmarks, part 1'
+description: 'I have so many things I want to do with my blog! I’m already thinking about having a good way to embed Pixelfed images, and now I’m also wondering what could be the best way to handle bookmarks. Currently, I’m just posting them as compilations, manually marking them up in Markdown lists with links, writing descriptions, and then categorizing them. But the way I do it now is too limited: it is too manual, and it is difficult to build on top of it.'
+tags: ['Process', 'Bookmarks', 'Astro']
+pubDate: '2024-11-11'
+mastodonPostId: ''
+
+current: {
+	drink: 'Lapsang Souchong tea',
+    music: 'Yvette Young — A Map a String a Light, Pt. 2'
+}
+---
+
+## Table of Contents
+
+## Introduction
+
+I have so many things I want to do with my blog! I’m already thinking about having [a good way to embed Pixelfed images](/embedding-pixelfed-part-1/), and now I’m also wondering what could be the best way to handle [bookmarks](/tags/bookmarks/).
+
+Currently, I’m just posting them as compilations, manually marking them up in Markdown lists with links, writing descriptions, and then categorizing them.
+
+I considered doing what some others do: posting bookmarks one by one, but I don’t think I like this approach. I enjoy reading articles in bunches, and usually on the same topic. It is interesting to make connections and look at how different people approach similar themes from different angles.
+
+But the way I do it now is too limited: it is too manual, and it is difficult to build on top of it.
+
+## What I Want
+
+Here is an approximate list of things that I want to do:
+
+- Make it easier to attribute people. Today, it’s a lot of manual work looking if I already posted something by some author, then copying their name & URL, and later their mastodon handle for mentioning there. I plan to save the common metadata, and then be able to easily access and compile it.
+
+- Sort things based on the time posted. Right now, I’m doing this manually, and do not really save this information anywhere, just using it to manually reorder bookmarks in the list. I wish to store the date, as it could be very useful in the future, as it will allow building a timeline of events for a specific CSS feature across multiple months.
+
+- Have better categories. Sometimes, I post bookmarks with too many different topics, not categorizing them at all. Often, I put some sections with a title around a list of them, but this allows me to have only one list. What I want to do is have the ability to add multiple tags per link, and then when I would like to publish a bookmarks post, make it easy to find the common themes.
+
+- Sometimes a post is a “reply” to something else or mentions other articles. For now, this is something I have to mention manually in my descriptions, but what if this could be another point of metadata added to every bookmark? It could allow the creation of something like a graph view of articles, showing how concepts evolve.
+
+- With tags, authors, and all the other metadata, I can see endless possibilities of providing different views over all the already posted bookmarks. I will need to fill out all that metadata, yes, but the result should be worth it.
+
+- If I detach saving the info on some bookmarks from publishing them, I could work on them more iteratively. I could easily separate published bookmarks from those not yet published and have an easy way to compile groups of them for my bookmarks posts.
+
+Well, that’s a lot!
+
+## What I’m Planning
+
+As I’m using Astro, I wondered how should I approach this. I think [content collections](https://docs.astro.build/en/guides/content-collections/) sound the best.
+
+I’ll need to come up with a good structure for everything.
+
+How do I store the common metadata? In separate `.json` files per metadata type, with the bookmarks aliasing things to mention them? Or should I do it the other way, and gather things from the bookmarks instead?
+
+How do I want to store a single bookmark? Should they be also in `.json`? One file per bookmark? Or maybe they could even be `.mdx`, allowing to add more elaborate descriptions, potentially with examples, if needed?
+
+Do I want to store the description of a bookmark alongside its metadata, or only in the compilation posts?
+
+Do I want to have some basic CMS that could simplify adding bookmarks significantly? Or just have some simple template and then just copy and paste stuff?
+
+Should the list of bookmarks exist inside my blog’s repo, or should I maybe even create a separate package for them?
+
+As you can see, I’m not a stranger to feature creep, haha.
+
+Perhaps, I could start small, and work iteratively on something that is good enough from the get-go, and later build on top of it.
+
+## What Do You Think?
+
+I’m planning to document how I iterate on this in my blog, with this being the first post in the series. As usual, I’m open to any feedback!
+
+Do you read the lists of bookmarks that I post? Do you like the way I do it now? Am I too ambitious with what I want to do?
+
+Do you post links in your blog? Is there something you are using to keep track of them? Would you change something in how you do it?
