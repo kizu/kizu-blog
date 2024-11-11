@@ -93,13 +93,13 @@ If we now look at the [“Flex Layout Algorithm”](https://drafts.csswg.org/
 
 > if that dimension of the flex container is being sized under a min or max-content constraint, the available space in that dimension is that constraint
 
-This means that the space available for all our flex items is calculated based on the `max-content` (in our case) _before_ any of the flex properties will be applied. So, when we calculate that `max-content`, we only look at the original, non-flex dimensions of our elements, and our `: before` is empty; thus it contributes `0px` to the “max-content constraint”, with the actual text being the only real contributor.
+This means that the space available for all our flex items is calculated based on the `max-content` (in our case) _before_ any of the flex properties will be applied. So, when we calculate that `max-content`, we only look at the original, non-flex dimensions of our elements, and our `::after` is empty; thus it contributes `0px` to the “max-content constraint”, with the actual text being the only real contributor.
 
 The `flex-basis` on the pseudo-element enters the algorithm later. What happens next is that, with a positive value, it is subtracted from the available space from our text’s anonymous box. From the [`flex-basis`](https://drafts.csswg.org/css-flexbox/#propdef-flex-basis) description:
 
 > This component sets the flex-basis longhand, which specifies the flex basis: the initial main size of the flex item, before free space is distributed according to the flex factors.
 
-And, because our container was sized with our text’s size, subtracting _anything_ results in the text wrapping! Of course, unless it was wrapping already — in which case the tiny size of the `: before` won’t have any visible impact.
+And, because our container was sized with our text’s size, subtracting _anything_ results in the text wrapping! Of course, unless it was wrapping already — in which case the tiny size of the `::after` won’t have any visible impact.
 
 
 ### Things to Note
