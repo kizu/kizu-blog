@@ -997,6 +997,7 @@ scroll-markers > ul {
 /* We need to have a wrapper, so the sticky positionined aside will be contained. Do we need some built-in way to contain a sticky element to its area when inside a grid? */
 .aside-wrapper {
 	grid-column: var(--aside-column);
+	grid-row-end: span var(--span, 1);
 
 	--aside-backdrop: var(--CONTENT-BG);
 	box-sizing: border-box;

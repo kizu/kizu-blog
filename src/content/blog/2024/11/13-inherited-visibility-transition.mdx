@@ -1,0 +1,104 @@
+---
+title: 'Observation: Inherited Visibility Transition'
+description: 'Do not use `transition: all` in CSS. Just don’t. I won’t go into all the details today about why it’s bad, but I will share one of the many issues it can cause. Let’s quickly focus on its interaction with the `visibility` property, specifically how transitions work with its inheritance.'
+tags: ['CSS', 'Observation']
+pubDate: '2024-11-13'
+mastodonPostId: ''
+
+current: {
+	drink: 'Peppermint Tea',
+	music: 'Mammal Hands — Quiet Fire'
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## Introduction
+
+Do not use `transition: all` in CSS. Just don’t (unless you are prototyping something, and will 100% remove it later). I won’t go into all the details today about why it’s bad (if I want to write about it well, I’ll need to do more research), but I will share one of the many issues it can cause.
+
+Let’s quickly focus on its interaction with the [`visibility`](https://drafts.csswg.org/css-display/#visibility) property, specifically how transitions work with its inheritance.
+
+
+## The Problem
+
+Look at this example, and focus or hover the button inside, then unhover or blur it.
+
+<LiveExample caption="After hovering or focusing the button, the “Some hidden text!” is shown immediately. When moving the focus or hover away, the “hidden” word in the middle, set in italics, stays visible for up to two seconds, while the remaining words disappear right away.">
+```css
+.example {
+	& > button:not(:hover, :focus-visible) + span {
+		visibility: hidden;
+	}
+	em {
+		transition: all 2s;
+	}
+}
+```
+```html
+<p class="example">
+	<button type="button">Hover or focus me!</button>
+	<span>Some <em>hidden</em> text!</span>
+</p>
+```
+</LiveExample>
+
+<div class="aside-wrapper">
+	<aside>
+It might be more obvious what is happening in this minimal example.
+
+In practice, these two rules would likely come from two different components.
+
+One wants to just hide the content, like a dropdown or a popover, and another takes the shortcut of applying an `all` transition for some state, completely not related to `visibility`.
+	</aside>
+</div>
+
+If you’re not familiar with how `visibility` property works, this could be confusing. Like, shouldn’t it be not visible when the parent is not? Well, I wrote an article about this two years ago: [“Obscure CSS: Restoring Visibility”](https://kizu.dev/restoring-visibility/).
+
+In short, unlike `display` or `opacity`, it is possible to restore the `visibility` on the descendent elements! And because `visibility` is an _inherited_ property, when the parent’s value changes, it inherits onto all the elements inside it.
+
+What happens with a descendent element that has `transition: all`? That inherited value will be animated!
+
+
+## Animating Visibility
+
+And due to the particular way a transition for `visibility` works, it will be visible for some time after we move the hover/focus away from the button in the example. Let me quote [the specs](https://www.w3.org/TR/web-animations/#animating-visibility):
+
+<div class="aside-wrapper" style="--span: 3">
+	<aside>
+Fun fact: at some point in the past, this was not the case.
+
+It was harder to animate things like `opacity` alongside `visibility`, as we had to manually define different values of `transition-delay` to it.
+
+Now — it works nicely.
+	</aside>
+</div>
+
+> For the `visibility` property, `visible` is interpolated as a discrete step where values of _p_ between 0 and 1 map to `visible` and other values of _p_ map to the closer endpoint; if neither value is `visible` then discrete animation is used.
+
+That means that while the transition is happening, the element is hidden only when the value is right at zero, and is visible at all other times.
+
+
+## What Should We Do?
+
+Not use `transition: all`. Use only the necessary list of properties you need to animate.
+
+If you need to have many of them, instead of repeating the easing, duration, and delay, omit the property and then add the `transition-property` longhand:
+
+```css
+em {
+	transition: 2s 0.3s linear;
+	transition-property: color, transform, opacity;
+}
+```
+
+
+## There is More (But Later)
+
+There are many other reasons why `transition: all` is bad, but a proper explanation would need more research and would result in a bigger post: thus this is an [“observation”](/tags/observation).
+
+As it goes, I did also stumble upon a potential browser bug that I’ll need to research, and then fill that is related to this observation.
+
+I’ll try to do both of these later at some point. I hope even this shorter post will be useful to you.

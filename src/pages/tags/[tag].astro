@@ -3,6 +3,7 @@ import Base from '@layouts/Base.astro';
 import { tagInURL } from '@lib/tagInURL';
 import { getAllTags } from '@lib/getAllTags';
 import ArticlesList from '@components/ArticlesList.astro';
+import type { MarkdownInstance } from 'node_modules/astro/dist/@types/astro';
 
 export async function getStaticPaths() {
 	const tagsMap = await getAllTags();
@@ -17,6 +18,8 @@ export async function getStaticPaths() {
 
 const { posts, name } = Astro.props;
 
+const TagDescription = (await Object.entries(await import.meta.glob('./_*.mdx', { eager: true })).find(([fileName]) => fileName === `./_${name.toLowerCase()}.mdx`)?.[1] as { Content: MarkdownInstance<{}>["Content"] })?.Content;
+
 const title = `${name}: ${posts.length}`;
 
 ---
@@ -24,7 +27,10 @@ const title = `${name}: ${posts.length}`;
 <Base title={title}>
 	<article>
 		<h1>{title}</h1>
-		<p>Below is a list of all posts in this category.</p>
+		{ TagDescription
+			? <TagDescription />
+			: <p>Below is a list of all posts in this category.</p>
+		}
 		<ArticlesList posts={posts} />
 		<hr />
 		<p>You can also look at a <a href="/tags">list of all tags</a>.</p>
