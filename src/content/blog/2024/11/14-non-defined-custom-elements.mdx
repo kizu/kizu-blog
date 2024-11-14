@@ -1,0 +1,172 @@
+---
+title: 'A good way to hide non-defined custom elements'
+description: 'This is a very short post about a thing that I wanted to share for quite a while. I am pretty certain that someone already wrote about this at some point, but hey. There is so much content everywhere that it might be useful to repeat stuff, making it more likely someone will stumble upon a solution for their problem.'
+tags: ['CSS', 'Custom Elements']
+pubDate: '2024-11-14'
+mastodonPostId: ''
+
+current: {
+	drink: 'Peppermint Tea',
+	music: 'BimBamBoom — Shinzo BakuBaku Ochokochoi'
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## Introduction
+
+This is a very short post about a thing that I wanted to share for quite a while. I am pretty certain that someone already wrote about this at some point, but hey. There is so much content everywhere that it might be useful to repeat stuff, making it more likely someone will stumble upon a solution for their problem. And if you know other articles about this topic: please, let me know!
+
+<div class="aside-wrapper">
+	<aside>
+This is also the second post in a row where I wrote something about that I encountered in some way while working: I am trying to note things that might not be too obvious and worth sharing. Thanks to the need to post one post a day this November, this is easy to do, haha.
+	</aside>
+</div>
+
+## The Probelem
+
+Let me show the problem on an example (refresh the page if you want to see how the slow element is defined with a delay).
+
+<LiveExample caption="There are three custom elements: one is defined right away, another — in two seconds, and the third is never defined.">
+```css
+.example1 {
+	& fast-element,
+	& slow-element,
+	& undefined-element {
+		&:not(:defined) {
+			/* Bad; don’t do this. */
+			visibility: hidden;
+		}
+	}
+}
+```
+```html
+<div class="example1">
+	<p>
+		Fast:
+		<fast-element>Fallback</fast-element>
+	</p>
+	<p>
+		Slow:
+		<slow-element>Fallback</slow-element>
+	</p>
+	<p>
+		Undefined:
+		<undefined-element>Fallback</undefined-element>
+	</p>
+</div>
+<script>
+	class MyCustomElement extends HTMLElement {
+		connectedCallback() {
+			this.attachShadow({ mode: 'open' });
+			this.shadowRoot.textContent = 'Defined!';
+		}
+	}
+	customElements.define(
+		'fast-element',
+		MyCustomElement
+	);
+	setTimeout(() => {
+		customElements.define(
+			'slow-element',
+			class extends MyCustomElement {}
+		);
+	}, 2000)
+	// Nothing for the undefined one, duh.
+</script>
+```
+</LiveExample>
+
+All three have the same styles applied to them, and you can see how it works. Or, rather, does not.
+
+Without a fix, if an element is never defined, the fallback content will never be shown. This could happen for many different reasons: starting from any random JS error that prevents it from happening, and ending in a user having JS disabled in their browser. Or, in my case, just forgetting to define the element.
+
+And when an issue like this happens — the element ends up being not visible and not accessible.
+
+## Animated Solution
+
+One possible fix that I like: use an animation that would start from the element being hidden, and then, after some delay, it will reveal the fallback regardless (refresh the page to see the example in action):
+
+<LiveExample caption="HTML here is the same as in the previous example, but we have a 3s grace period after which the non-defined element’s fallback is shown anyway.">
+```css
+@keyframes --not-defined {
+	from { visibility: hidden }
+}
+.example2 {
+	& fast-element,
+	& slow-element,
+	& undefined-element {
+		&:not(:defined) {
+			animation: --not-defined 0s 3s both;
+		}
+	}
+}
+```
+```html
+<div class="example2">
+	<p>
+		Fast:
+		<fast-element>Fallback</fast-element>
+	</p>
+	<p>
+		Slow:
+		<slow-element>Fallback</slow-element>
+	</p>
+	<p>
+		Undefined:
+		<undefined-element>Fallback</undefined-element>
+	</p>
+</div>
+```
+</LiveExample>
+
+I saw done other approaches to that, like having something that detects if JS is enabled, but these kinds of approaches will not help with the JS error edge case.
+
+## Future Alternative `@starting-style`
+
+In the future, when @starting-style will be more widely available, we could use it instead: the following example will work only in [browsers that support it](https://caniuse.com/mdn-css_at-rules_starting-style). And when they do boot support it, the styles won’t apply at all, which is also ok, as I always see this technique of hiding contents until defined as an enhancement, everything will still work without it, it just won’t be as pretty.
+
+
+<LiveExample caption="Again, same HTML, and same behavior in the browsers that support `@starting-style`">
+```css
+.example3 {
+	& fast-element,
+	& slow-element,
+	& undefined-element {
+		&:not(:defined) {
+			transition: visibility 0s 3s;
+			@starting-style {
+				visibility: hidden;
+			}
+		}
+	}
+}
+```
+```html
+<div class="example3">
+	<p>
+		Fast:
+		<fast-element>Fallback</fast-element>
+	</p>
+	<p>
+		Slow:
+		<slow-element>Fallback</slow-element>
+	</p>
+	<p>
+		Undefined:
+		<undefined-element>Fallback</undefined-element>
+	</p>
+</div>
+```
+</LiveExample>
+
+
+## Final Words
+
+This case is a thing that I often people see not doing: not considering the failing states of something they implement.
+
+It is always a useful habit: to ask yourself “what is the worst case scenario?” when doing something as drastic as hiding content.
+
+I am in no way an expert in custom elements. If you know downsides of my approach, or a better way to shove the same: please, let new know!
