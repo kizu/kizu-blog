@@ -1,6 +1,6 @@
 ---
 title: 'A good way to hide non-defined custom elements'
-description: 'This is a very short post about a thing that I wanted to share for quite a while. I am pretty certain that someone already wrote about this at some point, but hey. There is so much content everywhere that it might be useful to repeat stuff, making it more likely someone will stumble upon a solution for their problem.'
+description: 'This is a very short post about a thing that I have wanted to share for quite a while. I am pretty certain that someone already wrote about this at some point, but hey. There is so much content everywhere that it might be useful to repeat stuff, making it more likely someone will stumble upon a solution to their problem.'
 tags: ['CSS', 'Custom Elements']
 pubDate: '2024-11-14'
 mastodonPostId: '113483786835419624'
@@ -17,7 +17,7 @@ import LiveExample from '@components/LiveExample.astro';
 
 ## Introduction
 
-This is a very short post about a thing that I wanted to share for quite a while. I am pretty certain that someone already wrote about this at some point, but hey. There is so much content everywhere that it might be useful to repeat stuff, making it more likely someone will stumble upon a solution for their problem. And if you know other articles about this topic: please, let me know!
+This is a very short post about a thing that I have wanted to share for quite a while. I am pretty certain that someone already wrote about this at some point, but hey. There is so much content everywhere that it might be useful to repeat stuff, making it more likely someone will stumble upon a solution to their problem. And if you know other articles about this topic: please, let me know!
 
 <div class="aside-wrapper">
 	<aside>
@@ -25,9 +25,9 @@ This is also the second post in a row where I wrote something about that I 
 	</aside>
 </div>
 
-## The Probelem
+## The Problem
 
-Let me show the problem on an example (refresh the page if you want to see how the slow element is defined with a delay).
+Let me show the problem in an example (refresh the page if you want to see how the slow element is defined with a delay).
 
 <LiveExample caption="There are three custom elements: one is defined right away, another — in two seconds, and the third is never defined.">
 ```css
@@ -79,7 +79,7 @@ Let me show the problem on an example (refresh the page if you want to see 
 ```
 </LiveExample>
 
-All three have the same styles applied to them, and you can see how it works. Or, rather, does not.
+All three have the same styles applied to them, and you can see how it works. Or, rather, it does not.
 
 Without a fix, if an element is never defined, the fallback content will never be shown. This could happen for many different reasons: starting from any random JS error that prevents it from happening, and ending in a user having JS disabled in their browser. Or, in my case, just forgetting to define the element.
 
@@ -122,7 +122,7 @@ One possible fix that I like: use an animation that would start from the eleme
 ```
 </LiveExample>
 
-I saw done other approaches to that, like having something that detects if JS is enabled, but these kinds of approaches will not help with the JS error edge case.
+I saw other approaches to that, like having something what detects if JS is enabled, but these kinds of approaches will not help with the JS error edge case.
 
 ## Future Alternative `@starting-style`
 
@@ -165,8 +165,8 @@ In the future, when @starting-style will be more widely available, we could u
 
 ## Final Words
 
-This case is a thing that I often people see not doing: not considering the failing states of something they implement.
+This case is a thing that I often see people not doing: not considering the failing states of something they implement.
 
-It is always a useful habit: to ask yourself “what is the worst case scenario?” when doing something as drastic as hiding content.
+It is always a useful habit: to ask yourself “What is the worst-case scenario?” when doing something as drastic as hiding content.
 
-I am in no way an expert in custom elements. If you know downsides of my approach, or a better way to shove the same: please, let new know!
+I am in no way an expert in custom elements. If you know any downsides of my approach or a better way to shove the same: please, let me know!
