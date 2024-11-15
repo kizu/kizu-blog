@@ -261,6 +261,14 @@ html:has(#theme-dark:checked) {
 	&:has(.aside-wrapper, aside > details) {
 		--min-aside-width: calc(var(--ASIDE-WIDTH) * var(--has-aside));
 	}
+
+	/* For browsers that do not support `round()` move the asides into content area. */
+	@supports not (width: round(1px, 1px)) {
+		--has-no-aside: 1;
+		--has-aside: 0;
+		--has-no-toc: 1;
+		--has-toc: 0;
+	}
 }
 
 @property --captured-length {
