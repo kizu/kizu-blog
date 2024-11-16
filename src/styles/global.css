@@ -476,13 +476,18 @@ article > :not(figure, pre, aside) {
 	);
 }
 
-:is(article, blockquote) > p:not(.starts-with-tag:has(> img:only-child)) + p:not(.starts-with-tag:has(> img:only-child)) {
-	margin-block-start: calc(-1 * var(--gap));
-	text-indent: var(--text-indent);
+:is(article, blockquote) > p:not(.starts-with-tag:has(> img:only-child)) {
+	&,
+	& + .aside-wrapper {
+		& + p:not(.starts-with-tag:has(> img:only-child)) {
+			margin-block-start: calc(-1 * var(--gap));
+			text-indent: var(--text-indent);
 
-	/* Text-indent is inheritable, so we need to reset it. */
-	& > * {
-		text-indent: 0;
+			/* Text-indent is inheritable, so we need to reset it. */
+			& > * {
+				text-indent: 0;
+			}
+		}
 	}
 }
 

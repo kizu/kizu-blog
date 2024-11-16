@@ -1,0 +1,83 @@
+---
+title: 'The Problem of Embeddable Interactions'
+description: 'When I created this blog, I implemented the same thing I did on my main site: a custom element that links to the Mastodon post where I shared the link to the post, and which also shows the number of replies, favorites, and boosts. I saw others implement this. Now, people are also adding the same for reactions on bluesky as well. I won’t do it.'
+tags: ['IndieWeb', 'Mastodon', 'Random', 'Personal']
+pubDate: '2024-11-16'
+mastodonPostId: ''
+
+current: {
+    drink: 'Peppermint Tea',
+    music: 'Novo Amor, Gia Margaret — No Fun'
+}
+---
+
+## Table of Contents
+
+## What I’m Talking About
+
+When I created this blog, I implemented the same thing I did on my main site: a custom element that links to the mastodon post where I shared the link to the post, and which also shows the number of replies, favorites, and boosts.
+
+<div class="aside-wrapper" style="--span: 3">
+	<aside>
+That said, I still question myself: do I even need these? I don’t like the tendency to strive for bigger numbers, and I often feel bad about some of my articles that I think deserve a better reception.
+
+All these numbers rarely reflect the effort that was put into some articles.
+	</aside>
+</div>
+
+It is very primitive (so there is no real point in sharing its code yet), but I have some plans to improve it.
+
+One thing I _do not_ plan: embedding the comments and userpics of the people who reacted to the posts.
+
+I did think about this for quite a while. I saw others implement this: pulling as much data as they can, showing all the comments people leave to their Mastodon posts, showing all the faces of people who “liked” the post. Now, people are also adding the same for reactions on bluesky as well.
+
+**I won’t do it.**
+
+
+## Why not?
+
+For me, this is an issue of expectations and consent.
+
+I see a difference between publishing something on a website, and an interaction that is happening in a social network.
+
+When I look at some post in Mastodon, I do not usually consider that a reply to it, or me boosting or favoriting it, will be broadcast to everyone. Personally, I do not care much, but I can see how someone more concerned with their privacy could not expect their userpic be shown under someone’s post. In most cases, this can be harmless. But what about the edge cases?
+
+It is easy to be ok with your name under someone’s post in Mastodon — where it is visible only if you’d explicitly go look who did interact with it.
+
+Compare this with your userpic or username clearly visible on the page with some content.
+
+Yes, the information about the interaction is public, but I can see the difference in the perception of privacy, and the potential impact.
+
+If your interaction is automatically displayed this way, often you won’t even know about it. Most Mastodon posts that are used to pull these interactions do not have anything stated in them about this.
+
+## Can We Improve This?
+
+### Comments
+
+When I was thinking about whether there is a good way to display comments this way, I decided that if I did it, I would use the boosting feature in Mastodon.
+
+Basically, by default, no comments are pulled into the post. If you boost it from your account — only then it could be included. By boosting it in Mastodon, you’re communicating that you’re sharing the comment further.
+
+This makes it also a good pre-moderation tool: comments are _not_ displayed by default under your post, and require your explicit action to be added there. “Favorites” could also be used this way, but it feels a bit too easy to misuse.
+
+Another thing that could be considered: respecting the “quiet public” (as Mastodon calls it now, previously “unlisted”) privacy setting.
+
+Even with boosting, I probably won’t ever display an unlisted post — after all, their author explicitly opts out of it being too public.
+
+
+### Favorites and Boosts
+
+With favorites and boosts, it is much harder to gauge when they can be safely displayed. The closest thing to use could be the [“discoverable”](https://docs.joinmastodon.org/entities/Account/#discoverable) flag from the account data, likely, alongside the [“noindex”](https://docs.joinmastodon.org/entities/Account/#noindex) one, and probably the [“locked”](https://docs.joinmastodon.org/entities/Account/#locked) one.
+
+If I were to implement something like that, I wouldn’t show the interaction if there is any indication that the author didn’t want their content to be shared more widely. Actually, this is likely something that could also be considered for displaying comments as well.
+
+With this in mind, the number of favorites and boosts could be displayed as “N likes, including from this person and that person”.
+
+
+## Final Words
+
+Even though I did propose some ways this feature could be implemented in a slightly more respectful way, I will likely not do it for my blog (and maybe even remove the interaction counters whatsoever).
+
+But if you’re already displaying others’ Mastodon and bluesky interaction on your blog — I recommend you to think about it, and see if you could consider what I wrote about above.
+
+Also, perhaps it is just me overthinking things, as usual, but hey. If you also ever had thoughts about this, or felt a bit uncomfortable when seeing these integrated interactions — I’ll be happy to hear your ideas about it!
