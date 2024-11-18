@@ -6,9 +6,13 @@ interface Props extends HTMLAttributes<'a'> {}
 
 const html = await Astro.slots.render('default');
 
-const { class: className, ...props } = Astro.props;
+const { class: className, title, ...props } = Astro.props;
 
-const extraClasses: string[] = [];
+let extraClasses: string[] = [];
+
+if (title && title[0] === '.') {
+	extraClasses = title.split(/\./).filter(e=>e);
+}
 
 // If the text content of the link starts and ends with the quotes,
 // or other symbols that look better without an underline,

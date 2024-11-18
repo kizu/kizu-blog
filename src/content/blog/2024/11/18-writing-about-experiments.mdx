@@ -1,0 +1,112 @@
+---
+title: 'Writing About Experiments'
+description: 'I often see complaints about people hyping up new web platform features while they’re not yet ready for wide use. I also was on the receiving end of similar complaints. When I publish my articles, I always have plenty of things in mind, not necessarily a set of rules, but rather guidelines and directions that I follow. In this post, I cover some of them.'
+tags: ['Random', 'CSS']
+pubDate: '2024-11-18'
+mastodonPostId: ''
+
+current: {
+    drink: 'Peppermint Tea',
+    music: 'Haley Heynderickx — Gemini'
+}
+---
+
+## Table of Contents
+
+## In Response To
+
+I often see complaints about people hyping up new web platform features while they’re not yet ready for wide use. Like, developers getting tired of hearing about all these shiny new things, and not being able to apply them to their production sites.
+
+One recent article that mentioned this was [“New CSS that can actually be used in 2024”](https://thomasorus.com/new-css-that-can-actually-be-used-in-2024.html ".u-in-reply-to") by [Thomas Loreille](https://thomasorus.com/) from this March. In it, he tries to look at various _wider_ supported features instead. Ironically, in some enterprise environments, even these features you couldn’t, actually, use.
+
+A few days ago, [Rachel Andrew](https://rachelandrew.co.uk/) wrote about this (and also mentioned Thomas’ article) in her post [“When is the right time to share our excitement about new web features?”](https://rachelandrew.co.uk/archives/2024/11/15/when-is-the-right-time-to-share-our-excitement-about-new-web-features/ ".u-in-reply-to"), where she looks at this issue from a browser DevRel perspective.
+
+As someone, who regularly writes about the emerging specs and their experimental implementations, I also was on the receiving end of similar complaints.
+
+## What I Do
+
+I am not a browser DevRel. However, I am now a [member of CSSWG](https://blog.kizu.dev/two-invitations/) (previously: an invited expert, now a member on behalf of the company I am working in — [Datadog](https://www.datadoghq.com/) — as it joined W3C), but I am trying to look at things in the same way I did before, and write about them in the same way.
+
+When I publish my articles, I always have plenty of things in mind, not necessarily a set of rules, but rather guidelines and directions that I follow.
+
+In this post, I cover some of them, and if you want to experiment as well, consider thinking about them too.
+
+### Browser Support
+
+This is the most obvious thing: when writing about something that is not widely supported, we must warn others which browsers support something, and if the feature is experimental.
+
+I am not only talking in terms of [Baseline](https://web-platform-dx.github.io/web-features/), but I am glad we are working on standardizing the way we can share this in articles.
+
+### Current Experimental Version
+
+When I write about some experimental feature, not only do I mention that it _is_ such, but I prefer to mention which exact browser version I am using.
+
+Both specs and experimental implementations change — it is not guaranteed that the code I share will work after I publish an article.
+
+We always should have a date somewhere on the page with a post we share, but having an exact browser version is very convenient too, especially if you’d want to later report a regression.
+
+### Adding Screen Recordings
+
+When sharing live examples of the new code, I almost always provide a screen recording of them, which is shown if the reader is looking at the page in a browser that does not support the required CSS feature. This fulfills multiple things:
+
+1. A user without a browser with the feature in question can still see how it works. This can be especially helpful on mobile devices, where you can’t easily switch the browser to the experimental one with some feature flag turned on.
+
+2. It records the way something works in case it changes. Even if the code example breaks due to the implementation change, it will still be possible to see how the example was intended to work. You can also consider it to be a kind of visual regression testing: if something breaks or changes, it will be possible to use the recording for comparison. And with the exact browser version, it can be used in browser bug reports.
+
+3. Finally, a minor bonus: for highly interactive examples, a video like this provides an alternative way of experiencing this interactivity. By watching the video, you’ll know what I wanted to show with the added interactivity, and it can be helpful if that interactivity is inaccessible otherwise, like with the `resize` CSS property on a mobile device (where you’d likely also won’t have enough space to test the responsiveness). I am even thinking of maybe adding this to articles that do not have browser limitations, but as this is extra work, I never find extra spoons for this.
+
+### Not Writing Tutorials
+
+I rarely intend the code I share in my articles to be easy to copy. Usually, I display only the necessary parts to explain what they do, and I do not always work on making it reusable.
+
+As Rachel writes:
+
+> You often don’t need to write huge guides, how tos, and tutorials for experimental things.
+
+I do not consider myself a good teacher, and I am not the best at organizing things. I adore people like [Stephanie Eckles](https://thinkdobecreate.com/) who can distill some technique into a nice reusable snippet, or [Josh W. Comeau](https://www.joshwcomeau.com/) who can explain things in plain language with great interactive examples.
+
+Me? I like to poke at the code with a stick, see what happens, and then share it alongside my thoughts about it.
+
+### Not Sharing as Tips
+
+This is something where I can often agree with the critics of the experimental features hype: we should not present new tech as “tips”. If something is a foundational CSS feature but does not work everywhere, you cannot, with good conscience, recommend it as a solution.
+
+I notice that many authors play the “algorithm” by sharing very obnoxiously experimental demos as “CSS Tips”, and I find it misleading and harmful. Don’t do this, please.
+
+### Thinking About the Future
+
+When I write about new features, I always look into the future. A day will come when we will be, finally, able to use all of this new goodness in production.
+
+By experimenting with all of that today and writing about it, I believe I am bringing this day a bit closer.
+
+Browsers implementors and spec editors need feedback from authors from many different angles:
+
+- Is there someone who needs this feature?
+- Are there issues with the way the feature works?
+- Is its API convenient?
+- How does it play with other features?
+- What are edge cases?
+- Could we change something small, and get a quick win while we’re in the context of working on this feature?
+- Is there something that it can unlock that was not possible before?
+
+If you read my articles about [anchor positioning](https://kizu.dev/tags/anchor_positioning/) or [scroll-driven animations](https://kizu.dev/tags/scroll_driven_animations/), you’d likely see how I try to cover most of these questions with what I write.
+
+I experiment, fill browser bugs, provide feedback in CSSWG issues, and share the potential techniques that will be possible with the new experimental features.
+
+When the future becomes the present, we will have it in better shape — and with all these techniques ready to be applied. After all, some techniques that use existing features can take years to discover, my [“Fit-to-Width Text: A New Technique”](https://kizu.dev/fit-to-width/) or [“Layered Toggles: Optional CSS Mixins”](https://kizu.dev/layered-toggles/) being good examples.
+
+## Final Words
+
+The last few years were very productive for CSS: both in terms of what goes into specs, and what browsers implement. Some authors look at all of this and think that it is too much. Some are frustrated that we cannot use all of this today.
+
+We are in an interesting spot: after these years of progress on CSS, much of it started to become wider and wider available.
+
+My hypothesis is that many people have a delayed response — and a habit — of being frustrated about the limited capabilities of CSS.
+
+I am only excited. With each day, browser support for container queries, `:has()`, `@layer`, `@property`, and countless other “newly available” CSS features improve.
+
+And as someone who tries to follow almost everything that authors write about CSS, as features become more available, we get more articles about them.
+
+When a feature lands in all browsers, people write about it. The longer a feature is available, the more people start using it in production and also write about it.
+
+It is a long process, and we can be frustrated that the bright future is not there yet. But it will be there. I believe in it, and in us, who are trying to bring it closer.
