@@ -1,0 +1,71 @@
+---
+title: 'Transitions of Inherited Properties'
+description: 'When I shared my “Observation: Inherited Visibility Transition” post, I mentioned that there was a bug I encountered that I wanted to research and maybe fill later. Well. I thought it would be a quick thing, making into a quick post. Apparently, not!'
+tags: ['CSSWG', 'CSS']
+pubDate: '2024-11-20'
+mastodonPostId: ''
+
+current: {
+	drink: 'Peppermint Tea',
+	music: 'Stage Kids — The Seven Pillars of Gulu'
+}
+---
+
+## Table of Contents
+
+## Introduction
+
+When I shared my [“Observation: Inherited Visibility Transition”](/inherited-visibility-transition/) post, I mentioned that there was a bug I encountered that I wanted to research and maybe fill later.
+
+Well. I thought it would be a quick thing, making into a quick post. Apparently, not!
+
+## The Problem
+
+In that post, I talked about `visibility` and inheritance. The bug that I wanted to report was related to how values are inherited: I noticed a difference between how Firefox does it, and how Chrome and Safari do it.
+
+When there are _multiple_ nested elements with a transition for an inherited property, Firefox applies the transition immediately for all of them, while other browsers stagger it.
+
+Looking if this is already reported, I found the following:
+
+- A Webkit bug report [“CSS inheritance delayed when transition duration on parent and child elements”](https://bugs.webkit.org/show_bug.cgi?id=46041) from 2010 by [Sidney San Martín](https://s4y.us/).
+- A Chromium bug report [“CSS transitions inherit incorrectly when specified both an element and its ancestor”](https://issues.chromium.org/issues/40337057) from 2013.
+- [“Undesired behaviour - transition of inherited value happening in sequence”](https://github.com/w3c/csswg-drafts/issues/5324) CSSWG issue from 2020 by [Meir Cohen](https://github.com/meirkoen). Meir also opened two bug reports alongside it:
+	- A Chromium bug report [“CSS Transition of inherited value sequenced across children elements”](https://issues.chromium.org/issues/40709392).
+	- A WebKit bug report [“CSS Transition of inherited value sequenced across children elements”](https://bugs.webkit.org/show_bug.cgi?id=214352).
+- A Chromium bug report [“CSS font size transition is slower if the element inherits it”](https://issues.chromium.org/issues/353738500) from 2024.
+
+Almost in every case, people seem to prefer the way Firefox handles it (applying immediately across all elements), rather than how Safari and Chrome do it (restarting the transition of the inherited property on every frame).
+
+## Not a Bug?
+
+The bigger problem: this might not be a bug, even though this might be a significant interop issue. It is obvious that multiple people have stumbled upon this over the last 14 years. If I would not look up for existing bug reports, I would be another person reporting the same issue.
+
+But is it a bug? This is one of those cases, where [CSS specs](https://drafts.csswg.org/css-transitions/#starting) explicitly say that the browsers can do whatever they want:
+
+> This specification does not define when computed values are updated, beyond saying that implementations must not use, present, or display something resulting from the CSS cascading, value computation, and inheritance process without updating the computed value (which means merely that implementations cannot avoid meeting requirements of this specification by claiming not to have updated the computed value as part of handling a style change).
+>
+> […]
+>
+> Since this specification does not define when a style change event occurs, and thus what changes to computed values are considered simultaneous, authors should be aware that changing any of the transition properties a small amount of time after making a change that might transition can result in behavior that varies between implementations, since the changes might be considered simultaneous in some implementations but not others.
+
+So, according to specs… this is not a bug?
+
+## Still a Problem
+
+Looking into the history of the transition specs — this last part was there already in 2009. Here it is from [CSS3 specs](https://www.w3.org/TR/2009/WD-css3-transitions-20091201/#starting):
+
+> When the value of an animatable property changes, implementations must decide what transitions to start based on the values of the `transition-property`, `transition-duration`, `transition-timing-function`, and `transition-delay` properties at the time of the change. Since this specification does not define what property changes are considered simultaneous, authors should be aware that changing any of the transition properties a small amount of time after making a change that might transition can result in behavior that varies between implementations, since the changes might be considered simultaneous in some implementations but not others.
+
+This was even before CSS animations were a thing! Not mentioning what we have today, and what is planned (view transitions, scroll-driven animations, and so on).
+
+Maybe it is time to revisit it?
+
+Given the interop inconsistency is there for so many years, on one hand, it might be tricky to change, on the other — different browsers already treat it differently, and the world did not explode.
+
+If anything, I think I could even prefer having a separate property that would control how such a transition happens! I still think that the way Firefox behaves is the correct one, but I can also see how what Safari and Chrome do today can be potentially used in some techniques.
+
+## Let’s Reopen the Issue
+
+After thinking about this, I decided to reopen [the issue](https://github.com/w3c/csswg-drafts/issues/5324) that I mentioned in the beginning. I don’t like to have inconsistencies like that in the web platform, and the longer we keep them, the higher chance they will impact something in the future, making it much harder to implement new things consistently and in an interoperable manner.
+
+Please participate in this issue if you did also stumble upon this in the past!
