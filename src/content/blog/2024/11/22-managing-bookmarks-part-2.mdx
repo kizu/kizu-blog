@@ -3,7 +3,7 @@ title: 'Managing Bookmarks, part 2'
 description: 'I spent this evening thinking a bit more about what I want to do with my bookmarks. Nothing really done, but this time I experimented with Obsidian to see if it could be a good way to store them, add metadata to them, and so on. I tried a few plugins and, at first glance, managed to get rather close to a good starting point. No code to share yet, but I’ll mention the plugins that I tried.'
 tags: ['Process', 'bookmarks meta', 'Obsidian']
 pubDate: '2024-11-22'
-mastodonPostId: ''
+mastodonPostId: '113529209931180717'
 
 current: {
 	drink: 'Camomile & Lavender tea',
@@ -17,13 +17,13 @@ Nothing really done, but this time I experimented with [Obsidian](https://obsid
 
 I tried a few plugins and, at first glance, managed to get rather close to a good starting point. No code to share yet, but I’ll mention the plugins that I tried:
 
-- [Templater](https://github.com/SilentVoid13/Templater) plugin is nice, and allows (among other things) setting up a default template per folder, so creating a file in it could fill it with some default metadata. And, potentially, run some scripts. Some other plugins can build on top of this one.
+- [Templater](https://github.com/SilentVoid13/Templater) plugin by [SilentVoid13](https://github.com/SilentVoid13) is nice, and allows (among other things) setting up a default template per folder, so creating a file in it could fill it with some default metadata. And, potentially, run some scripts. Some other plugins can build on top of this one.
 
-- [JS Engine](https://github.com/mProjectsCode/obsidian-js-engine-plugin) plugin is fun, and allows running arbitrary JS right inside Obsidian. It is required for some other plugins.
+- [JS Engine](https://github.com/mProjectsCode/obsidian-js-engine-plugin) plugin by [Moritz Jung](https://www.moritzjung.dev/) is fun, and allows running arbitrary JS right inside Obsidian. It is required for some other plugins.
 
-- [Meta Bind](https://github.com/mProjectsCode/obsidian-meta-bind-plugin) is one such plugin that depends on JS Engine and allows adding various inputs, like buttons, right inside your documents.
+- [Meta Bind](https://github.com/mProjectsCode/obsidian-meta-bind-plugin) (also by Moritz) is one such plugin that depends on JS Engine and allows adding various inputs, like buttons, right inside your documents.
 
-- [MetaEdit](https://github.com/chhoumann/MetaEdit) plugin. I wanted to see if there is an easy way to modify the frontmatter of any current file, as by default Obsidian does not seem to provide a built-in API for this. At first, I encountered a few issues with how it works: I tried using the MetaEdit’s API inside a `js-engine` fenced block, but it was bugging out. Then, I tried it with Meta Bind — and it worked inside of it!
+- [MetaEdit](https://github.com/chhoumann/MetaEdit) plugin by [Christian Bager Bach Houmann](https://bagerbach.com/). I wanted to see if there is an easy way to modify the frontmatter of any current file, as by default Obsidian does not seem to provide a built-in API for this. At first, I encountered a few issues with how it works: I tried using the MetaEdit’s API inside a `js-engine` fenced block, but it was bugging out. Then, I tried it with Meta Bind — and it worked inside of it!
 
 At this point, what I am planning to do: create a default template with some metadata fields and a button. Then, I could create a new bookmark file, paste the bookmark’s URL into one of the fields, press the button, and it would try and fill the remaining fields automatically for me. In theory.
 
