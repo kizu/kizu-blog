@@ -1,0 +1,66 @@
+---
+title: 'Idea: Self-Boosting Image Mastodon Bot'
+description: 'There is such thing as picture bots that post images every hour. I subscribe to a few of these that post red pandas, and opossums. They’re all cute! While I like these kinds of bots, I noticed several problems with them. In this post, I share my idea for a potential solution of them.'
+tags: ['Random', 'Idea', 'Mastodon']
+pubDate: '2024-11-23'
+mastodonPostId: ''
+
+current: {
+	drink: 'Peppermint Tea',
+    music: 'MindaRyn — SURVIVE'
+}
+---
+
+## Table of Contents
+
+## Introduction
+
+Every so often I write down various non-CSS ideas in my notes, which I know I likely won’t ever implement (or maybe will do, but I never know when). This is one example of such an idea: perhaps it could be worth sharing them in the blog.
+
+There is such thing as picture bots that post images every hour. I subscribe to a few of these that post [red pandas](https://botsin.space/@HourlyRedPanda), [raccoons](https://botsin.space/@RaccoonsHourly), and [opossums](https://botsin.space/@possumeveryhour). They’re all cute! Though, with the [botsin.space instance going away](https://muffinlabs.com/posts/2024/10/29/10-29-rip-botsin-space/), I’ll likely need to find another source of these.
+
+## The Problems
+
+While I like these kinds of bots (they bring some positivity to a sometimes too sad or technical timeline), I noticed several problems with them:
+
+- Digital waste. These bots can regularly post the same image, over and over. While you could set up automatic deletion of old posts, this is still not ideal for various reasons.
+
+- No way to know whether you saw some image or not. You have to rely on your memory: is this a new picture? Or you saw it, but forgot about it? As the same image can be randomly reposted, that post will be a new one, so you couldn’t use likes or bookmarks to mark those that you already saw.
+
+- It is difficult to identify an entirely new image. When a new one is added to the dataset, you won’t know if a new random post takes an image from the archive or if that image is a sparkling fresh.
+
+- The randomness algorithm is frequently flawed, commonly reposting the same image too close to others, or not giving some image a chance for a while.
+
+## One Potential Solution
+
+If I were to implement a similar bot (or if you’re thinking about one), here is how I’d try to approach it.
+
+1. Each image from the dataset should be posted only once. No deletion, and no duplicates.
+
+2. On every iteration, if there is an image in the backlog that was never published, it is published as a new post. If there are multiple images in the backlog, a new one is chosen randomly.
+
+3. Crucial part: once all images from the backlog are published, instead of _reposting_ the old ones, the bot starts _boosting_ old posts. It must boost only an image that it never boosted before, and select one randomly.
+
+4. It should never pick to boost a newly published post until a certain grace period passes.
+
+5. The same grace period is used to un-boost the old boosted posts, making them enter the stack of possible posts to boost next.
+
+We can think of the posts as of multiple stacks of cards: they never duplicate, and we just shuffle them around, making sure we keep things fresh for the duration of the grace period.
+
+## Benefits
+
+- Because the images are never duplicated, this should be much lighter for the servers and the infrastructure. No need to upload duplicate images, as the old ones could be just used.
+
+- All the interactions stay with the image: if you boosted, liked, or bookmarked a post, you’ll know when it comes again.
+
+- As even comments will stay, this can allow people to add their input to the posts: add better alternative descriptions, sources, and attribution.
+
+- Bot authors could use these interactions to improve the posts: the data in them can become the source of truth, and the images could be easily updated with the better descriptions and attribution, or retired if found problematic for some reason.
+
+- New posts will stand out, as they won’t have the “self-boost” visual. Even more: you could always disable boosts from the bot account, and only receive new images if you’d want to.
+
+- It might be easier to implement the algorithm, and maybe even keep it for boosting only, while allowing posting new images outside the regular schedule manually. This way, all the necessary data for the algorithm can be contained in the bot’s timeline, making the bot much more simple.
+
+## Final Words
+
+I never wrote a Mastodon bot. So take my idea with a grain of salt. But I have been sitting on this idea for a few months already, and I still think that it is a good one. Maybe I am wrong! Please let me know if so. And you are welcome to try implementing it — the last time I touched [Mastodon API](https://docs.joinmastodon.org/), it was rather simple.
