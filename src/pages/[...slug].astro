@@ -6,6 +6,7 @@ import { getSortedPosts } from '@lib/getSortedPosts';
 
 import Link from '@components/mdx/Link.astro';
 import Heading from '@components/mdx/Heading.astro';
+import Image from '@components/mdx/Image.astro';
 import Paragraph from '@components/mdx/Paragraph.astro';
 import Pre from '@components/mdx/Pre.astro';
 import List from '@components/mdx/List.astro';
@@ -17,6 +18,7 @@ const components = {
 	ul: List,
 	li: ListItem,
 	h2: Heading,
+	img: Image,
 };
 
 export async function getStaticPaths() {
@@ -31,6 +33,7 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await post.render();
+// console.log(`src/content/blog/${post.id}`)
 ---
 
 <BlogPost {...post.data}>

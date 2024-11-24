@@ -1,0 +1,87 @@
+---
+title: 'Embedding Pixelfed, part 2'
+description: 'Since my last post about this, I did some progress on embedding Pixelfed images in my blog. There are still many things I want to implement before I could start using this properly, but this seems like a good checkpoint in my work on the feature.'
+tags: ['Pixelfed', 'Process', 'Astro', 'IndieWeb']
+pubDate: '2024-11-24'
+mastodonPostId: ''
+
+current: {
+    drink: 'Sencha tea',
+    music: 'This is The Kit — No Such Thing',
+}
+---
+
+![](pixelfed:739971733249250140/3)
+
+Look at this squirrel!
+
+## Table Of Contents
+
+## Introduction
+
+Since [my last post about this](/embedding-pixelfed-part-1/), I did some progress on embedding Pixelfed images in my blog. Here is what I had to write in this post’s markdown to get this photo displayed:
+
+```md
+![](pixelfed:739971733249250140/3)
+```
+
+That’s it. You might notice that in the markdown there is no `alt` provided. But it is still present in the actual HTML, as I am retrieving it from the one I submitted with the photo when uploading it to [my Pixelfed instance](https://pixey.org/).
+
+The `src` for this image in Markdown contains two things: first the lookup string — in this case [the post’s ID](https://pixey.org/i/web/post/739971733249250140), and then the index of the image in the post.
+
+There are still many things I want to implement before I could start using this properly, but this seems like a good checkpoint in my work on the feature.
+
+
+## What I Did
+
+Looking at the [“Plans”](http://localhost:4321/embedding-pixelfed-part-1/#plans) section of my previous post, this one covers most of what I wanted to achieve so far, except for the design/CSS part.
+
+- For now, I am using the [`dotenv`](https://www.npmjs.com/package/dotenv) NPM package for storing the API token. I know, there is likely a way to do this without depending on a package, but I’m lazy to explore this, ok?
+
+- I implemented fetching and caching the data for my Pixelfed posts. It is likely far from optimal, but it works. I’ll only fetch things when doing local development, then what I receive from the API is saved as `.json` files, one per post, so there won’t be any fetching done neither in the CI nor on the client (aside from the image’s `src`, of course).
+
+- I added a wrapper around the MDX `img` component that checks if it uses the fake `pixelfed:` protocol in the `src`. If not, it falls back to the original Astro’s [Image component](https://docs.astro.build/en/reference/modules/astro-assets/#image-), but otherwise it will do everything necessary to get the `src`, `alt`, `width`, and `height` for the image from the cached/fetched data. See my [“Astro MDX Components”](/astro-mdx-components/) post on how I substitute the built-in HTML tags rendered by MDX with custom Astro components.
+
+- I added some very basic CSS for the photos:
+
+	```css
+	img {
+		max-inline-size: 100%;
+		height: auto;
+
+		&.photo {
+			display: block;
+			width: auto;
+			max-block-size: min(100vh, 100cqw);
+			margin-inline: auto;
+
+			p:has(> &) {
+				container-type: inline-size;
+			}
+		}
+	}
+	```
+
+	Nothing special; mostly trying to make images always fit into the viewport, and make it so horizontal and vertical images will have roughly the same area. I will likely redo this, but it works for now.
+
+
+## To Do Next
+
+Here is what I am planning to do next:
+
+- Come up with the design for a `<figure>` around a photo, and for how I want to display its caption. As I wrote in the beginning, I already have the `alt` coming from the Pixelfed API, so I am thinking of reusing the markdown’s alt (`![this part]()`) to provide an additional caption for a photo.
+
+- Find a good way to display a gallery of photos, optionally with the thumbnails and a way to see one in full.
+
+- Refactor the code behind how I fetch and display the images. Currently, it is a mess. I want it to be less of a mess. When I do so, I might write about what I’m doing here, but I don’t want to share my suboptimal code just yet.
+
+That’s it for now! I have many other ideas as well: somehow getting the [Exif](https://en.wikipedia.org/wiki/Exif) metadata from my photos that I have locally, displaying it, and so on. But that’s likely for much further in the future.
+
+
+## Final Words
+
+I am pretty happy with what I did so far, and with what I’m planning to do in the future.
+
+Fun fact: I just ordered a [new lens](https://explore.omsystem.com/gb/en/m-zuiko-25mm-f1-8) for [my camera](https://en.wikipedia.org/wiki/Olympus_OM-D_E-M5). I’m a bit frugal with my setup, and rarely buy new stuff in general, but as I managed to do quite a few (for me) photo walks this year, I decided that it might be time to add another lens to my very tiny collection. Maybe one day I’ll write about my setup.
+
+But for now, I’ll need to continue working on an ability to embed photos in this blog, so I could properly share what I capture.

@@ -4,6 +4,9 @@
 		"strictNullChecks": true,
 		"baseUrl": ".",
 		"paths": {
+			"@content/*": [
+				"src/content/*"
+			],
 			"@components/*": [
 				"src/components/*"
 			],
