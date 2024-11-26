@@ -779,7 +779,7 @@ pre {
 	line-height: 1.5;
 }
 
-:where(:not(figure)) > pre {
+:where(:not(figure)) > :not(h2,h3,h4,h5,h6) + pre {
 	inline-size: fit-content;
 	justify-self: center;
 }

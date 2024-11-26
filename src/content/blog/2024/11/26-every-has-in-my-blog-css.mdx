@@ -1,0 +1,218 @@
+---
+title: 'Every :has() in my Blog’s CSS'
+description: 'Miriam Suzanne asked: “What are your favorite little day-to-day use cases for the CSS `:has()` selector? Anyone using it in their reset yet?” While I don’t have “day-to-day” cases at work (`:has()` falls outside our browser support for now, and we’re careful around its performance issues), I am using it in a few places for my blog’s CSS. So, I decided to list _all_ the places in my blog’s styles with brief explanations why I’m using `:has()` there.'
+tags: ['Response', 'Random', 'CSS']
+pubDate: '2024-11-26'
+mastodonPostId: ''
+
+current: {
+    drink: 'Peppermint Tea',
+    music: 'Soft Blue Shimmer — Prism of Feeling'
+}
+---
+
+## Table of Contents
+
+## In Response To
+
+[Miriam Suzanne](https://www.miriamsuzanne.com/) [asked in Mastodon](https://front-end.social/@mia/113548620361402447 ".u-in-reply-to"):
+
+> What are your favorite little day-to-day use cases for the CSS `:has()` selector? Anyone using it in their reset yet?
+
+While I don’t have “day-to-day” cases at work (`:has()` falls outside our browser support for now, and we’re careful around its performance issues), I am using it in a few places for my blog’s CSS.
+
+So, I decided to list _all_ the places in my blog’s styles with brief explanations why I’m using `:has()` there.
+
+## My `:has()` Usage
+
+<aside class="warning">
+Note that the styles for my blog are not refined, and are very experimental. I see many ways they can be improved, but I like to work on them iteratively, resolving issues only when I encounter the need for them, and not prematurely.
+</aside>
+
+
+### Adjusting the Grid
+
+```css
+.root-grid {
+	&:has(.aside-wrapper, aside > details) {
+		--min-aside-width:
+			calc(var(--ASIDE-WIDTH) * var(--has-aside));
+	}
+}
+```
+
+The `--min-aside-width` custom proprety is used in two places: for the CSS grid itself, and for the `min-inline-size` of the `.aside-wrapper`. While for the latter it is not necessary to use the `:has()`, I am just reusing this variable. Why I am using it: to adjust the layout when there is a secondary column present, changing how responsiveness works.
+
+When there is enough space on the page, the main content is always centered. But when there is not enough space, this behavior kicks in. Without `aside`. The content will continue to be centered, but when it is present, content will shift aside. Five years ago, I wrote a post about a similar layout: [“My Grid Layout”](https://kizu.dev/my-grid-layout/) — layout there relies on the intrinsic dimensions of things inside columns.
+
+I find `:has()` to be very convenient for adjusting various aspects of CSS grids. Sometimes, as with the article above, it might be possible to hack around with intrinsic values and comples `minmax()` and repeating columns, but for simple cases we can often just use `:has()`. It is more convenient and expressive.
+
+
+### Modifier Shortcut
+
+```css
+header {
+	&:has(> h1) {
+		--ratio: 1;
+	}
+}
+```
+
+On the main page, `h1` is inside the topmost `header`. On inner pages, it is moved inside the `<article>`. I could add a class to the `header` based on the layout, but eh, why not just use `:has()`? I won’t use this in an enterprise production code, but for my blog? Why not.
+
+The `--ratio` here just changes some dimensions somewhere, its style is not that important.
+
+
+### Indented Paragraphs
+
+```css
+:is(article, blockquote) > p:not(.starts-with-tag:has(> img:only-child)) {
+	&,
+	& + .aside-wrapper {
+		& + p:not(.starts-with-tag:has(> img:only-child)) {
+			margin-block-start: calc(-1 * var(--gap));
+			text-indent: var(--text-indent);
+
+			& > * {
+				text-indent: 0;
+			}
+		}
+	}
+}
+```
+
+Ok, this one might be overcomplicated. The idea is to style `p + p` to have an indentation instead of a gap. Yes, inside my `article` I am using a CSS grid with `gap` which defines the basic distance between any elements inside.
+
+But for consecutive paragraphs, I really like the indented text look.
+
+There are a few things going on:
+
+1. The first `:has()` is used to check if our paragraph is not one containing just a singular image. In this case, it would be just some illustration, and it should not be considered an actual paragraph.
+
+2. The `.starts-with-tag` is there because in CSS all the `:NNN-child` does not care about text nodes, and I have a [custom Astro component for paragraphs](https://github.com/kizu/kizu-blog/blob/main/src/components/mdx/Paragraph.astro) in MDX that looks at their content, and if it does not have text nodes in the beginning, adds this class. There is [a CSSWG issue about this](https://github.com/w3c/csswg-drafts/issues/3216) by [ExE Boss](https://exe-boss.tech/) — if you want to have a native way to do so as well, please, share your use cases there.
+
+3. The `&, & + .aside-wrapper` in the middle is there because we might have an optional `.aside-wrapper`, which usually interrupts the flow and goes into a sidebar. In that case, we would like to treat the paragraphs that are separated by it as consecutive. This does not work for narrow screen for now; maybe I will fix that case one day.
+
+4. Because `text-indent` is an _inherited_ property, and my content can have inline-blocks etc, I need to reset it for anything nested: `& > *`.
+
+
+### Different Types Of Lists
+
+```css
+li + li {
+	margin-block-start: 0.25lh;
+}
+li:has(p) + li {
+	margin-block-start: 0.5lh;
+}
+```
+
+In some flavors of Markdown, there is a difference whether your list items have an empty line between them or not. Those that care about this difference tend to put the content of more sparse items inside paragraphs. I am using `:has()` here to modify the margin to replicate this spacing in Markdown.
+
+
+### Hanging Punctuation
+
+```css
+:is(ul, ol):has(
+	> li.starts-with-tag > a.has-left-overhang:first-child,
+	> li.starts-with-tag > p.starts-with-tag:first-child > a.has-left-overhang:first-child
+) li {
+	padding-inline-start: var(--overhang);
+	margin-inline-start: calc(-1 * var(--overhang));
+}
+
+li.starts-with-tag:has(
+	> a.has-left-overhang:first-child,
+	> p.starts-with-tag:first-child > a.has-left-overhang:first-child
+) {
+	& > a.has-left-overhang:first-child,
+	& > p.starts-with-tag:first-child > a.has-left-overhang:first-child {
+		margin-inline-start: calc(-1 * var(--overhang));
+	}
+}
+```
+
+I have many thoughts about hanging punctuation, and I am not talking about the highly restricted and limited `hanging-punctuation`. Even if it was wider available, I would probably not use it. Well, I would, but also keep all the other similar stuff I’m doing.
+
+This specific example was made specifically for my [“bookmarks”](/tags/bookmarks/) posts: they contain lists with links, and I wanted to adjust their styling just a bit.
+
+I don’t know if you ever noticed this when looking at them, but hey. If you did — nice.
+
+
+### Conditional Container
+
+```css
+img {
+	&.photo {
+		max-block-size: min(100vh, 100cqw);
+		p:has(> &) {
+			container-type: inline-size;
+		}
+	}
+}
+```
+
+I already showed this as a part of my [“Embedding Pixelfed, part 2”](/embedding-pixelfed-part-2/) post, but I did not explain what it does.
+
+I am using a CSS grid where all content goes inside a middle column. But for images inside a lonely paragraph, I want to limit their width by the width of the content area, so I need to have a container on the paragraph. While I could apply the containment to _all_ paragraphs, I decided to do it only for these that need it.
+
+
+### Bleed Layout for Images
+
+```css
+p.starts-with-tag:has(> img:only-child) {
+	margin-inline: calc(-1 * var(--content-padding));
+}
+```
+
+I already mentioned this case where I excluded paragraphs with lonely images, now we target them and use the custom property for the content padding to make them go full-width. For an example, you can peek at the beginning of my [“Embedding Pixelfed, part 2”](/embedding-pixelfed-part-2/) post that I already mentioned above.
+
+
+### Figure Decorations
+
+```css
+figure {
+	&:not(:has( > figcaption))::after {
+		inset-block-end: 0;
+	}
+}
+```
+
+The way I style `<figure>` and `<figcaption>` probably deserve a separate post, but in short: when there is a figcaption, I draw a border via an `::after` pseudo-element, making it wrap everything _except_ for the `figcaption`. When there is no figcaption, I need to adjust the position of the bottom edge of this decorative element.
+
+
+### Table of Contents
+
+```css
+.table-of-contents {
+	&:hover,
+	&:has(:focus-visible) {
+		z-index: 1;
+		opacity: 1;
+	}
+
+	&:has(> details[open]) {
+		--toc-margin: var(--DOUBLE-PADDING);
+
+		transform: /*…*/;
+
+		&:hover,
+		&:has(:focus-visible) {
+			transform: /*…*/;
+		}
+	}
+}
+```
+
+My table of contents also deserves an extra post for sure. In this case, the `:has(:focus-visible)` works basically like non-existent `:focus-visible-within`. But hey, look at [this CSSWG issue](https://github.com/w3c/csswg-drafts/issues/3080) by [David Baron](https://dbaron.org/). You know what to do if you want this as well.
+
+And another usage here is for checking if my ToC contains an opened `<details>`
+
+
+## Conclusion
+
+Most of my usage for `:has()` are shortcuts for something that could, potentially, be done either by manually hardcoding the modifiers, or by <del>parsing</del> regexping the content and adding classes similar to `.starts-with-tag`.
+
+But `:has()` allows doing this declaratively from CSS. Which is nice, but can have performance issues. Still good enough for a hobby project.
+
+The only cases above that cannot be done without relying on JS are for anything _dynamic_: the `:has(: focus-visible)` and `:has(details[open])`. These are prime use cases for `:has()`, and even though in some cases `JS` could still be more performant, these are very fun to apply from CSS.
