@@ -1,0 +1,65 @@
+---
+title: 'Short Lines, Bad Breaks, and CSS'
+description: 'In today’s CSSWG meeting, there was one issue about the new value of `text-wrap-style` property — `avoid-orphans`. There was agreement in the meeting that we should look for a better name, and open a separate issue about this, which I did, as well as opened another one — about the `orphans` and `widows` properties.'
+tags: ['Typography', 'CSSWG', 'CSS']
+pubDate: '2024-11-27'
+mastodonPostId: ''
+
+current: {
+    drink: 'Peppermint Tea',
+    music: 'Daughter — Dandelion'
+}
+---
+
+## Table of Contents
+
+## The Problem
+
+In today’s CSSWG meeting, there was [one issue](https://github.com/w3c/csswg-drafts/issues/3473#issuecomment-2348275178) about the new value of `text-wrap-style` property — [`avoid-orphans`](https://drafts.csswg.org/css-text-4/#valdef-text-wrap-style-avoid-orphans).
+
+When going through the list of issues in the agenda before the meeting, I saw this issue, and it reminded me of one typographic thing that I had been thinking about for quite a while: the weirdness of the “widows” and “orphans” terms.
+
+I never could remember them, even when people mentioned various mnemonics. And then, whenever in some typographic context people mentioned “eliminate widows”, without that context, it sounded pretty bad.
+
+I was glad that I am not the only one who did not like this term: this year I bought the third edition of [Ellen Lupton](https://ellenlupton.com/)’s [“Thinking with Type”](https://ellenlupton.com/Thinking-with-Type), and was pleasantly surprised when she brought this up in the “Short Lines” chapter (starting from page 128):
+
+> In English, short lines are often called `widows` and `orphans`. When used as epithets, these terms are sexist and insensitive. Neutral descriptions like “short line” or “bad break” are respectful and easy to understand.
+
+I read the whole book, and can happily recommend it to everyone, by the way.
+
+Beyond the terms being insensitive, there is another problem that I mentioned in the beginning: these terms are just plain confusing. If you go to the [Wikipedia page about them](https://en.wikipedia.org/wiki/Widows_and_orphans#Definitions), here is what you will find in how it defines these terms:
+
+<blockquote>
+	<dl>
+		<dt>Widow (sometimes called orphan)</dt>
+		<dd>A paragraph-ending line that falls at the beginning of the following page or column, thus separated from the rest of the text. Mnemonically, a widow is “alone at the top” (of the family tree but, in this case, of the page).</dd>
+		<dt>Orphan (sometimes called widow)</dt>
+		<dd>A paragraph-opening line that appears by itself at the bottom of a page or column, thus separated from the rest of the text. Mnemonically, an orphan is “alone at the bottom” (of the family tree but, in this case, of the page).</dd>
+		<dt>Runt (sometimes called widow or orphan)</dt>
+		<dd>A word, part of a word, or a very short line that appears by itself at the end of a paragraph. Mnemonically still “alone at the bottom”, just this time at the bottom of a paragraph. Orphans of this type give the impression of too much white space between paragraphs.</dd>
+	</dl>
+</blockquote>
+
+Just look at these parentheses! No wonder, I was confused for so long: likely, I looked at different sources inconsistently calling the same thing different names.
+
+Even more: if we look at the definitions of “widows” and “orphans” in this Wikipedia article, we’ll see that the proposed `avoid-orphans` is about neither! It is about the third case, which in this article is called “runts”. And, which, unsurprisingly, also can be used [as a derogatory term](https://www.merriam-webster.com/dictionary/runt) (see third definition). This was also the first time I heard this term in a typographic context, so I just flipped through a few books on typography from my bookshelf and did not find it mentioned there.
+
+## Opening Issues
+
+Anyway, stumbling upon this issue today made me remember this grip I had with the terms, so I both [commented on the issue](https://github.com/w3c/csswg-drafts/issues/3473#issuecomment-2504370877), and then later brought all of that up in the discussion.
+
+There was agreement that we should look for a better name, and open a separate issue about this, [which I did](https://github.com/w3c/csswg-drafts/issues/11283). Spoiler: my suggested name for this value is `avoid-short-lines`, but if you have a better name (or just agree) — please, participate there.
+
+In the discussion, it was mentioned that CSS already has two other properties: `orphans` and `widows`. Oh wow, I completely forgot that we had these! Likely, because [their support](https://caniuse.com/css-widows-orphans) is still not there, with Firefox missing, and in browsers that claim to support them, it appears to be uneven. See [this test example](https://quirksmode.org/css/css2/widows.html) by [Peter-Paul Koch](https://quirksmode.org/) and compare how things render in Safari vs Chrome. There was also an [Interop 2023 proposal related to this](https://github.com/web-platform-tests/interop/issues/520) by [Scott Kellum](https://scottkellum.com/).
+
+After some thought, I decided to open an issue about renaming (and maybe reimagining?) them too: [“Rename and/or reimagine widows and orphans”](https://github.com/w3c/csswg-drafts/issues/11286). Given that they’re not interoperable today, we could retire them (well, keep them deprecated by “working” where they do now), and come up with both better names, and perhaps better behavior (if needed).
+
+## Final Words
+
+Let me copy the last two paragraphs from that second issue:
+
+> This could be a good opportunity to discuss these differences, why they’re there, and if we could come with a consensus which all browsers could agree on, so we could move forward.
+>
+> Both avoiding short lines, and avoiding single leading or trailing lines in fragments are something I (and many other developers) wanted to have for a while, so it would be great to get closer to it.
+
+Do you have an opinion about this? Were you also confused about these terms? Did you want to use them in your code? Please let me know, or — even better — comment in these issues.

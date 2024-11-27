@@ -657,14 +657,23 @@ dl {
 
 	color: var(--mix);
 	--mix-alpha: 0.8;
+
+	blockquote > & {
+		grid-template:
+			" dt dt dt "
+			" .  dd dd " /
+			var(--text-indent) 1fr 1fr;
+	}
 }
 
 dt {
 	font-weight: 600;
+	grid-column: dt;
 }
 
 dd {
 	margin: 0;
+	grid-column: dd;
 }
 
 /* Kinda a mixin */
