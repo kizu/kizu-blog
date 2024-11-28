@@ -816,7 +816,7 @@ figure > pre:nth-last-child(1 of :not(style, figcaption)) {
 	border-end-end-radius: calc(var(--BORDER-RADIUS) + 1px);
 }
 
-figure > pre:nth-child(1 of :not(style)) {
+figure > pre:nth-child(1 of :not(style, script)) {
 	margin-block-start: min(calc(-1 * var(--padding)), 0px);
 	border-start-start-radius: calc(var(--BORDER-RADIUS) + 1px);
 	border-start-end-radius: calc(var(--BORDER-RADIUS) + 1px);

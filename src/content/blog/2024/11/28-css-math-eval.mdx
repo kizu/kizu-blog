@@ -1,0 +1,89 @@
+---
+title: 'Observation: CSS Math Eval'
+description: 'There is a calculator that uses JS in the post. If you wonder: “What is special about it” — there was one problem that I wanted to solve: evaluating some math expression from user input in a very safe way. I know, there exist external libraries people did already write which could do this job well enough. But I wanted something minimal and with no dependencies. And hacky. Enter CSS, registered custom property, and `calc()`.'
+tags: ['Observation', 'Custom Elements', 'CSS']
+pubDate: '2024-11-28'
+mastodonPostId: ''
+
+current: {
+    drink: 'Peppermint Tea',
+    music: 'how to count one to ten — news paper'
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+This is just a quick idea that I had recently, and decided to write down. Look at this:
+
+<LiveExample caption="You can edit the content in the inputs and see the result of the calculations inside.">
+```html
+<css-math>
+	<input type="text" value="2 + 2" />
+	=<output></output>
+</css-math>
+
+<css-math>
+	<input type="text" value="sin(90deg)" />
+	=<output></output>
+</css-math>
+
+<css-math>
+	<input type="text" value="(pi - 1) * 2" />
+	=<output></output>
+</css-math>
+```
+</LiveExample>
+
+This is a calculator? I guess? If you wonder: “What is special about it” — there was one problem that I wanted to solve.
+
+That problem: evaluating some math expression from user input in a very safe way. I know, there exist external libraries people did already write which could do this job well enough. But I wanted something minimal and with no dependencies. And hacky.
+
+Enter CSS, registered custom property, and `calc()`:
+
+<LiveExample caption="I have no idea what I’m doing.">
+```html
+<script>
+	CSS.registerProperty({
+		name: '--css-math',
+		syntax: '<number>',
+		inherits: false,
+		initialValue: 0,
+	});
+	class CSSMath extends HTMLElement {
+		getResult(el) {
+			this.style.setProperty(
+				'--css-math',
+				`calc(${el.value})`
+			);
+			return getComputedStyle(this)
+				.getPropertyValue('--css-math');
+		}
+		connectedCallback() {
+			const input = this.querySelector('input');
+			const output = this.querySelector('output');
+			setTimeout(() => {
+				output.value = this.getResult(input)
+			}, 0);
+			input.addEventListener('input', ({ target }) => {
+				output.value = this.getResult(target);
+			});
+		}
+	}
+	customElements.define('css-math', CSSMath);
+</script>
+```
+</LiveExample>
+
+This is far, _far_, **far** from being a good implementation. Among other things, it accepts only what CSS can: `2 + 2` works, but `2+2` does not.
+
+I imagine, it might be possible to throw a quick regex that would normalize the input to be easier accepted by _the thing_, but hey, this is just a quick idea, and a quick post.
+
+If you’re wondering what’s going on inside, we register a custom property in CSS, then put our user input inside a `calc()`, and set this property on our element. And then read the resulting value: because the custom property is registered, we will get the already calculated value!
+
+The main problem of this method is that it is _slow_. After all, you have to set a property, and then run a `getComputedStyle()` on it.
+
+But I still think that this is neat: `calc()` is so powerful in CSS today, and allows throwing many different things into it, and is continously improved.
+
+While writing this post, I got an even wilder idea about how this could be “improved”, but, I guess, let me save it for another [observation](/tags/observation/)-type post.
+
+And, maybe, before that, you could tell me: how wacky is this? Do you wish we had a safe native way to evaluate math expressions in JS, without `eval()`, `new Function()` etc? Do you know a better way to achive the same, which would be as full of features as math in CSS?
