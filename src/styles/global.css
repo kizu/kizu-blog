@@ -441,6 +441,10 @@ blockquote {
 	padding-inline-start: var(--text-indent);
 
 	& > * {
+		margin: 0;
+	}
+
+	& > * {
 		--content-padding: var(--DOUBLE-PADDING);
 	}
 

@@ -1,7 +1,7 @@
 ---
 import { Code } from 'astro:components';
 import PreWrapper from './PreWrapper.astro';
-const [,,lang, code] = (await Astro.slots.render('default')).match(/^<code( class="language-([^"]+)")?>([\s\S]+)<\/code>$/) || [];
+const [,,lang = 'css', code = ''] = (await Astro.slots.render('default')).match(/^<code( class="language-([^"]+)")?>([\s\S]+)<\/code>$/) || [];
 
 const theme = 'solarized';
 const finalCode = code

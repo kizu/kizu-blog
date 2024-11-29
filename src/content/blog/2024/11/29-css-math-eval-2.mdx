@@ -1,0 +1,248 @@
+---
+title: 'CSS Math Eval, now Better and Weirder'
+description: 'After the yesterday’s “Observation: CSS Math Eval” post, I got a mastodon reply from Valtteri Laitinen. In this post, I modify my example with `CSSNumericValue`, provide a better fallback, and also look into one curious aspect of `initial-value` of registered custom properties.'
+tags: ['Observation', 'Custom Elements', 'CSS']
+pubDate: '2024-11-29'
+mastodonPostId: ''
+
+current: {
+    drink: 'Peppermint Tea',
+    music: 'Uchu Conbini — 体温'
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## A Better Solution
+
+After the yesterday’s [“Observation: CSS Math Eval”](/css-math-eval/) post, I got a [mastodon reply](https://fedi.valtlai.fi/@valtlai/113567079349772684) from [Valtteri Laitinen](https://valtlai.fi/en/) (in a [reply thread](https://mastodon.social/@Kilian/113565127260717868) started by [Kilian Valkhof](https://kilianvalkhof.com/)):
+
+> Seems that you can use
+> ```js
+> CSSNumericValue
+> 	.parse(`calc(${el.value})`)
+> 	.to('number').value
+> ```
+> instead of the custom property and `getComputedStyle()`. That isn’t supported by Firefox though.
+
+When I was experimenting for my original post, I briefly looked at the [CSSOM](https://developer.mozilla.org/fr/docs/Web/API/CSS_Object_Model), but did miss the `.to('number')` method! I suspected that it _should_ provide something similar, and I am happy that it exists, and that Valtteri pointed it out to me!
+
+For [browsers that support `CSSNumericValue`](https://caniuse.com/mdn-api_cssnumericvalue), this is a much better solution, as it does not require `getComputedStyle()`, and thus should not cause a layout recalculation.
+
+Here is the example from the last article, now using `CSSNumericValue` when it is available:
+
+<LiveExample caption="Still not perfect, but now much faster in browsers that support CSSOM.">
+```html
+<css-math-2>
+	<input type="text" value="2 + 2" />
+	=<output></output>
+</css-math-2>
+
+<css-math-2>
+	<input type="text" value="sin(90deg)" />
+	=<output></output>
+</css-math-2>
+
+<css-math-2>
+	<input type="text" value="(pi - 1) * 2" />
+	=<output></output>
+</css-math-2>
+
+<script>
+	CSS.registerProperty({
+		name: '--css-math-2',
+		syntax: '<number>',
+		inherits: false,
+		initialValue: 0,
+	});
+	class CSSMath2 extends HTMLElement {
+		getResult(el) {
+			if ('CSSNumericValue' in window) {
+				return CSSNumericValue
+					.parse(`calc(${el.value})`)
+					.to('number').value
+					+
+					' (using CSSNumericValue)';
+			}
+			this.style.setProperty(
+				'--css-math-2',
+				`calc(${el.value})`
+			);
+			return getComputedStyle(this)
+				.getPropertyValue('--css-math-2')
+				+
+				' (using getComputedStyle)';
+		}
+		connectedCallback() {
+			const input = this.querySelector('input');
+			const output = this.querySelector('output');
+			setTimeout(() => {
+				output.value = this.getResult(input)
+			}, 0);
+			input.addEventListener('input', ({ target }) => {
+				output.value = this.getResult(target);
+			});
+		}
+	}
+	customElements.define('css-math-2', CSSMath2);
+</script>
+```
+</LiveExample>
+
+
+## A Better Fallback
+
+However, if we’re talking about fallbacks, my original method was still far from being perfect: after all, `registerProperty` has a [_worse_ support](https://caniuse.com/?search=registerProperty).
+
+Can we have a better fallback for it? Yes, if instead of using a registered custom property, we will use a regular property that accepts a `<number>` syntax:
+
+<LiveExample caption="Now this should work even in older browsers! Although, for this example the bottleneck would be custom elements support, but the same could be possible to achieve with just older native JS as well.">
+```html
+<css-math-3>
+	<input type="text" value="2 + 2" />
+	=<output></output>
+</css-math-3>
+
+<css-math-3>
+	<input type="text" value="sin(90deg)" />
+	=<output></output>
+</css-math-3>
+
+<css-math-3>
+	<input type="text" value="(pi - 1) * 2" />
+	=<output></output>
+</css-math-3>
+
+<script>
+	let propertyToCheck = 'border-image-outset';
+	if ('registerProperty' in CSS) {
+		propertyToCheck = '--css-math-3';
+		CSS.registerProperty({
+			name: propertyToCheck,
+			syntax: '<number>',
+			inherits: false,
+			initialValue: 0,
+		});
+	}
+	class CSSMath3 extends HTMLElement {
+		getResult(el) {
+			if ('CSSNumericValue' in window) {
+				return CSSNumericValue
+					.parse(`calc(${el.value})`)
+					.to('number').value
+					+
+					' (using CSSNumericValue)';
+			}
+			this.style.setProperty(
+				propertyToCheck,
+				`calc(${el.value})`
+			);
+			return getComputedStyle(this)
+				.getPropertyValue(propertyToCheck)
+				+
+				` (using ${propertyToCheck})`;
+		}
+		connectedCallback() {
+			const input = this.querySelector('input');
+			const output = this.querySelector('output');
+			setTimeout(() => {
+				output.value = this.getResult(input)
+			}, 0);
+			input.addEventListener('input', ({ target }) => {
+				output.value = this.getResult(target);
+			});
+		}
+	}
+	customElements.define('css-math-3', CSSMath3);
+</script>
+```
+</LiveExample>
+
+Just for fun (and because it is unlikely to clash with anything usually), I used the `border-image-outset` property. Did you know about its existence? It is there for [as long](https://caniuse.com/mdn-css_properties_border-image-outset) as [`calc()`](https://caniuse.com/calc), which we also need for things to work.
+
+
+## A Weird Solution: Calculated `initial-value`
+
+Before I got to know about `CSSNumericValue`, I was playing with various ways to improve the performance of my initial method. I found a thing about which I did not know about, but which seems obvious in hindsight.
+
+We can use calculations for `initial-value` of registered properties! Here is my original example which uses this method:
+
+<LiveExample caption="This one is fun, but not practical.">
+```html
+<css-math-weird>
+	<input type="text" value="2 + 2" />
+	=<output></output>
+</css-math-weird>
+
+<css-math-weird>
+	<input type="text" value="sin(90deg)" />
+	=<output></output>
+</css-math-weird>
+
+<css-math-weird>
+	<input type="text" value="(pi - 1) * 2" />
+	=<output></output>
+</css-math-weird>
+
+<script>
+	const mathCache = new Map();
+
+	class CSSMathWeird extends HTMLElement {
+		getResult(el) {
+			const result = mathCache.get(el.value);
+			if (result) {
+				return result;
+			}
+			const name =
+				`--css-math-weird-${mathCache.size}`;
+			CSS.registerProperty({
+				name,
+				syntax: '<number>',
+				inherits: false,
+				initialValue: `calc(${el.value})`,
+			});
+			const value = getComputedStyle(this)
+				.getPropertyValue(name);
+			mathCache.set(el.value, value);
+			return value;
+		}
+		connectedCallback() {
+			const input = this.querySelector('input');
+			const output = this.querySelector('output');
+			setTimeout(() => {
+				output.value = this.getResult(input)
+			}, 0);
+			input.addEventListener('input', ({ target }) => {
+				output.value = this.getResult(target);
+			});
+		}
+	}
+	customElements.define(
+		'css-math-weird',
+		CSSMathWeird
+	);
+</script>
+```
+</LiveExample>
+
+Ok, this one is very inefficient: we need to maintain a cache for the values (so we won’t attempt to register the same custom property twice, which is prohibited), and I don’t even want to know how the browser will behave if we will suddenly register hundreds of unused custom properties.
+
+But hey, it works! Not sure what can be the practical purpose of this, though.
+
+## Room for Improvement
+
+There are still many things that something like this will require for it to be a viable reusable solution.
+
+But now I know about `CSSNumericValue`! I hope we will get it in all browsers, eventually. Mozilla is [positive](https://github.com/mozilla/standards-positions/issues/1091) about CSS Typed OM, so, hopefully, someone will eventually implement it there.
+
+<aside>
+If, for some reason, you want be the one to do so, here is the [Bugzilla page](https://bugzilla.mozilla.org/show_bug.cgi?id=1278697) for its implementation, where [Emilio Cobos Álvarez](https://crisal.io/) [writes](https://bugzilla.mozilla.org/show_bug.cgi?id=1278697#c10):
+
+> Anybody can pick this up, I’d be happy to mentor / review patches / etc. We can sort out the complex bits as we get to them :)
+</aside>
+
+It is fascinating how by implementing a powerful feature like this one in CSS, we unlock it not only there, but also for JS as well. Can it be viable to propose a native JS method for evaluating CSS math?
+
+I’m also happy that I wrote the original post, even though the idea was very wild and unpolished. It might help someone (like Kilian), and now we know more about CSS and its API.
