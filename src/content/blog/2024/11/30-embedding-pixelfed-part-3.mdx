@@ -1,0 +1,62 @@
+---
+title: 'Embedding Pixelfed, part 3'
+description: 'While I did not do everything from the “To Do Next” of my last update, I did most of it. Now, if I provide a caption in the markdown, it will render as a `<figure>` with a `<figcaption>`.'
+tags: ['Pixelfed', 'Process', 'Astro', 'IndieWeb']
+pubDate: '2024-11-30'
+mastodonPostId: ''
+
+current: {
+    drink: 'Lapsang Souchong tea',
+    music: 'Haisuinonasa — forest and light',
+}
+---
+
+## Table Of Contents
+
+## Since Last Update
+
+While I did not do everything from the [“To Do Next”](/embedding-pixelfed-part-2/#to-do-next) of my [last update](/embedding-pixelfed-part-2/), I did most of it.
+
+Now, if I provide a caption in the markdown, like this:
+
+```markdown
+![A horizontal photo](pixelfed:740944759087514268/4)
+```
+
+It will render as a `<figure>` with a `<figcaption>`:
+
+![A horizontal photo](pixelfed:740944759087514268/4)
+
+It will also work with vertical photos, in which case I am trying to make either have similar dimensions, as if I would just stretch a vertical photo to the content width, it will overwhelm everything around it.
+
+![A vertical photo](pixelfed:740944759087514268/3)
+
+You might’ve noticed a “See details” link under both, and maybe even interacted with it.
+
+This part is not yet finished, but was also something I mentioned I wanted to do: a full-page view for any photo. For now, it is handled with just CSS and some in-page anchor links, but there are a few things I’d want to enhance.
+
+
+## Next Time
+
+- I want to enhance it with some Popover API:
+	- Right now it is using `position: fixed`, but it would be better to put it into the top layer.
+	- It will also provide `esc` for closing it from the box.
+- I would like to add buttons for going to the next/prev photos on the page.
+	- This is complicated, as if I’d want to do it without client-side JS, I’ll need to gather all the photos on the page in Astro, and then use this when rendering the images.
+- I did try, but did not finish making a list with thumbnails.
+	- For it, I’d need to conditionally render the image and its figure differently.
+	- However, in Astro, there is no such thing as context. So I’ll need to do something differently. Likely, reuse what I’ll do for prev/next buttons, and will try to detect the images' context when parsing their markdown.
+- The visuals for the full-page view are not final. Well, nothing is, but it’s even more.
+	- I’ll need to add more metadata, handle responsiveness better, work on margins, etc.
+- I wonder if I could add view transitions, for browsers that support them?
+
+Again, there are also tons of other things that I’d want to do, but I think I am close to a state where I could actually start using this!
+
+
+## End of November
+
+This is the last post of November. I guess, I managed to do all 30 posts this month. Some — good, some — meh.
+
+Whiel I did not manage to plan all of them in advance, I tried to play with different ways of setting up the next ones by having these process posts.
+
+Posting what I did and, especially, what I plan to, really helps to continue the work. It makes it easier to get into the context of what I did, and then provides a few starting points. I’ll try to continue doing updates like these in the future.

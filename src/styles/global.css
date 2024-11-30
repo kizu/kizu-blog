@@ -1,11 +1,13 @@
 @import './features/scroll-markers.css';
 @import './features/debug.css';
+@import './features/photo.css';
 
 html {
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
 	font-synthesis: none;
-	scroll-padding: var(--MIN-CONTENT-PADDING);
+	--SCROLL-PADDING: var(--MIN-CONTENT-PADDING);
+	scroll-padding: var(--SCROLL-PADDING);
 
 	--CONTENT-WIDTH: 48rem;
 	--MAX-LAYOUT-WIDTH: calc(2.5 * var(--CONTENT-WIDTH));
@@ -96,7 +98,7 @@ html {
 
 	--min-aside-width: 0px;
 
-	background-image: radial-gradient(
+	--PAGE-GRADIENT: radial-gradient(
 		farthest-corner circle at 50% 50%
 		,
 		var(--BG-FROM)
@@ -105,11 +107,20 @@ html {
 		var(--BG-TO)
 		100%
 	);
+	background-image: var(--PAGE-GRADIENT);
 	background-attachment: fixed;
 	hyphens: auto;
 	/* Disabled, as I don't like how snapping works everywhere except Firefox */
 	scroll-snap-type: y proximity;
+
+	--MIN-RESOLUTION: 1;
+
+	@media (min-resolution: 1.5x) { --MIN-RESOLUTION: 1.5 }
+	@media (min-resolution: 2x)   { --MIN-RESOLUTION: 2   }
+	@media (min-resolution: 2.5x) { --MIN-RESOLUTION: 2.5 }
+	@media (min-resolution: 3x)   { --MIN-RESOLUTION: 3   }
 }
+
 @media (prefers-color-scheme: dark) {
 	html {
 		--LIGHT: ;
@@ -708,19 +719,6 @@ ul ul > li::marker {
 img {
 	max-inline-size: 100%;
 	height: auto;
-
-	&.photo {
-		display: block;
-		width: auto;
-		max-block-size: min(100vh, 100cqw);
-		margin-inline: auto;
-		/* Disabled, as I don't like how snapping works everywhere except Firefox */
-		/* scroll-snap-align: center; */
-
-		p:has(> &) {
-			container-type: inline-size;
-		}
-	}
 }
 
 p.starts-with-tag > img:only-child {
@@ -740,6 +738,7 @@ figure {
 	margin: 0;
 	container-type: inline-size;
 	max-inline-size: calc(1px * var(--width) / 2 + 2 * var(--padding));
+	--border-radius: var(--BORDER-RADIUS);
 
 	--content-padding: 0px;
 
@@ -751,7 +750,7 @@ figure {
 		inset-inline: 0;
 		grid-row: 1 / 99;
 		outline: 1px solid var(--BLUE);
-		border-radius: var(--BORDER-RADIUS);
+		border-radius: var(--border-radius);
 		opacity: 0.5;
 	}
 

@@ -8,13 +8,17 @@ const html = await Astro.slots.render('default');
 
 const { class: className, ...props } = Astro.props;
 
+const shouldSkip = html.match(/^<(div|figure)/);
 ---
 
-<p
-	{...props}
-	class={classNames(
-		className,
-		{ ['starts-with-tag']: html.trim()[0] === '<'},
-	)}
-	set:html={html}
-/>
+{shouldSkip
+	? <Fragment set:html={html} />
+	: <p
+		{...props}
+		class={classNames(
+			className,
+			{ ['starts-with-tag']: html.trim()[0] === '<'},
+		)}
+		set:html={html}
+	/>
+}

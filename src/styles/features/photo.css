@@ -1,0 +1,133 @@
+.photo {
+	display: block;
+	width: auto;
+	max-block-size: min(100vh, 100cqw);
+	margin-inline: auto;
+	/* Disabled, as I don't like how snapping works everywhere except Firefox */
+	/* scroll-snap-align: center; */
+
+	p:has(> &) {
+		container-type: inline-size;
+	}
+}
+
+.photo-frame-container {
+	container-type: inline-size;
+	margin-inline-end: 0;
+
+	&::before {
+		content: "";
+	}
+
+	&:target {
+		visibility: visible;
+		position: fixed;
+		inset: 0;
+		z-index: 9;
+		background-image: var(--PAGE-GRADIENT);
+		background-attachment: fixed;
+
+		place-content: center;
+
+		overflow: auto;
+		scrollbar-gutter: stable;
+
+		.photo-details:not(& > *) {
+			display: none;
+		}
+
+		& > * {
+			max-inline-size: min(
+				var(--width, 100cqw) / var(--MIN-RESOLUTION),
+				100vw - 2 * var(--padding, 0px),
+				(100vh - 2 * var(--padding, 0px)) * var(--ratio, 1)
+			);
+			margin: auto;
+		}
+
+		& > .photo-frame {
+			& > .photo {
+				margin-top: max(
+					0px,
+					var(--top-offset) /  1.618 + var(--padding)
+				);
+			}
+
+			& > figcaption {
+
+				& > nav > a[href$='--full'] {
+					display: none;
+				}
+				& > nav > a:not([href$='--full']) {
+					display: flex;
+				}
+			}
+
+			&::after {
+				display: none;
+			}
+		}
+
+		:has(&):is(html, body) {
+			overflow: hidden;
+			visibility: hidden;
+			scrollbar-gutter: auto;
+		}
+	}
+}
+
+
+.photo-frame {
+	max-inline-size: min(
+		var(--width) / var(--MIN-RESOLUTION),
+		100cqw - 2 * var(--padding),
+		(100vh - 2 * var(--padding)) * var(--ratio)
+	);
+
+	--padding: var(--border-radius);
+
+	--top-offset: calc(
+		0.5
+		*
+		(
+			100vh - 2 * var(--SCROLL-PADDING)
+			-
+			100cqw / var(--ratio)
+		)
+	);
+
+	& > .photo {
+		scroll-margin: var(--top-offset);
+
+		max-block-size: 100%;
+	}
+
+	& > figcaption {
+		display: flex;
+		flex-wrap: wrap;
+		margin-inline-start: calc(-1 * var(--padding));
+		padding-inline-start: var(--text-indent);
+
+		& > nav {
+			margin-inline-start: auto;
+		}
+		& > nav > a {
+			padding: 0;
+
+			&:not([href$='--full']) {
+				display: none;
+			}
+		}
+	}
+}
+
+.photo-details {
+	padding-block: 1rem;
+	padding-inline: 0;
+	gap: 1rem;
+
+	& > dt {
+		text-align: right;
+	}
+}
+
