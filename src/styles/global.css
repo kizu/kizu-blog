@@ -452,15 +452,19 @@ blockquote {
 	padding-inline-start: var(--text-indent);
 
 	& > * {
-		margin: 0;
-	}
-
-	& > * {
 		--content-padding: var(--DOUBLE-PADDING);
 	}
 
 	& > *:only-child {
 		margin: 0;
+	}
+
+	& > p:first-child {
+		margin-block-start: 0;
+	}
+
+	& > p:last-child {
+		margin-block-end: 0;
 	}
 }
 
