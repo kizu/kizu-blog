@@ -1,0 +1,161 @@
+---
+title: 'Splash Colour Mixin'
+description: 'Two days ago, I published a new article. In that article, I presented a way to prototype native CSS mixins with what we have in CSS today. Three days ago, Lu Wilson published an experimental colour format: Splash. When I read about it, I immediately saw what I’d want to do with it: prototype a mixin.'
+tags: ['Colors', 'CSS']
+pubDate: '2024-12-26'
+mastodonPostId: ''
+
+current: {
+	drink: 'Jasmine Green Tea',
+	music: 'Nuito — NeKoMaJiN Vs'
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## The Context
+
+Two days ago, I published a new article: [“Indirect Cyclic Conditions: Prototyping Parametrized CSS Mixins”](https://kizu.dev/indirect-cyclic-conditions/). It is long, but might be a necessary context for today’s post. If you did not yet check it out: please, do!
+
+Anyway. In that article, I presented a way to prototype native CSS mixins with what we have in CSS today: custom cascade layers, and a new technique based on how cyclic dependencies work for custom properties.
+
+Unlike my previous steps toward this — [“Layered Toggles: Optional CSS Mixins”](https://kizu.dev/layered-toggles/) — the new technique allows us to call a mixin with at least one _parameter_!
+
+The increase in usefullness is infinite: `0 → 1`. An ability to assign just one custom property — and provide the value at the same time — makes me want to do everything in this way now.
+
+So, in the last two days following the publication of this article, I am already testing it for various things, and written at least two relatively complicated mixins based on it.
+
+In this post, I will write about one of them.
+
+## The Splash
+
+Three days ago, [Lu Wilson](https://www.todepond.com/) published an experimental colour format: [Splash](https://www.todepond.com/lab/splash/). It is a simple idea: to express RGB in just three decimal digits, with an explicitly loose definition over how it should be converted into the actual color, with an invitation to adjust and play with it.
+
+<aside>
+I, personally, don’t like RGB too much, so I wonder if we could do the same, but for something like [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch). And name it… OKSplash?! You are welcome to do it, if you think that’s a good idea.
+</aside>
+
+Coincidentally, after publishing my article about mixins, and talking a bit with [Lea Verou](https://lea.verou.me/), she nerd-sniped me into [playing with colors](https://front-end.social/@kizu/113714092648709846) for a bit.
+
+So later, when I read about Splash, I immediately saw what I’d want to do with it. Because in my color experiments, I was looking into how we could map and convert colors when we have only their components. And a format being just a three-digit number makes it straightforward to work with. If it had any letters in it, it would be much harder to work with in CSS!
+
+## The Mixin
+
+The original experimental mixin is available [on CodePen](https://codepen.io/kizu/pen/yyBoyev), but I’ll present it here as well, and will try to explain it a bit further.
+
+I think it is a good demonstration of what might be possible with native mixins.
+
+<LiveExample>
+```html
+<p style="position: sticky; top: 0;">
+	<em style="--splash-bg: 967">pink</em>
+	<span style="--splash-bg: 342">dark olive</span>
+	<strong style="--splash-bg: 277">turquoise</strong>
+	<strong style="--splash-bg: 999">white</strong>
+	<strong style="--splash-bg: 000">black</strong>
+</p>
+```
+```css
+/* Required for indirect cyclic conditions */
+:root { --WHEN: }
+
+@layer splash { * {
+	/* Our input, with a list of “dependencies” */
+	--splash-bg:
+		var(--_splash-bg-value)
+		var(--_splash-shadow)
+		var(--_splash-color);
+
+	/* Extracting the color components from the input */
+	--_splash_r: round(down,
+		var(--splash-bg) / 100,
+	1);
+
+	--_splash_g: round(down,
+		(var(--splash-bg) - var(--_splash_r) * 100) / 10,
+	1);
+
+	--_splash_b: calc(
+		var(--splash-bg)
+		-
+		var(--_splash_r) * 100
+		-
+		var(--_splash_g) * 10
+	);
+
+	/* Normalizing the values to regular rgb: any changes and adjustements can go here */
+	--_rgb_r: calc(var(--_splash_r) * 255/9);
+	--_rgb_g: calc(var(--_splash_g) * 255/9);
+	--_rgb_b: calc(var(--_splash_b) * 255/9);
+
+	/* Assigning the actual value for the background color. */
+	--_splash-bg-value:
+		rgb(var(--_rgb_r), var(--_rgb_g), var(--_rgb_b));
+	background: var(--_splash-bg-value, revert-layer);
+
+	/* By default, adding a text-shadow (might be overridden later) */
+	--_splash-shadow:
+		var(--WHEN, var(--_splash-bg-value))
+		Canvas 1px 1px 0px,
+		Canvas -1px -1px 0px,
+		Canvas 1px -1px 0px,
+		Canvas -1px 1px 0px;
+	text-shadow: var(--_splash-shadow, revert-layer);
+
+	/* If the browser supports relative colors, use them to assign a color instead of a shadow */
+	@supports (color: oklch(from red l c h)) {
+		--_splash-l: clamp(
+			0,
+			(l / var(--l-threshold, 0.71) - 1) * -infinity,
+			1
+		);
+
+		--_splash-color:
+			var(--WHEN, var(--splash-bg))
+			oklch(
+				from var(--_splash-bg-value)
+				var(--_splash-l) 0 h
+			);
+
+		color: var(--_splash-color, revert-layer);
+		text-shadow: revert-layer;
+	}
+} }
+```
+</LiveExample>
+
+Here is what this mixin does:
+
+1. On any element, we can add a `--splash-bg` custom property with a three-digit number.
+
+2. Doing so will enable the “mixin”: the `background` and `text-shadow` or `color` properties will be applied. Without the `--splash-bg`, thanks to custom cascade layers and `revert-layer`, these properties will not have any effect on anything evben though we apply them via `*`.
+
+3. In addition, as we know the background color, we can try using [relative colors](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_colors/Relative_colors) to assign a contrasting text color alongside that background! This is thanks to the [“On compliance vs readability: Generating text colors with CSS”](https://lea.verou.me/blog/2024/contrast-color/) article by [Lea Verou](https://lea.verou.me/).
+
+I won’t explain what’s going on there in detail: aside from what is explained in all the linked articles, there is nothing too complex going on.
+
+The remaining most interesting part is splitting the incoming three-digit color into three components. There might be a better way to do it, but I used the very helpful `round()` CSS function for this, plus some math.
+
+## Some Lessons
+
+When I did this experiment, I left some notes to myself.
+
+1. When we do mixins like that, because we can return any number of properties, it is easy to add something extra — like the contrasting `color` in addition to the `background` that we know. This would be not a case with custom functions, or anything that involves only custom properties.
+
+2. If we were to implement “OKSplash” based on OKLCH — that is, we had three pure components for the perceived Lightness, color’s Chroma, and its Hue — we could skip the relative color part, and calcualte the `color` directly.
+
+3. When we’re inside an `@layer`, using `revert-layer` for things inside an `@supports` or other overrides feels very natural and lifts some weight from the mind: we completely revert the declaration, instead of overriding it to some _default_.
+
+4. Initially, I saw the intermediate step required for the mixin to work — where we define our value for the property as a separate custom property — as a downside. However, when it is done this way, it is effortless to then reuse this value. In this case, I did not have to change the existing code I wrote for the mixin to use this color to get the contrasting one.
+
+5. When I use `round()` for regular numbers, I always forget the `1` in the end. This was a change based [an issue](https://github.com/w3c/csswg-drafts/issues/9668) by [Oriol Brufau](https://github.com/Loirooriol), but it is not yet available in all browsers. Testing helps!
+
+## That’s It
+
+I really like how we can hide a lot of the complexity behind a simple custom property call. Can we have native mixins already in all browsers, so I won’t have to write these adominations?
+
+Please, [sponsor Oddbird](https://opencollective.com/oddbird-open-source) so [Miriam Suzanne](https://www.miriamsuzanne.com/) could work more actively on the specs for native mixins!
+
+And — experiment. I am already looking to write another post — or maybe an article on my main site — about another useful way we could use these mixins for. And I am not planning to stop. So I nudge you to try doing this as well. It is fun.
