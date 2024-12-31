@@ -1,0 +1,138 @@
+---
+title: 'My 2024 in CSS'
+description: 'This was another productive year for me. After 2023, I was afraid that I couldn’t get anywhere close. After all, innovation is hard, and you never know if you will stumble over something exciting. Looking back at 2024, I can safely say that I managed to continue doing what I was doing. And, as it will be obvious from the post, there were things that would be difficult to top.'
+tags: ['CSS', 'Personal']
+pubDate: '2024-12-31'
+mastodonPostId: ''
+
+current: {
+	drink: 'Sencha tea',
+	music: 'MASS OF THE FERMENTING DREGS — Aoi, Koi, Daidaiiro No Hi',
+}
+---
+
+## Table of Contents
+
+## Intro
+
+This was another productive year for me. After [2023](/my-2023-in-css/), when I explored [anchor positioning](https://kizu.dev/tags/anchor_positioning/), [scroll-driven animations](https://kizu.dev/tags/scroll_driven_animations/), and came up with [“Cyclic Dependency Space Toggles”](https://kizu.dev/cyclic-toggles/), I was afraid that I couldn’t get anywhere close. After all, innovation is hard, and you never know if you will stumble over something exciting.
+
+Looking back at 2024, I can safely say that I managed to continue doing what I was doing. And, as it will be obvious from the next sections, there were things that would be difficult to top.
+
+## Joining the CSS Working Group
+
+For someone who built their entire career by focusing on CSS, getting an email titled “Would you like to be a CSS WG Invited Expert?” at the beginning of February was surreal, and equally gratifying.
+
+Obviously, I accepted. A bit later, in June, the company I am working in — [Datadog](https://www.datadoghq.com/) — joined W3C, so now I’m a regular member of [CSS Working Group](https://www.w3.org/Style/CSS/).
+
+I try to participate in every meeting I can, although I am not sure if I manage to contribute much. Being among people who write CSS specs and implement them in browsers is a good opportunity to keep the impostor syndrome that I had my whole life going strong.
+
+![A photo showing a group of people walking from left to right on a hill overlooking a city on a peninsula, with blue water, rolling green hills and slightly cloudy sky.](./CSSWG.jpg)
+
+In June, I traveled to A Coruña for a few days of face-to-face meetings and met many people I previously only talked to or followed virtually. I still need to publish the photos that I took there, oops.
+
+## Speaking at CSS Day 2024
+
+Another thing that happened at the beginning of 2024 was getting an invitation to speak at [CSS Day](https://cssday.nl/) conference, and then speaking at it in June.
+
+I’ve yet to watch [my talk](https://www.youtube.com/watch?v=ZC_WS05t2lI), but I am planning to eventually do it, as I want to do a text version of it. I have no idea how it went other than that I almost fell from the stage, haha.
+
+[All other talks](https://www.youtube.com/playlist?list=PLjnstNlepBvO0-I7iwqpkOY_fwAop6Pl-) from this conference, were, as usual, great — I can highly recommend you to watch them!
+
+## My Articles and Techniques
+
+<style>{`
+p.starts-with-tag:has(> a.has-left-overhang.has-right-overhang:only-child) {
+	text-wrap: balance;
+}
+`}</style>
+
+While 2023 was for me mostly a year of playing with experimental features, I spent most of 2024 thinking about custom properties, ways we can do APIs with them, and many related topics like conditional CSS and mixins. Most of it stemmed from my [“Cyclic Dependency Space Toggles”](https://kizu.dev/cyclic-toggles/) from 2023: both the first and the last articles I published are a continuation of them.
+
+- [“Layered Toggles: Optional CSS Mixins”](https://kizu.dev/layered-toggles/)
+
+	_April 9._ Probably the weakest article from this year, but about an important topic — I published it as soon as I discovered the technique. While the usage of `revert-layer` for optional styles was not new, using it in combination with space and cyclic toggles is a much more powerful concept, which I will depend on in the future.
+
+- [“Alternating Style Queries”](https://kizu.dev/alternating-style-queries/)
+
+	_April 16._ An article about a simple but powerful trick with style container queries. Once they become available in all browsers (Firefox, I’m looking at you), I expect this technique to be very common. Initially, it was meant to be a part of the next article I published, but I saw how it is more important to separate it from the more gimmicky and complicated parts.
+
+- [“Self-Modifying Variables: the `inherit()` Workaround”](https://kizu.dev/self-modifying-variables/)
+
+	_April 18._ The article that flew under the radar the most, even though the effect it talks about is very useful and powerful and is not possible to achieve in any other way. Looking at how we can work around the things that will eventually be in CSS was a theme for me this year, and the `inherit ()` function is something I wish browsers started to prototype. The workaround based on alternating style queries from the previous article is tricky, but once we have style container queries, I expect it to be an important and invaluable tool.
+
+- [“Fit-to-Width Text: A New Technique”](https://kizu.dev/fit-to-width/)
+
+	_July 19._ The most popular article from any that I ever published. The solution for fit-to-width text was something of a holy grail in CSS, and I still can’t believe I found a key to it — and that it is fully cross-browser. It is imperfect as it requires duplication of content, but I don’t think we will come anywhere closer with pure CSS. Let’s hope this will one day be possible with native CSS!
+
+- [“Possible Future CSS: Tree-Counting Functions and Random Values”](https://kizu.dev/tree-counting-and-random/)
+
+	_October 22._ The article that took the longest to finish. But it also has the best interactive examples! It does not really introduce new techniques, but it combines many concepts that I did not see used together before. I can’t wait for the native CSS in question to be available, but, for now, I am planning to use the workarounds described in this article in my other experiments.
+
+- [“Indirect Cyclic Conditions: Prototyping Parametrized CSS Mixins”](https://kizu.dev/indirect-cyclic-conditions/)
+
+	_December 24._ The article is about a technique that is a culmination of many different things. In some way, it was another holy grail that I pursued for a long time, and I’m thrilled that I managed to get to the solution. Yes, we will eventually have native conditions, functions, and mixins, but what I unveiled in this article will allow us to close the gap and experiment with these concepts _today_. And, hopefully, it could also push browsers to start prototyping sooner rather than later.
+
+
+## Some of My Blog Posts
+
+While I did manage to write a blog post every day for the whole of November again, I did not manage to do it consistently in other months. At some point, I got overwhelmed with the [bookmarks](/tags/bookmarks/) backlog and will need to work on some kind of solution (I still want to share them more often — and first read them, as I never share things that I did not read).
+
+I did also post a few noteworthy CSS-related posts here. Some of them were _almost_ good enough to be articles on the main site, but I explicitly wanted them to be a bit less polished. I wanted to work on my blog’s engine (mostly Astro), so I needed to have some posts with live code examples.
+
+Here are the posts that, if you missed, I recommend to check out:
+
+- [“Cap-Height Vertical Align”](/cap-height-align/)
+
+	_January 3._ That was a nice post to start the year from. A rather simple technique, but also something that I wanted to write for a while.
+
+- [“Querying the Color Scheme”](/querying-the-color-scheme/)
+
+	_August 29._ A fun, but not very practical trick. Requires style container queries — another sign we need them as soon as possible.
+
+- [“Captured Custom Properties”](/captured-custom-properties/)
+
+	_September 2._ A post about a pattern that I use more often for my registered custom properties.
+
+- [“Observation: Forced Wrapping”](/forced-wrapping/)
+
+	_November 5._ A short post about one rare use case for `flex-basis`. I want to publish posts like these more: there are many neat interactions that can happen with various CSS properties.
+
+- [“A good way to hide non-defined custom elements”](/non-defined-custom-elements/)
+
+	_November 14._ While I do not yet use custom elements a lot, this was one of the first things I tried when seeing the issues of other similar implementations.
+
+- [“Observation: Sticky Anchor Navigation”](/sticky-anchor-navigation/)
+
+	_November 25._ A few test cases and a workaround for one weird issue with anchored navigation. This is a topic that I hope to delve more into, as there are numerous interoperability issues related to it.
+
+- [“Observation: CSS Math Eval”](/css-math-eval/) and [“CSS Math Eval, now Better and Weirder”](/css-math-eval-2/)
+
+	_November 28_ and _November 29_. Posts looking at how we can use the powers of CSS calculations to safely evaluate user input with everything that is available inside `calc()`.
+
+- [“Splash Colour Mixin”](/splash-colour-mixin/)
+
+	_December 26_. One of the first native mixin prototypes I did after publishing [“Indirect Cyclic Conditions: Prototyping Parametrized CSS Mixins”](https://kizu.dev/indirect-cyclic-conditions/). More to come!
+
+## My Browser Bug Reports
+
+Almost every time I work on an article or post, I encounter some bugs. I am not always diligent in reporting them, but I try to do it when I have the spoons for this. This year, I matched the number of bugs I reported in 2023: a total of 27 across all browsers then and now.
+
+- [13 Chrome bugs][1] ([16 in 2023][2])
+- [8 Firefox bugs][3] ([6 in 2023][4])
+- [6 Safari bugs][5] ([5 in 2023][6])
+
+[1]: https://issues.chromium.org/issues?q=reporter:kizmarh@gmail.com%20created:2024-01-01..2024-12-31
+[2]: https://issues.chromium.org/issues?q=reporter:kizmarh@gmail.com%20created:2023-01-01..2023-12-31
+[3]: https://bugzilla.mozilla.org/buglist.cgi?emailreporter1=1&email1=kizmarh%40gmail.com&chfieldfrom=2024-01-01&chfieldto=2024-12-31&chfield=%5BBug%20creation%5D&emailtype1=substring
+[4]: https://bugzilla.mozilla.org/buglist.cgi?emailreporter1=1&email1=kizmarh%40gmail.com&chfieldfrom=2023-01-01&chfieldto=2023-12-31&chfield=[Bug%20creation]&emailtype1=substring&list_id=17371297
+[5]: https://bugs.webkit.org/buglist.cgi?email1=kizmarh%40ya.ru&emailassigned_to1=1&emailreporter1=1&emailtype1=exact&list_id=11875877&chfieldfrom=2024-01-01&chfieldto=2024-12-31&chfield=%5BBug%20creation%5D
+[6]: https://bugs.webkit.org/buglist.cgi?chfield=%5BBug%20creation%5D&chfieldfrom=2023-01-01&chfieldto=2023-12-31&email1=kizmarh%40ya.ru&emailassigned_to1=1&emailreporter1=1&emailtype1=exact&list_id=11875877
+
+I think I have a few unreported bugs here and there in my notes and drafts; I’ll try to be even more diligent in 2025.
+
+## Plans for 2025
+
+Speaking of notes and drafts. While I don’t have any specific plans for the next year, what I have is a pile of drafts and experiments on various stages.
+
+While there is nothing _groundbreaking_ among them, there are some things that I find curious enough to be content with what I could publish in 2025. I do not intend — and can’t imagine — topping this past year. After all, you can’t force discoveries — only work towards them.

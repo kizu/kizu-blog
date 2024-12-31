@@ -3,6 +3,8 @@
 @import './features/photo.css';
 
 html {
+	--WHEN: ;
+
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
 	font-synthesis: none;
@@ -352,6 +354,14 @@ h1 {
 	font-variant-caps: petite-caps;
 }
 
+@layer small-caps {
+	* {
+		--small-caps: var(--_small-caps);
+		--_small-caps: petite-caps var(--WHEN, var(--small-caps));
+		font-variant-caps: var(--_small-caps, revert-layer);
+	}
+}
+
 h2 {
 	font-size: 1.25em;
 	margin-block-start: 1lh;
@@ -693,6 +703,7 @@ dt {
 dd {
 	margin: 0;
 	grid-column: dd;
+	text-wrap: balance;
 }
 
 /* Kinda a mixin */
