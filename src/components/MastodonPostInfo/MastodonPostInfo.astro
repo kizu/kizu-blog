@@ -93,10 +93,12 @@ const href = getMastodonPostLink(mastodonPostId);
 						.then((data: Data[]) => {
 							const foundPost = data.filter(d => (d.content as string).includes(currentURL.pathname))[0];
 							if (!foundPost) {
-							return;
+								return;
 							}
 							postsCache.set(foundPost.id as string, foundPost);
 							this.updateContent(foundPost);
+							// Update the link itself
+							link.setAttribute('href', `${link.href}/${foundPost.id}`);
 						})
 						.catch(error => {
 							console.error('Failed to fetch Mastodon post information:', error);
