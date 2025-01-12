@@ -1,0 +1,28 @@
+/*
+	Implements the `progress()` and `mix()` workaround, calculating
+	the position of the page width between min and max boundaries.
+*/
+html {
+	--captured-length: calc(100vw);
+	--mix-wide: clamp(
+		0,
+		tan(atan2(
+			var(--captured-length) - var(--MIN-PAGE-WIDTH),
+			var(--MAX-PAGE-WIDTH) - var(--MIN-PAGE-WIDTH)
+		)),
+		1
+	);
+	--mix-narrow: calc(1 - var(--mix-wide));
+}
+
+@property --MIN-PAGE-WIDTH {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}
+
+@property --MAX-PAGE-WIDTH {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}

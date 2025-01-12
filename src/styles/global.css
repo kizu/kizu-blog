@@ -1,4 +1,5 @@
 @import './features/scroll-markers.css';
+@import './features/progress.css';
 @import './features/debug.css';
 @import './features/photo.css';
 
@@ -17,6 +18,7 @@ html {
 	--MIN-CONTENT-PADDING: 16px;
 	--DOUBLE-PADDING: calc(2 * var(--MIN-CONTENT-PADDING));
 	--MAX-CONTENT-PADDING: 6rem;
+	--MIN-PAGE-WIDTH: 22rem;
 	--MAX-PAGE-WIDTH: calc(
 		var(--CONTENT-WIDTH)
 		+
@@ -199,7 +201,12 @@ html:has(#theme-dark:checked) {
 		0.5em
 	);
 
-	--FONT-SIZE--BODY: 1.5rem;
+	--FONT-SIZE--BODY: calc(
+		1.5rem * var(--mix-wide)
+		+
+		1.125rem * var(--mix-narrow)
+	);
+
 	--LINE-HEIGHT--BODY-UNITLESS: 1.6;
 	--line-height--body: calc(
 		var(--FONT-SIZE--BODY)
