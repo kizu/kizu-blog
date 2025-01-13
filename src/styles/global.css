@@ -291,6 +291,12 @@ html:has(#theme-dark:checked) {
 		--has-no-toc: 1;
 		--has-toc: 0;
 	}
+
+	/* Hello, Servo! */
+	@supports not (display: grid) {
+		max-width: var(--MAX-PAGE-WIDTH);
+		margin: 0 auto;
+	}
 }
 
 @property --captured-length {
@@ -402,7 +408,12 @@ main > article {
 	z-index: 0;
 	padding-block-start: calc(0.5 * var(--MAX-CONTENT-PADDING));
 	padding-block-end: var(--MAX-CONTENT-PADDING);
+
+	@supports not (display: grid) {
+		padding-inline: var(--content-padding);
+	}
 }
+
 main > article::before {
 	content: "";
 	grid-column: --page;
