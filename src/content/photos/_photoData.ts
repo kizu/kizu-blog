@@ -15,6 +15,14 @@ export const rawPhotoData: PhotoData = [
 			{ url: 'https://pixey.org/i/web/post/743090656662981352' },
 		],
 	},
+	{
+		name: 'A walk on December 25, 2024',
+		date: '2024-12-25',
+		lens: '25mm',
+		photos: [
+			{ url: 'https://pixey.org/i/web/post/785237288622073118' },
+		],
+	},
 ];
 
 export const photoData = await expandPhotoData(rawPhotoData);

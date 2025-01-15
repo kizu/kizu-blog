@@ -14,6 +14,10 @@ const blog = defineCollection({
 			.string()
 			.optional()
 			.transform((str) => (str ? new Date(str) : undefined)),
+		eventDate: z
+			.string()
+			.optional()
+			.transform((str) => (str ? new Date(str) : undefined)),
 		heroImage: z.string().optional(),
 		mastodonPostId: z.string().optional(),
 		current: z.object({

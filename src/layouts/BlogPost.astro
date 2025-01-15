@@ -13,6 +13,7 @@ type Props = Partial<CollectionEntry<'blog'>['data']>;
 const {
 	title = SITE_TITLE,
 	pubDate,
+	eventDate,
 	updatedDate,
 	heroImage,
 	current,
@@ -30,6 +31,9 @@ const allMusic = await getAllMusic();
 		{pathname !== '/' ? <>
 			<h1 class="p-name">{title}</h1>
 			<dl>
+				{eventDate ? (<>
+					<dt>Happened on:</dt><dd><FormattedDate date={eventDate} /></dd>
+				</>) : null }
 				{pubDate ? (<>
 					<dt>Published on:</dt>
 					<dd><a

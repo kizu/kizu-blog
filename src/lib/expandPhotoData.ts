@@ -6,6 +6,11 @@ import { resolve } from "path/posix";
 export const MAIN_CAMERA = 'Olympus OM-D E-M5';
 export const MAIN_LENS = 'Olympus M.Zuiko Digital 45mm f/1.8';
 
+export const LENSES = {
+	'45mm': 'Olympus M.Zuiko Digital 45mm f/1.8',
+	'25mm': 'Olympus M.Zuiko Digital 25mm f/1.8',
+}
+
 import exampleJSON from '@content/photos/_cache/737699511545145683.json';
 type CachedData = typeof exampleJSON;
 
@@ -25,6 +30,7 @@ export interface PixelfedPost {
 	name?: never;
 	photos?: never;
 	date?: never;
+	lens?: never;
 }
 
 /** A group of connected Pixelfed posts */
@@ -32,6 +38,7 @@ interface PixelfedGroup {
 	name: string;
 	id?: string;
 	date?: string;
+	lens?: keyof typeof LENSES;
 	photos: PixelfedPost[];
 
 	url?: never;
@@ -40,7 +47,7 @@ interface PixelfedGroup {
 export type PhotoData = (PixelfedPost|PixelfedGroup)[];
 
 
-const ACCESS_TOKEN = process.env.PIXEY_TOKEN;
+const ACCESS_TOKEN = import.meta.env.PIXEY_TOKEN;
 const getStatusInfo = async (id: string) => {
 	if (!ACCESS_TOKEN) {
 		return;

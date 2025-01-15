@@ -38,6 +38,8 @@ Looking at the [“Plans”](http://localhost:4321/embedding-pixelfed-part-1/#p
 
 - For now, I am using the [`dotenv`](https://www.npmjs.com/package/dotenv) NPM package for storing the API token. I know, there is likely a way to do this without depending on a package, but I’m lazy to explore this, ok?
 
+	**Update from 2025-01-24: **actually, Astro has build-in support for [env variables](https://docs.astro.build/en/guides/environment-variables/), so now I’m using it.
+
 - I implemented fetching and caching the data for my Pixelfed posts. It is likely far from optimal, but it works. I’ll only fetch things when doing local development, then what I receive from the API is saved as `.json` files, one per post, so there won’t be any fetching done neither in the CI nor on the client (aside from the image’s `src`, of course).
 
 - I added a wrapper around the MDX `img` component that checks if it uses the fake `pixelfed:` protocol in the `src`. If not, it falls back to the original Astro’s [Image component](https://docs.astro.build/en/reference/modules/astro-assets/#image-), but otherwise it will do everything necessary to get the `src`, `alt`, `width`, and `height` for the image from the cached/fetched data. See my [“Astro MDX Components”](/astro-mdx-components/) post on how I substitute the built-in HTML tags rendered by MDX with custom Astro components.
