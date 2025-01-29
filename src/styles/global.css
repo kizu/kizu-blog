@@ -451,6 +451,7 @@ code {
 	white-space: pre-wrap;
 	tab-size: 2;
 	word-break: keep-all;
+	hyphens: none;
 }
 
 :not(pre) > code,

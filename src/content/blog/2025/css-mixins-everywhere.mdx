@@ -1,0 +1,47 @@
+---
+title: 'CSS Mixins Everywhere'
+description: 'On Monday, I published a new article: “Pure CSS Mixin for Displaying Values of Custom Properties”. It is a long one, but you don’t have to read it fully to get something out of it, as I also published an npm package that allows you to use the mixin described in the article right away. But then… I wondered. What if this mixin was available _everywhere_ in my browser?'
+tags: ['CSS Mixins', 'CSS Overrides', 'CSS']
+pubDate: '2025-01-29'
+mastodonPostId: ''
+
+current: {
+	drink: 'Herbal tea (“Tisane Fruits exotique”)',
+	music: 'kinoue64 — tomorrow, the world will end.',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+On Monday, I published a new article: [“Pure CSS Mixin for Displaying Values of Custom Properties”](https://kizu.dev/preview-mixin/). It is a long one, but you don’t have to read it fully to get something out of it, as I also published an [npm package](https://github.com/kizu/mixins?tab=readme-ov-file#install--use) that allows you to use the mixin described in the article right away.
+
+The mixin itself is for debugging stuff, and one way I envisioned it being used: have a template on CodePen that would include the mixin. Not super convenient (need to pre-select the template, can’t be used with other pre-existing CodePens, etc.), but works. It is also possible to just drop the import of the mixin anywhere if you need it:
+
+```CSS
+@import
+	url("https://unpkg.com/@kizu/mixins@0.1.3/preview.css");
+```
+
+I also included it in this blog, though, importing from `node_modules` instead of using the CDN. So now it is possible to preview any values here as well:
+
+<LiveExample>
+```HTML
+<div style="--preview: pi"></div>
+```
+</LiveExample>
+
+But then… I wondered. What if this mixin was available _everywhere_ in my browser?
+
+I am a fan of CSS overrides in general, and I am using the Stylus extension for this ([for Firefox](https://addons.mozilla.org/en-US/firefox/addon/styl-us/), [for Chrome](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne?hl=en&pli=1)).
+
+What if I would just… add a global override that would be available on every page, and will include the mixin? Now I can just open devtools on any page, add `--preview` to any element, and “inspect” any values! Or, when doing stuff in a CodePen, I can just use `--preview` as if it were available natively for me.
+
+Of course, this will be something visible only _to me_, so if I would want to share such a CodePen with the previews visible, I would need to remember to include the mixin itself as well. But — for the most part, this mixin is purely for debugging. So why not have it available always?
+
+This is the power of CSS mixins: if they do not do anything until you call them, we can always add them and use them when we see fit. A mixin like `--preview` becomes like a custom browser extension, made with just CSS!
+
+And imagine when we will have native CSS mixins! We could do the same with them: include them always via overrides, and use them for debugging on any page.
+
+Finally, this can be a great way for me to test how robust the mixin’s code is: does it introduce any performance overhead? Will it break in some cases? How annoying is it to have its styles always there in an inspector? Do I want to scope it in some way for this kind of usage, so I would have to add a custom class around something I want to debug?
+
+I am excited to try this out, and adjust the mixin with what I will find. And if you will try this method as well — you’re welcome to, but be warned that it is highly experimental. But then — please, let me know if you have any feedback about it!
