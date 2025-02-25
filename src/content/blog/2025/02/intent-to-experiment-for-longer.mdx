@@ -1,0 +1,49 @@
+---
+title: 'Intent to Experiment for Longer'
+description: 'Today, Chrome published two “intents to ship”: for the new CSS `if()` function, and for custom CSS functions. I informally object to this.'
+tags: ['CSS']
+pubDate: '2025-02-25'
+mastodonPostId: ''
+
+current: {
+	drink: 'Peppermint Tea',
+	music: 'Ann Annie — By Morning',
+}
+---
+
+Today, Chrome published two “intents to ship”: [for the new CSS `if()` function](https://groups.google.com/a/chromium.org/g/blink-dev/c/EOz7NK6Y0cE/m/VsZveC-fAwAJ), and [for custom CSS functions](https://groups.google.com/a/chromium.org/g/blink-dev/c/bvi4D7eD7wI/m/djYVLu6OAwAJ).
+
+I _informally_ object to this.
+
+Intent to prototype the `if()` function was [less than a month ago](https://groups.google.com/a/chromium.org/g/blink-dev/c/ySEBHgVlhBM/m/zO5OcgtWEgAJ). Its [TAG review](https://github.com/w3ctag/design-reviews/issues/1045) has no resolution.
+
+Intent to prototype custom functions was [a year ago](https://groups.google.com/a/chromium.org/g/blink-dev/c/b-BTxKD-Ldc/m/1pyobjq7AQAJ), and while there was _some_ prototyping at the time, the new version of what is currently in Canary was started only [in the last month](https://issues.chromium.org/issues/325504770#comment6). Its [TAG review](https://github.com/w3ctag/design-reviews/issues/1031) has no resolution as well.
+
+Given how foundational and crucial these features are — I would strongly recommend Google to re-think how they’re planning to ship these features.
+
+Just last year we had a situation where anchor positioning was shipped prematurely, with very substantial changes to its syntax later based on the later feedback. And this was after the feature was in a prototype stage for much longer than both `if()` and custom functions.
+
+The absense of open issues in CSSWG for these features cannot be taken as a signal that they are ready to ship: authors just started to play with them, and I am not sure engineers and CSSWG members from other browsers had a chance to take an in-depth look into the specs and play with the prototypes just yet.
+
+- - -
+
+I am very biased: I want these features more than many others. My first article about [“Conditions for CSS Variables”](https://kizu.dev/conditions-for-css-variables/) was in 2016.
+
+In 2023 and 2024 I published four articles about various ways we could write conditional CSS, prototyping conditions, functions and mixins:
+
+- [“Cyclic Dependency Space Toggles”](https://kizu.dev/cyclic-toggles/)
+- [“Scroll-Driven State Transfer”](https://kizu.dev/scroll-driven-state-transfer/)
+- [“Layered Toggles: Optional CSS Mixins”](https://kizu.dev/layered-toggles/)
+- [“Indirect Cyclic Conditions: Prototyping Parametrized CSS Mixins”](https://kizu.dev/indirect-cyclic-conditions/)
+
+For a few years, from around 2013 to 2016, I was also a maintainer of the Stylus CSS preprocessor. I wanted conditions, functions, and mixins for a long, long time.
+
+And yet, I don’t want them to ship in Chrome — not right now.
+
+I want these features to be in their **perfect form** when they ship. Maybe not complete — but one where we’re all certain that what we have will not change, and will be future-proof.
+
+Just a month since the prototype to shipping the features is many months too soon. I just had a bit of time to play with them. The feedback that I have is already brewing in me, but I’ll need more time to express it properly. Other authors, I am pretty sure, will need this time too.
+
+If Chrome is to ship these features in their stable browser versions — at the very least — do so under a feature flag that is disabled by default. Let authors play with the features, let other browsers to look into them and consider various use cases, let the Web Platform take a few breaths — and then think about shipping the features _for real_.
+
+Please. Let us experiment with these features for longer.
