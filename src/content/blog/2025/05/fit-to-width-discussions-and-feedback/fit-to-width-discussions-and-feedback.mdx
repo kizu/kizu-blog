@@ -196,7 +196,7 @@ Finally, there might be other ways to achieve “fitting to width”, like wi
 
 #### Collapsing the Container
 
-Another idea I had, but did not manage to go far with it: what if we could somehow detect that the element is in the context where it _can’t_ adapt to the viewport — or its container’s — width? If the problematic cases only happen due to the zoom & viewport interaction, and we can’t detect the zoom level (there is an [“Browser zoom unit for accessibility”](https://github.com/w3c/csswg-drafts/issues/6869) issue by Scott Kellum, but I am not sure if it will be ever resolved), then can we require setting that fixed width for an element that should grow?
+Another idea I had, but did not manage to go far with it: what if we could somehow detect that the element is in the context where it _can’t_ adapt to the viewport — or its container’s — width? If the problematic cases only happen due to the zoom & viewport interaction, and we can’t detect the zoom level (there is an [“Browser zoom unit for accessibility”](https://github.com/w3c/csswg-drafts/issues/6869) issue by [Scott Kellum](https://scottkellum.com/), but I am not sure if it will be ever resolved), then can we require setting that fixed width for an element that should grow?
 
 I tried thinking how we could approach it — using containers, maybe anonymous boxes around our text, or something else — but couldn’t find a way that wouldn’t introduce too much friction, or won’t be easy to work around by using registered custom properties, viewport units, or something similar.
 
