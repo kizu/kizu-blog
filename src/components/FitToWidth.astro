@@ -1,0 +1,138 @@
+---
+const html = await Astro.slots.render('default');
+---
+
+<span class="root" {...Astro.props}>
+	<span class="text-fit render-root">
+		<span>
+			<span class="text-fit render-static">
+			<span>
+				<span class="text-fit render-opsz">
+					<span><span class="render-final" set:html={html}></span></span>
+					<span aria-hidden="true" set:html={html} />
+				</span>
+			</span>
+			<span aria-hidden="true" set:html={html} />
+			</span>
+		</span>
+		<span aria-hidden="true" set:html={html} />
+	</span>
+</span>
+
+<style>
+.root {
+	display: block;
+	line-height: 0.95;
+	margin-block: 0.25em;
+	--captured-length: 1em;
+	--fs0: var(--captured-length);
+}
+.text-fit {
+	display: flex;
+	container-type: inline-size;
+
+	--captured-length: initial;
+
+	& > [aria-hidden] {
+	visibility: hidden;
+	block-size: 0;
+	}
+
+	& > :not([aria-hidden]) {
+	flex-grow: 1;
+	container-type: inline-size;
+
+	--captured-length: 100cqi;
+	--available-space: var(--captured-length);
+
+	& > * {
+		--captured-length: 100cqi;
+
+		inline-size: calc(var(--available-space) + 0.1px);
+
+		@container (inline-size > 0) {
+		white-space: nowrap;
+		}
+	}
+	}
+}
+
+.render-static {
+	--rendered-at-fs0: calc(var(--available-space) - var(--captured-length));
+
+	--ratio1: tan(atan2(
+	var(--available-space),
+	var(--rendered-at-fs0)
+	));
+	--fs1: calc(var(--fs0) * var(--ratio1));
+
+	& > * {
+	font-size: var(--fs1);
+	--captured-length2: var(--fs0);
+	--frozen-em: var(--captured-length2);
+	font-variation-settings: 'opsz' tan(atan2(var(--frozen-em), 1px));
+	}
+}
+
+.render-opsz {
+	--rendered-at-fs1: calc(var(--available-space) - var(--captured-length));
+	--static-space: calc(
+	(
+		var(--rendered-at-fs1)
+		-
+		var(--rendered-at-fs0) * var(--ratio1)
+	)
+	/
+	(1 - var(--ratio1))
+	);
+
+	--ratio2: tan(atan2(
+	var(--available-space) - var(--static-space),
+	var(--rendered-at-fs0) - var(--static-space)
+	));
+	--fs2: calc(var(--fs0) * var(--ratio2));
+	--captured-length2: var(--fs2);
+
+	& > * {
+	font-size: var(--fs2);
+	--frozen-em: var(--captured-length2);
+	font-variation-settings: 'opsz' tan(atan2(var(--frozen-em), 1px));
+	}
+}
+
+.render-final {
+	--rendered-at-fs2: calc(var(--available-space) - var(--captured-length));
+
+	--ratio3: tan(atan2(
+		var(--available-space) - var(--static-space),
+		var(--rendered-at-fs2) - var(--static-space)
+	));
+
+	--fs3: clamp(
+	var(--fs0),
+	var(--fs2) * var(--ratio3),
+	var(--max-font-size, infinity * 1px)
+	);
+
+	display: block;
+	font-size: var(--fs3);
+	--frozen-em: var(--captured-length2);
+	font-variation-settings: 'opsz' tan(atan2(var(--frozen-em), 1px));
+}
+
+slot[name]::slotted(*) {
+	display: contents;
+}
+
+@property --captured-length {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}
+@property --captured-length2 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}
+
+</style>

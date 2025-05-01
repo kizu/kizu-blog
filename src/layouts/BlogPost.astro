@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import Base from '@layouts/Base.astro';
 import FormattedDate from '@components/FormattedDate.astro';
+import FitToWidth from '@components/FitToWidth.astro';
 import { tagInURL } from '@lib/tagInURL';
 import { SITE_TITLE } from '@consts';
 import { getAllTags } from '@lib/getAllTags';
@@ -12,6 +13,7 @@ type Props = Partial<CollectionEntry<'blog'>['data']>;
 
 const {
 	title = SITE_TITLE,
+	fancyTitle,
 	pubDate,
 	eventDate,
 	updatedDate,
@@ -29,7 +31,7 @@ const allMusic = await getAllMusic();
 	<article class="e-content scroll-markers-content">
 		{heroImage && <img width={720} height={360} src={heroImage} alt="" />}
 		{pathname !== '/' ? <>
-			<h1 class="p-name">{title}</h1>
+			<h1 class="p-name">{fancyTitle ? fancyTitle.split('|').map(part => <><FitToWidth set:html={part} /> </>) : title}</h1>
 			<dl>
 				{eventDate ? (<>
 					<dt>Happened on:</dt><dd><FormattedDate date={eventDate} /></dd>

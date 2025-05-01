@@ -1,0 +1,398 @@
+---
+title: 'Fit-to-Width Discussions & Feedback'
+fancyTitle: 'Fit-to-Width|Discussions & Feedback'
+description: 'A bit less than a year ago, I published my “Fit-to-Width Text: A New Technique” article. Since then, CSSWG resolved to start working on it, and, following this, two things happened: a discussion of its potential accessibility issues, and an intent to prototype of it from Google. I have some thoughts, feedback, and ideas about both of these, so here is a post!'
+tags: ['Accessibility', 'CSSWG', 'Typography', 'CSS']
+pubDate: '2025-05-01'
+mastodonPostId: ''
+
+current: {
+	drink: 'Peppermint Tea',
+	music: 'Tom Figgins — A Leaf in the Breeze',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+import FitToWidth from '@components/FitToWidth.astro';
+import Image from '@components/mdx/Image.astro';
+
+<style>{`
+h1 > * {
+	--max-font-size: calc(2 * var(--fs0));
+}
+h1 > :first-child {
+	font-size: 50px;
+}
+
+.table-of-contents {
+	grid-row-end: span 10;
+}
+`}</style>
+
+## Table of Contents
+
+## The Context
+
+A bit less than a year ago, I published my [“Fit-to-Width Text: A New Technique”](https://kizu.dev/fit-to-width/) article, where I presented a CSS-only way to achieve a responsive fit-to-width text. You might’ve noticed: this article’s header uses it, for example.
+
+Since then, I thought a lot about that technique, refined it, and bumped a few times the [corresponding CSSWG issue](https://github.com/w3c/csswg-drafts/issues/2528) by [Tobi Reif](https://tobireif.com/), which is now seven years old.
+
+On April 1st, I presented this issue and my thoughts about it during a CSS Working Group’s face-to-face meeting, where we [resolved](https://github.com/w3c/csswg-drafts/issues/2528#issuecomment-2769621512) to start working on it as a part of [CSS Fonts Module Level 5](https://www.w3.org/TR/css-fonts-5/).
+
+<div class="aside-wrapper" style="--span: 3;">
+<aside style="position: static;">
+
+I want to thank [Adam Argyle](https://nerdy.dev), who I talked a lot with while [he was still at Google](https://nerdy.dev/ex-googler), and who nudged Chrome engineers to look more into fit-to-width, as well as [Penelope McLachlan](https://github.com/b1tr0t) who asked a few questions about fit-to-width in bluesky, and [Roel Nieskens](https://pixelambacht.nl/) who promptly answered a few font-related questions that I asked.
+
+</aside>
+</div>
+
+Following that, two things happened: a discussion in the issue regarding potential accessibility problems of this feature, [started](https://github.com/w3c/csswg-drafts/issues/2528#issuecomment-2769947094) by [Patrick H. Lauke](https://www.splintered.co.uk/), and an [Intent to Prototype](https://groups.google.com/a/chromium.org/g/blink-dev/c/I3aG24t4bwI/m/xLBLyAJKDwAJ) for it alongside an [Explainer](https://github.com/explainers-by-googlers/css-fit-text/blob/main/README.md) by [Kent Tamura](https://github.com/tkent-google).
+
+I have some thoughts, feedback, and ideas about both of these, so here is a post!
+
+<aside class="warning">
+I wrote this post relatively quickly — trying to get it out sooner rather than later, and thus it might be as unpolished as this blog’s byline goes. Please let me know if you’ll spot any typos, mistakes, or anything else!
+</aside>
+
+## Accessibility
+
+### The Problem: Dependency on Viewport
+
+Long story short, a common problem of fit-to-width (and other responsive typography) approaches is that they can fail [Success Criterion 1.4.4 Resize Text](https://www.w3.org/TR/WCAG21/#resize-text) of WCAG 2.1:
+
+> Except for captions and images of text, text can be resized without assistive technology up to 200 percent without loss of content or functionality.
+
+How could this technique fail this success criterion? Let’s say we have a viewport, in which we have a fit-to-width block that stretches from one side to another:
+
+<LiveExample>
+<div><FitToWidth style="font-size: 10px;">Hello There!</FitToWidth></div>
+</LiveExample>
+
+Now, a user wants to zoom in to increase the text’s size up to 500%:
+
+<LiveExample>
+	<FitToWidth style="font-size: 10px; width: 20%; scale: 5; margin: 5em auto">Hello There!</FitToWidth>
+</LiveExample>
+
+Do you see any change in the text’s size? No? The example above has `width: 20%; scale: 5; ` added to it, essentially, replicating the effect that would be there if we were to zoom into a web page without changing the dimensions of its window.
+
+When I measure the computed font-size of both examples, the first example has `125.45px`, and the second — `25.1108px`. 500% is the maximum full-page zoom I can achieve in my Firefox, and it did not change the font-size of our text at all.
+
+#### Possible Arguments
+
+While it could be argued that in _some_ cases users could have access to an alternative way to zoom in like a pinch-to-zoom, not all users will have it, so if we were to consider only those methods available in the browsers, neither changing the default page’s font-size, nor full-page zoom allows us to bump the size of our text by 200%.
+
+And so, it fails the success criterion. At least, literally: in some cases, like in an example above, it could be argued that the text is “big enough”. And, here is [a relevant comment](https://github.com/w3c/wcag/issues/1671#issuecomment-797178007) by [Mitchell Evan](https://github.com/mitchellevan) from a different (but related) WCAG issue [“Can large headings be exempt from Success Criterion 1.4.4 Resize text?”](https://github.com/w3c/wcag/issues/1671):
+
+> […] I'll add that today 150% sized heading text could meet the functional performance criteria of US Section 508 as an instance of equivalent facilitation, if it provides "substantially equivalent or greater accessibility and usability by individuals with disabilities than would be provided by conformance". It's a similar concept to functional needs in WCAG 3.0.
+
+I am not a lawyer, and I don’t know if fit-to-width cases could be considered an “equivalent facilitation”. And if WCAG is referenced by legislation in other countries where they don’t have such excemption, from the potential letter of law this could still be a problem.
+
+It is also necessary to say that the “equivalent facilitation” will only take place in certain conditions, where the text that fits the width would need to have some minimum font-size that is larger than the body copy, not overflow when zoomed, and so on.
+
+In practice, when authors implement fit-to-width texts and other responsive typography techniques, it is possible to easily make the experience _worse_ in certain cases.
+
+For example, forgetting to set a minimum font-size, and then trying to fit a very long line of text in just one line could lead to the font-size being too small:
+
+<LiveExample>
+	<FitToWidth style="font-size: 1px; width: 20%; scale: 5; margin: 5em auto">This a very long line of text that fits the width, but does not wrap, rendering in a tiny font-size as it does not have a lower limit.</FitToWidth>
+</LiveExample>
+
+Ah, and this is also an example that uses `width: 20%; scale: 5`, emulating a user trying to use full-page zoom in an attempt to make the text larger. The computed font-size here is `2.48483px` on a wide screen, and `1.10771px` on a screen of an iPhone mini.
+
+My other personal pet peve is what happens when you’re not just zooming in, but _zooming out_ — sometimes a text can be too large, and you want to shrink it to read easier… but cannot, as it continues to take all the available space regardless of the full-page zoom level.
+
+<LiveExample>
+	<FitToWidth style="width: 200%; scale: 0.5; transform-origin: 0 0; margin-bottom: -15em;">CSS</FitToWidth>
+</LiveExample>
+
+This example is “zoomed out” by 50% via `width: 200%; scale: 0.5`, but the text continues to be very big (computed size is `779.034px` for me).
+
+#### Fixed Exceptions
+
+Before talking about solutions, I want to note that this problem won’t appear _always_. If the fit-to-width **does not** have a dependency on the viewport’s width, it will follow the full-page zoom perfectly.
+
+<LiveExample>
+<div style="width: 200px; outline: 2px solid var(--PINK)"><FitToWidth>42</FitToWidth></div>
+
+<div style="width: 200px; outline: 2px solid var(--PINK)"><FitToWidth>2025</FitToWidth></div>
+
+<div style="width: 200px; outline: 2px solid var(--PINK)"><FitToWidth>3.1415926</FitToWidth></div>
+</LiveExample>
+
+Above is an example with three elements, each of which has a fixed width of 200px. If we were to zoom in, the text’s size will increase as well, as it won’t adapt to the change of the viewport.
+
+However, this is only a subset of all possible cases which authors could have, and sometimes you could think that the element’s width is fixed, apply the technique, only to add `max-width: 100%` later and find the “stretched” text to be too small on a mobile viewport, where it becomes the limiting factor.
+
+### Possible Solutions
+
+It is impossible to eliminate _all_ the potential traps an author can fall when using new features, but we can make it harder to break things unintentionally, and build the defaults more cautiously.
+
+If we were to implement the feature with very severe limitations, there is always a chance authors would either use something else (which could be even worse), or work around the limitations by removing them completely with various hacks. We need to find a balance where we could allow authors to express themselves, but in a way they couldn’t unknowlingly make their sites inaccessible.
+
+I will welcome any constructive feedback: please let me know if you think the proposed solutions are enough, and if not — which limitations would you like to see instead? Is there anything I missed? Don’t hesitate to reply either on Mastodon, in the [parent CSSWG issue](https://github.com/w3c/csswg-drafts/issues/2528), write a post on your platform of choice, or email me at [kizmarh@gmail.com](mailto:kizmarh@gmail.com).
+
+#### Limiting the Size Range
+
+My first (and main) idea for a potential solution came from reading the [“Understanding Resize Text Success Criterion”](https://www.w3.org/WAI/WCAG21/Understanding/resize-text.html) document, specifically, [the second note there](https://www.w3.org/WAI/WCAG21/Understanding/resize-text.html#:~:text=for%20some%20users.-,Note,-As%20with%20most):
+
+> […] For example, if at the default browser setting of 100% zoom, text is set at 20px when the window is 1280 CSS pixels wide, at 200% zoom it will visually appear at twice the size. After zooming by 400% the page reflows to fit within the 320 CSS pixel viewport, the author may decide to set the page's text size to 10px. The text is now half the original size in CSS pixels, but as it has been enlarged to 400%, it is still displayed at twice the size compared to the default browser setting at 100% zoom. […]
+
+This note describes a case where an author adjusts the font-size based on the available space, but in a way where even though they reduce it from 20px to 10px, an increase in 400% from that point will lead to the text being 200% larger than originally, thus passing the Success Criterion 1.4.4.
+
+What if we were to limit the _range_ in which our fit-to-width can operate?
+
+In my initial proposal, I wanted to use the original `font-size` as the minimal size in which the text will be rendered during the first pass, and which then would be increased to fit the available space up to an optional maximum font-size. I contemplated having a default value there, and wondered if something like `100vb` would be enough.
+
+But what if we had the default value to be just `200%`? With all modern browsers having at least 500% full-page zoom available, a range of any font from `1em` to `2em` should pass the Success Criterion 1.4.4 in the same way as described in the above note.
+
+<div class="aside-wrapper" style="--span: 3;">
+<aside style="position: static;">
+
+If we were to look at the 500% value as is, we could say that making the limit be `250%` could still allow us to pass the SC, but it is better to leave some breathing room and limit it a bit more.
+
+</aside>
+</div>
+
+Here is an example from before, but with this limit: first without the “fit-to-width” applied, then with it, and finally, zoomed-in:
+
+<LiveExample style="font-size: 32px; word-break: break-word;">
+	<div>Limited</div>
+
+	<FitToWidth style="--max-font-size: calc(2 * var(--fs0));">Limited</FitToWidth>
+
+	<FitToWidth style="--max-font-size: calc(2 * var(--fs0)); width: 20%; scale: 5; margin: 5em auto">Limited</FitToWidth>
+</LiveExample>
+
+Of course, you can see that the text in the second line does _not_ fit the full width, as it grows only to be up to 200% larger than originally, but that is what allows it to grow when we “zoom in”.
+
+In practice, this limitation just means you need to care more about the original font-size, and make it not too small if you want your headers to be able to grow. This post’s header is using this limit, and it still looks good:
+
+<LiveExample style="">
+	<h1 style="margin: 0;overflow: hidden; resize: horizontal; max-width: 110cqi;min-width: 7.2em" role="presentation">
+		<FitToWidth>Fit-to-Width</FitToWidth>
+		<FitToWidth>Discussions & Feedback</FitToWidth>
+	</h1>
+</LiveExample>
+
+Although, I had to slightly bump the original font-size of the “Fit-to-Width” to grow further, but it was simple to do, and still allows the header to feel responsive when you resize the content area.
+
+##### Relaxed or Strict
+
+There are two versions of this proposed solution: relaxed and strict.
+
+1. **Relaxed:** use `200%` as the default “max-font-size” value for the fit-to-width feature. Omitting a value will lead to a guaranteed “passing” criterion. But it will be possible for an author to override it to a different value: smaller or larger.
+
+2. **Strict:** have `200%` as the _limit_ of what you could have for the feature. You could set it to be lower, but not higher.
+
+I lean towards the `relaxed` solution: the strict limit won’t make sense for any case where [the problem is non-existent](#fixed-exceptions), and as I described at the beginning of the [“Possible Solutions”](#possible-solutions) section, in CSS it is possible to find hacky way to work around this anyways.
+
+Having a stricter _default_ could be a good start, additional guidance about the potential accessibility implications in the specs and on MDN could go a long way, and user agents' developer tools could go even further and detect places where the fit-to-width value (or — any responsive typography calculations) can result in a more than 200% range and is dependent on the viewport dimensions.
+
+There might be some in-between version of this solution as well, where we could introduce some friction for removing the 200% limit. An author that knows what they’re doing will be able to do the required simple step to remove it, but the path of the least resistance will be safer.
+
+Finally, there might be other ways to achieve “fitting to width”, like with `letter-spacing` and other methods. If we will be able to define them well, a strict solution could use these methods to get the “last mile” after stopping at 200% for the font-size. But that is something that requires experimentation and prototyping, and I still tend to think that a more relaxed solution will work well enough.
+
+#### Collapsing the Container
+
+Another idea I had, but did not manage to go far with it: what if we could somehow detect that the element is in the context where it _can’t_ adapt to the viewport — or its container’s — width? If the problematic cases only happen due to the zoom & viewport interaction, and we can’t detect the zoom level (there is an [“Browser zoom unit for accessibility”](https://github.com/w3c/csswg-drafts/issues/6869) issue by Scott Kellum, but I am not sure if it will be ever resolved), then can we require setting that fixed width for an element that should grow?
+
+I tried thinking how we could approach it — using containers, maybe anonymous boxes around our text, or something else — but couldn’t find a way that wouldn’t introduce too much friction, or won’t be easy to work around by using registered custom properties, viewport units, or something similar.
+
+However, I wanted to mention this as an idea, or a _direction_ in which we could think. Could we have a strict max font-size by default, but somehow make it relaxed when we detect that the container has a fixed width?
+
+Please let me know if you think this direction is worth exploring it further. Or if you have other ideas over how we can alleviate the zooming issue when we’re bounded by the viewport.
+
+### Built-in vs. Custom Solutions
+
+I find this case to be similar to many other cases, where there is a tension between the web platform trying to improve certain use cases, when the design behind them is questionable in the first place. Exclusive accordions, carousels, screen-reader-only styles come to mind.
+
+Today, authors implement these in hacky ways, often with heavy JS usage. Disabled scripts, a tiny mistake, or just an author oversight can render the solutions inaccessible or broken. But new sites continue to be created using these patterns regardless.
+
+Should the Web Platform make it _easier_ to implement such designs? Opponents note that this will make those cases even more prevalent. Proponents say that if we approach it thoughtfully, we can build these solutions accessible (as much as they can be) from the box, eliminating the common mistakes, and reducing the room for an author error.
+
+I don’t have a definitive answer to this, but I believe that together we can strive to make things better and improve the Web.
+
+## Explainer
+
+Now, to the second part of this post: my feedback for Google’s [“CSS fit-width text Explainer”](https://github.com/explainers-by-googlers/css-fit-text/blob/main/README.md).
+
+In general, it is great that Google wants to prototype fit-to-width feature! Having it available in Canary could allow us to test our assumptions and explore possible fixes to the accessibility problems the feature could have. Of course, we should keep it as a _prototype_ until we will come to an acceptable solution for those, and I am strongly against shipping anything without doing so.
+
+The explainer proposes to have two ways of defining the “fit-to-width” behavior as two new CSS properties: `text-grow` and `text-shrink`.
+
+My opinion: at least initially, we should have _only_ the `text-grow` behavior, and I am not sure if we need the `text-shrink` at all. I want to focus my feedback on this part first, and then I’ll provide some of my thoughts regarding other open questions from the explainer.
+
+### Problems of `text-shrink`
+
+While it might seem that there is not a big difference in which way we approach “fit to width” — first rendering the text as small, and then growing it to fit, or first rendering the text as large, and then collapsing it to fit — in practice, there are many ways in which the “shrinking” behavior can be more awkward and less accessible.
+
+I argue that we can do everything `text-shrink` can do with `text-grow`, and having both can be problematic.
+
+#### Worse Fallbacks and Responsive Behavior
+
+Today, many workarounds for fit-to-width tend to _start_ from a larger font-size, shrinking it until it fits. If someone tried to reproduce the same behavior with `text-shrink` by wanting to have a single-line header that fits into the width, they will likely set `white-space: nowrap` and a large enough font-size, and then add `text-shrink`.
+
+This _will_ work, but it creates many problems:
+
+- In browsers that do not support `text-shrink`, the text will overflow beyond its container. More often than not, authors will forget to wrap the `white-space` in an `@supports`.
+
+- Similarly, if we’d like to enable/disable this behavior dynamically, instead of toggling a single property, you’ll need to remember to toggle `white-space` as well.
+
+With `text-grow`, we start from the small font-size, and then make it grow as a progressive enhancement. We don’t need `white-space: nowrap`, as we _design for the initial state first_.
+
+#### Harder to Set a Limit
+
+If we decide to go with having a `200%` limit of how much our text’s size can change, things become _very awkward_ if we have both `text-shrink` and `text-grow`, and allow using them at the same time.
+
+Do we make the limit for either smaller, so we will still have a 200% range from the smallest size to the largest when both are present? Do we add some magic that chooses this limit based on the presence of other property?
+
+I don’t think there is a good way to go about it. We either limit the most common cases, or introduce a hard-to-understand behavior.
+
+#### Opaque Edge Cases
+
+If we design for the larger font-size to be shrunk, we will likely only test the cases that have a non-modified font-size, but will rarely check what happens when it reaches the available range.
+
+This can lead to a tiny font-size, or — if we use the `white-space: nowrap` — content overflowing by reaching the minimum font-size, and not being able to shrink further.
+
+If we involve adjusting other properties alongside or instead of `font-size` like `letter-spacing`, negative values of it can result in a completely unreadable text:
+
+import Illustration from "./combine-b.png";
+
+<figure>
+<Image src={Illustration} alt="An illustration showing three lines of text with different values of letter-spacing: first line is readable, second one looks like it does not have spaces, so it is harder to read, and the third line has negative values for letter-spacing, resulting in letter overlapping, and making it almost impossible to understand what is written." />
+<figcaption>Illustration from the [“Combining behaviors” section of the Explainer](https://github.com/explainers-by-googlers/css-fit-text/blob/main/README.md#combining-behaviors)</figcaption>
+</figure>
+
+If we implement text-shrinking for something like a pill element, where the count inside fits its width, it is easy to make the font end up being too small to read.
+
+Generally, treating `text-grow` as a progressive enhancement allows us to design from the extreme case, and allow the browser improve the display of the text.
+
+### Other Syntax Feedback
+
+Aside from `text-shrink`, there are two things that, I feel, need to be talked about.
+
+#### Limit Value
+
+The explainer proposes to use a `<length>` for setting the max value of the font, and it mentions values like `30px` and `8px`. Setting the font-size in pixels is a common mispractice, and maybe this is a place where we could try not to introduce another potential point of failure for authors. I see two ways to handle this:
+
+- Allow only `<number>|<percentage>` values, with a `200%` by default. If the limit will be strict, it will allow a range of values either from `1` to `2`, or from `100%` to `200%`.
+
+- Allow setting a `<length>` as well, but convert it into a value based on `rem` automatically. This can be conroversial, as I don’t think we have a precedent for this in CSS yet, but maybe it is worth introducing a mechanism like this?
+
+And, a final option will be to disallow changing the limit at all. Are there actual cases where you’d want to limit upper value to be less than `200%`? If a strict limit will be enough, then why not simplify the property by removing the ability to override it at all.
+
+#### Syntax of `<fit-method>`
+
+The explainer proposes to have the following values: `scale`, `scale-inline`, `font-size`, and `letter-spacing`.
+
+I am not certain there is any benefit from having a `scale`/`font-size` separation: for most fonts there is no effective difference aside from maybe hinting, and for fonts with an optical variable axis you’d likely never want to use `scale`.
+
+Having `scale-inline` is interesting, although at least in western typography non-proportional scaling of glyphs is rarely considered to be good. I can see how it can be sometimes better than changing font-size, but it might also be too easy to shrink the glyph too much.
+
+The `letter-spacing` seems obvious, but I wonder if we also want to have some kind of limitation to how much it can grow: imagine having a two- or three-letter word that stretches using `letter-spacing`. We’d need to be able to control how much it will stretch, and have some built-in limit as well.
+
+Finally, I saw many authors mention that they’d want to be able to apply _both_ `font-size` scaling and `letter-spacing`, and maybe even some other approaches like changing the font’s `width` optical axis, or something else. In this case, we’d want to be able to _mix_ these, potentially providing a % of each, or defining a _sequence_ in which they should be used (like first only scaling via `font-size`, and when the limit is reached use `letter-spacing`).
+
+Handling multiple methods and mixing them is something I want to experiment with, and maybe we could start with a simplistic syntax, but we need to accomodate its future expansion to be more complicated.
+
+### Thoughts on Open Questions
+
+There are a few items and open questions in the [“Detailed design discussion”](https://github.com/explainers-by-googlers/css-fit-text/blob/main/README.md#detailed-design-discussion) section of the Explainer that I’d like to give my thoughts about.
+
+#### Scalable or Static Elements
+
+> - Items contained in a line box are classified as either "scalable" or "static", and only "scalable" items are affected by this feature.
+
+I am not sure if it is useful to categorize _elements_ inside a line box. Mostly, because later there is a question:
+
+> What about padding/border/margin of inline boxes?
+
+And I strongly think that almost anything that depends on the current font-size should scale accordingly (anything with values in `em`, `ch`, `cap`, etc), and anything that does not (`px`, `rem`, etc.) should not.
+
+In my proposal, I suggest having an additional render step that allows us to determine the _static contribution_ of any static parts, including paddings, margins, or more complex calculations.
+
+> - Should we assume text with a fixed font-size as "static"?
+
+Yes, if a nested element has a font-size defined in `px` or `rem`, it should not grow proportionally to the parent’s font-size.
+
+> - Replaced elements such as `<img>` and `<input>` are static.
+> - Atomic inlines are static
+
+As I mentioned before, I don’t think we should think about specific elements as being static, but rather determine how much they contribute statically, and how much they contribute when depending on the font-size. An image icon that is sized in `em` should grow with text, an input could also inherit the parent’s font-size, and thus grow with its font-size as well.
+
+This also answers a later question about `<length>`:
+
+> - How does this interact with properties with `<length>`.
+>     - Should the length be scaled or not? Depends on its units (`px`, `em`, `rem`, `%`, `vw`, `vh`, etc.)?
+
+#### `scale` vs `font-size`
+
+> - The methods vaues `scale` and `font-size` that can be specified for `<fit-method>` can produce similar visual results. Through prototype implementation and discussion, we aim to decide whether to standardize both or remove one of them.
+>
+>     - `scale` linearly scales up the glyph data obtained at the original font size for rendering. Consequently, the displayed glyph might differ from the ideal glyph intended for that size. However, since the glyph data retrieval process only happens once, it operates significantly faster.
+>     - `font-size` renders the ideal glyph for the displayed size. This process can be considerably slower because it necessitates trying out glyphs of various sizes.
+
+I mentioned this in the [“Syntax of `<fit-method>`”](#syntax-of-fit-method) section. In short, I think we don’t need the `scale`, as it won’t be a correct representation of the change in font-size, and I can see how the above thoughts about separating elements into static and scalable could make sense if we will do the “scale” method, but I consider this method to not be good enough.
+
+#### Best-fit `font-size` Algorithm
+
+> - How to find the best-fit font-size? There are cases where the line width becomes smaller even if the font-size is increased.
+
+The algorithm that I am using in my workaround could be a good starting point. For edge cases like `calc(20px - 1em)`, there are two things we could do:
+
+- Only use the initial font-size for such calculations, so the `1em` there won’t inherit the changed value.
+
+- Or, we could check if our new value that attempts to increase the length of a line results in a shorter line, and keep the original value instead.
+
+Such edge cases are rare, and we should strive to solve the most common cases, and have an accessible fallback for those outside of them.
+
+#### Other Variable Axis
+
+> - `font-weight` or `font-width` for `<fit-method>`? They work well only with specific fonts, and they don't offer the flexibility to fit text to any width. So we don't apply them in the initial proposal.
+
+I agree that we _could_ postpone this part, but we need to design the syntax in a way where it could be easily expanded to support those.
+
+I have some ideas about how we could do it. One is to treat each additional axis as linear by default, taking the dimensions of the min and max versions, and interpolating between them. Of course, a font could have a non-linear interpolation for any of the axises, in which case we could allow defining a custom easing as well, but for most cases, like with the `width` axis, having a linear interpolation by default should be good enough.
+
+#### Mentions of Accessibility
+
+> - Accessibility If an end-user tries to enlarge font size, UAs should not fit enlarged lines to the container width. Is minimum-font setting enough?
+> - The user's minimum font size preference should be respected.
+
+These are the only mentions of accessibility, and I don’t think it is possible for the UA to “not fit enlarged lines to the container width”, as this means the UA will treat full-page zoom differently than just a narrow layout, which might be problematic.
+
+I do not remember if we have a notion of a global “minimum font-size” in CSS, but if we have, and regardless of this, we for sure need to consider it. However, I imagine that we only would need to consider it when talking about `text-shrink`, while if we were to only implement `text-grow`, it won’t apply (as it will be just its interaction with regular `font-size`).
+
+Otherwise, I would like the explainer to dive into accessibility deeper, and consider my thoughts from [the first part of this post](#accessibility).
+
+#### Handling of last lines
+
+> - How to handle last lines if `text-grow:per-line` is specified. Should we widen them even if auto-wrapped?
+
+A good question! Without a limit, a single short word in the end could get too large. However, if we introduce the limit, I don’t think this becomes a big issue?
+
+#### Floats and Initial Letters
+
+> - Line's available width can depend on its block offset. e.g. `float` and `initial-letter`.
+
+I think the `float` case is more simple: we could exclude it from any scaling (so not change the `font-size` inside of it), and first lay out the float, then determine the line boxes and only then do the scaling.
+
+The `initial-letter` is more complex, as it behaves interestingly when it stretches multiple lines, as its size starts to depend on the line-height. If the line-height is only dependent on the font-size, then it is simple enough case, as we can treat the initial-letter’s contribution to each line as scaling accordingly, but when it is static or mixed, then the dependence is not linear, and we’ll need to define how things should work then.
+
+### Further Recommended Actions
+
+It is great that there is this explainer, as it allows us to start a dialogue and discuss the direction in which we want to go with this feature. If I were to give some advice to Google’s engineers implementing a prototype, here is what I would suggest:
+
+- Implement a soft 200% max-font-size limit. Having it in a prototype as a soft limit will allow us to test how things behave without it, and also test what happens if we increase it, and if we ever need to do so. We could always make it strict, or remove an ability to override it altogether later.
+
+- Focus only on `text-grow` for the start, see the [reasons why above](#problems-of-text-shrink).
+
+- Focus on trying to do the proper `font-size` scaling while taking the potential optical sizing axis in consideration as I explained in [my original proposal](https://github.com/w3c/csswg-drafts/issues/2528#issuecomment-2314897420). If the regular scaling is simple, it will be better to try and do the hard part first — we should not discard it without trying. But, in my opinion, even if just scaling in simpler, it will not be enough, and for many typographic designs we’ll have to rely on existings workarounds instead of using the new feature. And, because of the ways different algorithms treat static/scaling contributions, I doubt it will be good to allow them both.
+
+## Invitation to Participate
+
+That’s it for now!
+
+Fit-to-width is a hard problem, but it is worth solving. I invite all designers, typography enthusiasts, and accessibility practioners to participate in doing so, and finding a way forward that won’t make things worse.
