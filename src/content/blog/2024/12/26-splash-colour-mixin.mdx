@@ -94,7 +94,7 @@ I think it is a good demonstration of what might be possible with native m
 
 	/* By default, adding a text-shadow (might be overridden later) */
 	--_splash-shadow:
-		var(--WHEN, if(style(--_splash-bg-value): ; else: var(--_splash-bg-value)))
+		var(--WHEN, if(style(--_splash-bg-value: var(--_splash-bg-value)):))
 		Canvas 1px 1px 0px,
 		Canvas -1px -1px 0px,
 		Canvas 1px -1px 0px,
@@ -110,7 +110,7 @@ I think it is a good demonstration of what might be possible with native m
 		);
 
 		--_splash-color:
-			var(--WHEN, if(style(--splash-bg): ; else: var(--splash-bg)))
+			var(--WHEN, if(style(--splash-bg: var(--splash-bg)):))
 			oklch(
 				from var(--_splash-bg-value)
 				var(--_splash-l) 0 h
