@@ -1,0 +1,14 @@
+:root {
+	--WHEN: ;
+}
+
+/* Is the if() here the minimal and properly syntaxically correct?
+   For now, it works. */
+@supports (top: if(():)) {
+	:root {
+		--WHEN_CHECK: ;
+		--WHEN_a: var(--WHEN_b);
+		--WHEN_b: var(--WHEN_CHECK, var(--WHEN_a));
+		--WHEN: if(style(--WHEN_b: initial): ; else: initial);
+	}
+}

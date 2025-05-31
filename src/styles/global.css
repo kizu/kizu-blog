@@ -1,11 +1,11 @@
+@import './features/debug.css';
+@import './features/conditions.css';
+@import './features/require-supports.css';
 @import './features/scroll-markers.css';
 @import './features/progress.css';
-@import './features/debug.css';
 @import './features/photo.css';
 
 html {
-	--WHEN: ;
-
 	scrollbar-gutter: stable;
 	color-scheme: light dark;
 	font-synthesis: none;
@@ -364,13 +364,15 @@ h1 {
 	line-height: 1.2;
 	font-weight: 800;
 	letter-spacing: 0.025em;
-	font-variant-caps: petite-caps;
+	font-variant-caps: small-caps;
 }
 
 @layer small-caps {
 	* {
 		--small-caps: var(--_small-caps);
-		--_small-caps: petite-caps var(--WHEN, var(--small-caps));
+		/* For some reason, petite-caps do not work in Safari */
+		--_small-caps: small-caps
+			var(--WHEN, if(style(--small-caps): ; else: var(--small-caps)));
 		font-variant-caps: var(--_small-caps, revert-layer);
 	}
 }
@@ -880,79 +882,6 @@ pre {
 
 *[style*='--D-bg:'] {
 	background: var(--LIGHT, var(--L-bg)) var(--DARK, var(--D-bg));
-}
-
-[class*='require-']::before {
-	content:
-		"\26A0 \FE0F  Your browser does not support `"
-		var(--require-anchor-name,
-			var(--require-animation-range,
-				var(--require-timeline-scope,
-					var(--require-at-scope,
-						var(--require-cap,
-							var(--require-style-queries))))))
-		'`';
-	display: block;
-	border: 2px dashed #FFCA51;
-	padding: 8px;
-	margin-block-end: 16px;
-	text-align: center;
-}
-
-.require-at-scope {
-	--require-at-scope: '@scope';
-}
-
-.require-style-queries {
-	--require-style-queries: '@container style(--variable)';
-}
-
-@scope (html) {
-	.require-at-scope {
-		--require-at-scope: initial;
-	}
-}
-
-@container not style(--foo: 1) {
-	.require-style-queries::before {
-		--require-style-queries: initial;
-	}
-}
-
-@supports not (anchor-name: --foo) {
-	.require-anchor-name {
-		--require-anchor-name: 'anchor-name';
-	}
-}
-
-@supports not (anchor-name: --foo) {
-	.require-anchor-name {
-		--require-anchor-name: 'anchor-name';
-	}
-}
-
-@supports not (animation-range: entry-crossing) {
-	.require-animation-range {
-		--require-animation-range: 'animation-range';
-	}
-}
-
-@supports not (timeline-scope: --foo) {
-	.require-timeline-scope {
-		--require-timeline-scope: 'timeline-scope';
-	}
-}
-
-@supports not (opacity: round(5, 2, 1)) {
-	.require-round {
-		--require-timeline-scope: 'round()';
-	}
-}
-
-@supports not (margin: 1cap) {
-	.require-cap {
-		--require-cap: 'cap';
-	}
 }
 
 sup {
