@@ -372,7 +372,7 @@ h1 {
 		--small-caps: var(--_small-caps);
 		/* For some reason, petite-caps do not work in Safari */
 		--_small-caps: small-caps
-			var(--WHEN, if(style(--small-caps): ; else: var(--small-caps)));
+			var(--WHEN, if(style(--small-caps: var(--small-caps)):));
 		font-variant-caps: var(--_small-caps, revert-layer);
 	}
 }

@@ -1,0 +1,168 @@
+---
+title: 'Future-Proofing Indirect Cyclic Conditions'
+description: 'When working on another blog post, I noticed that my blog’s styles were broken in Chrome Canary. What happened? A change in how “short-circuiting” of custom property fallbacks works.'
+tags: ['CSS Mixins', 'CSS']
+pubDate: '2025-05-31'
+mastodonPostId: ''
+
+current: {
+	drink: 'Yunnan Tea',
+	music: 'Rökkurró — Innra',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+When working on another blog post, I noticed that my blog’s styles were broken in Chrome Canary.
+
+What happened? A change in how “short-circuiting” of custom property fallbacks works.
+
+## Table of Contents
+
+## The Context
+
+For a bit of context, see [“Short-circuit `if()` evaluation”](https://github.com/w3c/csswg-drafts/issues/11500) issue by [Anders Hartvoll Ruud](https://github.com/andruud) in which CSSWG [resolved in February](https://github.com/w3c/csswg-drafts/issues/11500#issuecomment-2669358882) to specify a new parsing behavior for all substitution functions. Including custom properties.
+
+Before that change (and what is currently happening in all browsers), [the algorithm for the dependency graph between custom properties in the specs](https://www.w3.org/TR/css-variables-1/#cycles) included the mention of the fallbacks:
+
+> For each element, create a directed dependency graph, containing nodes for each custom property. If the value of a custom property `prop` contains a `var()` function referring to the property `var` (including in **the fallback** argument of `var()`), add an edge between `prop` and the `var`.
+>
+> If there is a cycle in the dependency graph, all the custom properties in the cycle are invalid at computed-value time.
+
+The most recent [Editor’s Draft for CSS Values and Units Module Level 5](https://drafts.csswg.org/css-values-5/) does not mention this and contains [a rewritted set of custom property substitution rules](https://drafts.csswg.org/css-values-5/#substitution).
+
+The corresponding change followed the spec and landed in Chrome Canary [in a commit from May 15
+](https://github.com/chromium/chromium/commit/bdc06ec50523903db098fa80da5fe92f49e76ce5). It was known that this _will_ break backwards compat for anything that used this _for reasons_. However, the only reason we could think of at the time was my hacky technique: [“Indirect Cyclic Conditions”](https://kizu.dev/indirect-cyclic-conditions/), so we decided to try this, adding a use counter to track the usage of these fallbacks.
+
+Anders did a [thorough compat investigation](https://docs.google.com/document/d/1qHOZr5PK9WQWZtPIQvmAqps74pyjMyZ7uOvqq6MxyZs/edit?tab=t.0#heading=h.f8voyi71vekm) of pages that this use counter found.
+
+Of course, my technique was spotted by this use counter, and was mentioned in the investigation:
+
+> Roman invented a terrible (but great) mixin technique which relies on short-circuiting not happening […] This change would definitely break that approach, but Roman was part of the CSSWG decision to make this change, and has accepted the breakage.
+
+But other than this, the findings do now show any highly problematic use cases, and, if anything, this change could _fix_ some of them.
+
+Well, my blog and some articles on the main site broke, but — I knew about it — and it’s time to find a workaround!
+
+## The Workaround
+
+One of the reasons I was ok with this change — the only use case for this past behavior that I found was for doing conditionals. With `if()` function being accepted — and even already shipped in Chrome 137 — we will eventually have a proper way of doing conditions, in a much more simple and non-hacky way.
+
+But — the changes required to make `if()` performant lead to the past behavior — one my technique relied upon — to break. Can we somehow make it continue to work, while still using my technique for browsers that do not yet understand native conditions?
+
+The first idea I had was to just use `@supports` and override the definition of the custom property that uses the `--WHEN` in code to use an `if()` instead. Note that we cannot use a regular override like
+
+```css
+--color: pink var(--WHEN, var(--condition));
+--color: if(style(--condition): pink);
+```
+
+as for non-registered custom properties (which we have), they accept _anything_, and even if the browser does not know about `if()`, it will only ever use the second declaration here. So, we need an `@supports`.
+
+Let’s look at a minimal example that uses my technique:
+
+<LiveExample class="example1">
+```css
+.example1 { --WHEN: }
+.example1 .minimal {
+	--input: var(--bg-value);
+	--bg-value: var(--GREEN) var(--WHEN, var(--input));
+	background: var(--bg-value, var(--PINK));
+}
+```
+```html
+<div class="minimal">Pink</div>
+<div class="minimal" style="--input: 1">Green</div>
+```
+</LiveExample>
+
+If you look at this example today in Chrome Canary with the Experimental Web Platform Features flag on, you’ll see that it does not work: the first element there should be pink, as the always defined `--WHEN` means it will not go to the fallback, and will make the `--bg-value` valid for all cases.
+
+### Simple Fallback
+
+Just adding a fallback with `@supports` works:
+
+<LiveExample class="example2" shouldHideHTML>
+```css
+.example2 { --WHEN: }
+.example2 .minimal {
+	--input: var(--bg-value);
+	--bg-value: var(--GREEN) var(--WHEN, var(--input));
+
+	@supports (top: if(():)) {
+		--bg-value: if(style(--input): var(--GREEN));
+	}
+
+	background: var(--bg-value, var(--PINK));
+}
+```
+```html
+<div class="minimal">Pink</div>
+<div class="minimal" style="--input: 1">Green</div>
+```
+</LiveExample>
+
+<aside>
+I am using a very hacky-looking minimal `@supports` value — `if(():)`. Currently, it works in Chrome, although it is a bit difficult to understand whether it is _intended_ to work or not. If I’ll have an opportunity, I’ll dig into it, in the meantime, feel free to [read through its syntax](https://drafts.csswg.org/css-conditional-values-1/#condition) and let me know what you think!
+</aside>
+
+However, it is a bit verbose — we have to repeat the declaration, and repeat everything inside as well, just in a different form.
+
+Can we somehow keep just one declaration?
+
+### Complex Fallback
+
+We can, but we need to do two things:
+
+1. Define `--WHEN` conditionally.
+2. Adjust how we use it.
+
+<LiveExample class="example3" shouldHideHTML>
+```css
+.example3 {
+	--WHEN: ;
+	@supports (top: if(():)) {
+		--WHEN: initial;
+	}
+}
+
+.example3 .minimal {
+	--input: var(--bg-value);
+	--bg-value:
+		var(--GREEN)
+		var(--WHEN, if(style(--input: var(--input)):));
+
+	background: var(--bg-value, var(--PINK));
+}
+```
+```html
+<div class="minimal">Pink</div>
+<div class="minimal" style="--input: 1">Green</div>
+```
+</LiveExample>
+
+Here, our definition of `--WHEN` with `@supports` will need to be added just once, and then, whenever we want to add this condition, we could do it by wrapping the value inside `--WHEN`’s fallback in a special `if()`.
+
+Why this will work:
+
+- When `if()` is supported, the `--WHEN` will be `initial`, so we will skip to the fallback. Then, we will check for the `--input` — and this check might create our short circuit if the `--bg-value` will reference it as expected, or, with almost any other valid value, will result in a “space” value as any value will be equal to itself.
+
+- When `if()` is not supported, the browser will still _accept_ all the tokens, but will try to substitute all the custom properties, and will see the `var(--input)` inside the `--WHEN`'s fallback, which might create the short circuit.
+
+This requires us to repeat the `--input`’s name, but otherwise it’s coincise enough.
+
+<aside>
+It might seem that using the value of some variable on both sides of `: ` in `style(--input: var(--input))` is cyclic, but it is not — this is not an assignment, but a check.
+</aside>
+
+## An Unrelated `tan(atan2())` Breakage
+
+Curiously, literally while I was working on this article, [Oddbjørn Øvernes](https://github.com/oddvernes) [reported](https://front-end.social/@oddvernes/114602912044928080) an issue with [“Pure CSS Mixin for Displaying Values of Custom Properties”](https://kizu.dev/preview-mixin/) that uses this technique in Chrome. However, it was in _stable_ Chrome, and unrelated to short-circuiting. After some debugging, I found out that it was an issue with how it handles `tan(atan2())`. I already published a `0.2.1` version of this mixin that has both issues fixed in it, and [reported the bug to Chromium](https://issues.chromium.org/issues/421559833).
+
+## Final Words
+
+Who could’ve guessed that hacky code could have issues? Well, in this case we knew about it, and now accounted for it (although, I will still need to update the [“Indirect Cyclic Conditions: Prototyping Parametrized CSS Mixins”](https://kizu.dev/indirect-cyclic-conditions/) article with the corresponding changes).
+
+And, now we now have a way to continue using this hacky — but mostly cross-browser — technique for a subset of inline conditions that check for an existance of some value.
+
+I still hope you won’t use it in production!
