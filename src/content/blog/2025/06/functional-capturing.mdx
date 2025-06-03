@@ -1,0 +1,282 @@
+---
+title: 'Functional Capturing'
+description: 'Chrome currently has an experimental implementation of custom CSS functions in its Canary version. In a small series of blog posts, I’ll write about a few things I found interesting in the current prototype implementations of functions and conditions. This post is about one feature of custom functions that I will likely use all the time, but which might not be obvious at the first glance.'
+tags: ['CSS Functions', 'CSS']
+pubDate: '2025-06-03'
+mastodonPostId: ''
+
+current: {
+	drink: 'Jasmine Green Tea',
+	music: 'mudy on the sakuban — New Theory',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## The Context
+
+Chrome currently has an experimental implementation of [custom CSS functions](https://drafts.csswg.org/css-mixins-1/#defining-custom-functions) in its Canary version and also recently shipped [`if()` conditions](https://drafts.csswg.org/css-values-5/#if-notation) in stable Chrome 137.
+
+In February, I wrote a quick post about them: [“Intent to Experiment for Longer”](/intent-to-experiment-for-longer/) — more specificlaly, about how it is better to wait before shipping the features without sufficient developer feedback.
+
+One thing I forgot to mention in that post: the features, as far as I tested them, worked pretty well, and I generally liked their design. My main blocker that was there for functions — a necessity to explicitly define dependencies for functions — was [resolved to be removed](https://github.com/w3c/csswg-drafts/issues/10954#issuecomment-2623138036) (official resolution: “Kill `using` with fire”), and, with it, I did not yet find any other personal blockers, for now.
+
+That said: even when the design and implementation are sound, with the Web Platform it is always better to be on a more cautious side, especially with foundational features. And while I did not yet find any other blocking issues, this does not mean they do not exist. I would be happy if there are none! But if you’re a web developer: please, play with these new features, and give your feedback.
+
+In a small series of blog posts, I’ll write about a few things I found interesting in the current prototype implementations of functions and conditions.
+
+This post is about one feature of custom functions that I will likely use all the time, but which might not be obvious at the first glance.
+
+## Basic Capturing
+
+Before continuing, I recommend reading my [“Captured Custom Properties”](/captured-custom-properties/) post, in which I talk a bit about the registered custom properties, some use cases for them, and a pattern I currently use with them.
+
+<aside>
+In short: a registered custom property, when registered with a certain type, can store the resolved value instead of the sequence of tokens which custom property usually pass around. A `1em` will expand to something like `16px`, losing the association with the element it’s used on.
+
+One notable use case for it that I [mentioned in the above article](/captured-custom-properties/#named-container-query-length-units-workaround) is working around the absence of named container query length units, an [issue about which](https://github.com/w3c/csswg-drafts/issues/7858) was initially opened by [Una Kravets](https://una.im/), and where [I originally shared this workaround](https://github.com/w3c/csswg-drafts/issues/7858#issuecomment-1484103141) in the comments.
+
+Recently, [Ana Tudor](https://thebabydino.github.io/) wrote an article about this use case as well: [“Using Container Query Units Relative to an Outer Container”](https://frontendmasters.com/blog/using-container-query-units-relative-to-an-outer-container/).
+</aside>
+
+With custom functions, some of those use cases could be solved much more elegantly!
+
+Let’s look at one example from my “Captured Custom Properties” post.
+
+### Registered Custom Property Example
+
+In this example, we can use a custom property to “evaluate” its value on the element, so it will store the value of `1.5em` in pixels, so it could be used on its children through inheritance.
+
+<LiveExample shouldHideHTML caption="Storing the font-size on the root, and restoring it on an inner element.">
+```css
+@property --registered-font-size {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}
+
+.example-reg {
+	font-size: 0.666em;
+	--registered-font-size: 1.5em;
+
+	& span {
+		font-size: var(--registered-font-size);
+	}
+	& .inner {
+		font-size: 2em;
+	}
+}
+```
+```html
+<div class="example-reg">
+	<em>Outer:</em> <span>Foo</span>
+	<div class="inner">
+		<em>Inner:</em> <span>Bar</span>
+	</div>
+</div>
+```
+</LiveExample>
+
+This is great, and while my pattern of having a dedicated suit of registered custom properties works well, we have to register new custom properties whenever we want to use multiple of them on the same element.
+
+Even though you cannot register a custom property from inside a custom function, one of their features works similarly, and we can use it to simplify things a lot.
+
+### Custom Function Example
+
+<aside class="warning warning--custom-functions">
+Currently, custom functions are only available in [Chrome Canary](https://www.google.com/chrome/canary/) with an `Experimental Web Platform features` feature flag on at `chrome://flags/`.
+</aside>
+
+<LiveExample class="require-custom-functions" shouldHideHTML caption="Storing the font-size on the root, and restoring it, now via a custom function.">
+```css
+@function --capture-length(--value <length>) {
+	result: var(--value);
+}
+
+.example-fun {
+	font-size: 0.666em;
+	--captured-font-size: --capture-length(1.5em);
+
+	& span {
+		font-size: var(--captured-font-size);
+	}
+	& .inner {
+		font-size: 2em;
+	}
+}
+```
+```html
+<div class="example-fun">
+	<em>Outer:</em> <span>Foo</span>
+	<div class="inner">
+		<em>Inner:</em> <span>Bar</span>
+	</div>
+</div>
+```
+</LiveExample>
+
+This works the same! But now we have a reusable `--capture-length()` function, and with its parameter being _typed_, this parameter behaves like a registered custom property — capturing its value, and passing the evaluated value, and not the tokens in abstract.
+
+The [spec text for the custom function evaluation](https://drafts.csswg.org/css-mixins-1/#evaluate-a-custom-function) explicitly describes how exactly those parameters are registered:
+
+> For each function parameter of _custom function_, create a custom property registration with the parameter’s name, a syntax of the parameter type, an inherit flag of "true", and no initial value. Add the registration to _registrations_.
+
+Interestingly, if we define a _return type_ for a function, it will also be “captured”, so those two are identical:
+
+```css
+@function --capture-length(--value <length>) {
+	result: var(--value);
+}
+```
+
+```css
+@function --capture-length(--value) returns <length> {
+	result: var(--value);
+}
+```
+
+But using the type for a parameter is just so slightly more compact.
+
+### Use Cases for Capturing Length
+
+I won’t repeat [everything I wrote in my original article about it](/captured-custom-properties/), but to sum up some common use cases:
+
+- [“Detecting `@property` Support”](/captured-custom-properties/#detecting-property-support).
+
+- [“Named Container Query Length Units Workaround”](/captured-custom-properties/#named-container-query-length-units-workaround).
+
+- [“Working Around Type Limitations”](/captured-custom-properties/#named-container-query-length-units-workaround).
+
+## Universal Capturing
+
+The function above only captured a single type — `<length>`. But we can make it capture multiple different types at the same time!
+
+```css
+@function --capture(
+	--value type(<length>|<number>|<color>)
+) {
+	result: var(--value);
+}
+```
+
+This will work just as well!
+
+### More Use Cases
+
+However, the use cases for things outside `<length>` are rare.
+
+One example for `<color>` I also gave in my previous post on topic: [“Unlocking Style Queries”](/captured-custom-properties/#unlocking-style-queries).
+
+Until now, if we wanted to check the value of some color, like inside a style query, we had to “normalize” it and use a registered custom property for this.
+
+We can do this with our `--capture` function as well — and! — with conditions in CSS, we could implement a `--light-dark()` custom function similar to what I described in my [“Querying the Color Scheme”](/querying-the-color-scheme/) post, but one that will work without the downside of style queries!
+
+Here is a heavily modified example from the [“Single Source of Truth”](/querying-the-color-scheme/#single-source-of-truth) section of that post, but now using the custom functions and `if()`:
+
+<LiveExample class="require-custom-functions" shouldHideHTML>
+```css
+@function --capture(
+	--value,
+	--_value type(<length>|<number>|<color>):
+		var(--value)
+) {
+	result: var(--_value);
+}
+
+@function --light-dark(--a, --b) {
+	--captured-color:
+		--capture(light-dark(white, black));
+
+	result: if(
+		style(--captured-color: --capture(#FFF)):
+			var(--a);
+		else:
+			var(--b);
+	);
+}
+
+.example--light {
+	color-scheme: light;
+}
+
+.example--dark {
+	color-scheme: dark;
+}
+
+.example {
+	padding: 1em;
+	background: Canvas;
+	color: CanvasText;
+	border:
+		2px
+		--light-dark(solid, dashed)
+		--light-dark(hotpink, pink);
+
+	@layer {
+		.dark-only {
+			display: --light-dark(none, revert-layer);
+		}
+
+		.light-only {
+			display: --light-dark(revert-layer, none);
+		}
+	}
+}
+```
+```html
+<p class="example example--light">I should be always light. Current scheme: <em class="light-only">light</em><em class="dark-only">dark</em>.</p>
+<p class="example example--dark">I should be always dark. Current scheme: <em class="light-only">light</em><em class="dark-only">dark</em>.</p>
+```
+</LiveExample>
+
+We can see that our `--light-dark()` function works for any values — not just colors — and works perfectly on the same element on which we define the `color-scheme`!
+
+There are a few interesting things going on that demand additional explanations.
+
+#### Capturing `light-dark()`
+
+You could notice that the CSS of the `--capture` function here is different from what I proposed initially: it has _two_ arguments, with the second one having its value assigned from the first one by default.
+
+What is this, and why? The reason: `light-dark()` works only for color contexts. It might be Chrome’s implementation bug, but just passing `light-dark (…)` to a custom function, even if the argument is typed, will not capture it.
+
+But by doing this gambit, where we _reassign_ that argument to another typed argument, we can work around this!
+
+#### `revert-layer`, for now
+
+I’m using a `revert-layer` and a custom cascade layer around the `if()`s that touch `display` property, but in the future we could use `revert-rule` for this.
+
+If you don’t know what `revert-rule` is — in January CSSWG [resolved](https://github.com/w3c/csswg-drafts/issues/10443#issuecomment-2627865962) to add it to CSS, following [“New `! revertable` flag to mark a declaration as ‘can be reverted when IACVT’”](https://github.com/w3c/csswg-drafts/issues/10443) by [Lea Verou](https://lea.verou.me/), and an older proposal [“Proposal: additional CSS-Wide Keyword, ‘ignore’ (primarily for css variable fallbacks)”](https://github.com/w3c/csswg-drafts/issues/5319) by [Jane Ori](https://kizu.dev/fit-to-width/).
+
+This CSS-wide keyword will be _invaluable_ for any conditional styles!
+
+#### `if()` evaluation
+
+While the `if()` did ship in stable Chrome 137, it is not yet in its final form. Currently, you have to jump through a few hoops when you want to compare a return value of some function: assign it to another custom property, and also make sure the types match inside `style()` — `style(--captured-color: --capture(#FFF))` — here we have to explicitly call our `--capture()` around the `#FFF` to make sure it will be properly compared with the `--captured-color`.
+
+This is a known “gotcha”: for example, Temani Afif wrote a [“How to correctly use `if()` in CSS”](https://css-tip.com/inline-if/) post about this, in which he points that we can use registered custom properties to fix this. Our `--capture()` function might be an even better solution to this!
+
+And, in the future, the way `style()` is evaluated might change, so there is a chance we could simplify this place later.
+
+### Color Capturing Limitations
+
+When exploring capturing the `<color>` type for _another_ article, I discovered that it does not work for any colors that include `currentColor`.
+
+I won’t repeat myself, but I welcome you to check the [“Problem of the Current Color”](https://kizu.dev/svg-linked-parameters-workaround/#problem-of-the-current-color) section of my [“Passing Data into SVG: Linked Parameters Workaround”](https://kizu.dev/svg-linked-parameters-workaround/) article (which I also recommend reading in full — it contains _many_ fun bits!)
+
+I imagine there might be other similar cases, where we couldn’t capture something that evaluates at _used_ time, and not _computed_ which both registered custom properties and typed function arguments care about.
+
+## Fun Future
+
+I can’t wait for what else we could do with custom functions, `if()`, `revert-rule`, and many other incoming features which will make the foundation of future CSS.
+
+<aside>
+Big thanks to [Miriam Suzanne](https://www.miriamsuzanne.com/) for the [“CSS Mixins & Functions Explainer”](https://css.oddbird.net/sasslike/mixins-functions/#defining-a-mixin-the-mixin-rule) which kickstarted the current work on functions and future work on mixins. I can’t wait for her talk about all of that at [CSS Day](https://cssday.nl/) this week!
+
+If you want to support her work on CSS specs, I recommend supporting [OddBird Open Source](https://opencollective.com/oddbird-open-source) on Open Collective.
+</aside>
+
+At the first glance, functions might seem to be just a syntax sugar over something you could otherwise achieve with preprocessors. But, their type capabilities, and the way they interact with everything else in CSS, allows us to abstract things in much more dynamic ways than previously possible in static CSS.
+
+If you want to play with that future: I recommend trying Chrome Canary with its Experimental Web Platform Features flag, and give your feedback to [CSS Working Group](https://github.com/w3c/csswg-drafts/issues/) and [Chromium](https://issues.chromium.org/issues/wizard). And me — I would love to look at your experiments as well!
