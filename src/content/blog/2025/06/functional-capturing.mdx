@@ -255,7 +255,7 @@ This CSS-wide keyword will be _invaluable_ for any conditional styles!
 
 While the `if()` did ship in stable Chrome 137, it is not yet in its final form. Currently, you have to jump through a few hoops when you want to compare a return value of some function: assign it to another custom property, and also make sure the types match inside `style()` — `style(--captured-color: --capture(#FFF))` — here we have to explicitly call our `--capture()` around the `#FFF` to make sure it will be properly compared with the `--captured-color`.
 
-This is a known “gotcha”: for example, Temani Afif wrote a [“How to correctly use `if()` in CSS”](https://css-tip.com/inline-if/) post about this, in which he points that we can use registered custom properties to fix this. Our `--capture()` function might be an even better solution to this!
+This is a known “gotcha”: for example, [Temani Afif](https://css-articles.com/) wrote a [“How to correctly use `if()` in CSS”](https://css-tip.com/inline-if/) post about this, in which he points that we can use registered custom properties to fix this. Our `--capture()` function might be an even better solution to this!
 
 And, in the future, the way `style()` is evaluated might change, so there is a chance we could simplify this place later.
 
