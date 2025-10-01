@@ -21,11 +21,11 @@ h1 > * {
 	--max-font-size: calc(2 * var(--fs0));
 }
 h1 > :first-child {
-	font-size: 50px;
+	font-size: 3.125rem;
 }
 
 .table-of-contents {
-	grid-row-end: span 10;
+	grid-row-end: span calc(10 * var(--has-toc));
 }
 `}</style>
 
@@ -39,7 +39,7 @@ Since then, I thought a lot about that technique, refined it, and bumped a fe
 
 On April 1st, I presented this issue and my thoughts about it during a CSS Working Group’s face-to-face meeting, where we [resolved](https://github.com/w3c/csswg-drafts/issues/2528#issuecomment-2769621512) to start working on it as a part of [CSS Fonts Module Level 5](https://www.w3.org/TR/css-fonts-5/).
 
-<div class="aside-wrapper" style="--span: 3;">
+<div class="aside-wrapper" style="--span: 4;">
 <aside style="position: static;">
 
 I want to thank [Adam Argyle](https://nerdy.dev), who I talked a lot with while [he was still at Google](https://nerdy.dev/ex-googler), and who nudged Chrome engineers to look more into fit-to-width, as well as [Penelope McLachlan](https://github.com/b1tr0t) who asked a few questions about fit-to-width in bluesky, and [Roel Nieskens](https://pixelambacht.nl/) who promptly answered a few font-related questions that I asked.

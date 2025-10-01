@@ -1,0 +1,59 @@
+---
+title: 'Fit-to-Width Status Update: Prototype and Issues'
+fancyTitle: 'Fit-to-Width| Status Update:| Prototype and Issues'
+description: 'In which I present the current state of things and share links and descriptions of issues I opened in the CSS Working Group’s GitHub following the Chrome team’s feedback.'
+tags: ['Accessibility', 'CSSWG', 'Typography', 'CSS']
+pubDate: '2025-10-02'
+mastodonPostId: '115301367149898532'
+
+current: {
+	drink: 'Camomile Tea',
+	music: 'S — Falling',
+}
+---
+
+<style>{`
+h1 > * {
+	--max-font-size: calc(2 * var(--fs0));
+}
+h1 > :first-child,
+h1 > :nth-child(2) {
+	font-size: 3.125rem;
+}
+`}</style>
+
+Since [my last post about fitting some text into a box](/fit-to-width-discussions-and-feedback/), Chrome’s team posted [their feedback](https://github.com/w3c/csswg-drafts/issues/2528#issuecomment-3336857019) based on the work they did while prototyping.
+
+I agreed with some of what they wrote, but I also strongly disagreed with a bunch of it.
+
+To move things forward, I created four issues, [one of them](https://github.com/w3c/csswg-drafts/issues/12885) is about a technical issue about which spec this feature should belong to, but the other three are something I’d invite you to read and consider:
+
+1. [“Text Fitting: Default scaling limit”](https://github.com/w3c/csswg-drafts/issues/12886) — about my proposed solution of adding a default 200% limit to the feature.
+
+	Chrome team’s does not think it will work, but did not yet elaborate on why. Since posting about my proposed solution, I’ve received zero feedback about it anywhere: neither positive nor negative.
+
+	If you care about accessibility and want to help — I’ll be happy if you will consider [the problem](https://blog.kizu.dev/fit-to-width-discussions-and-feedback/#the-problem-dependency-on-viewport) and the proposed solution. Is it enough? Is there an alternative? What do you think?
+
+2. [“Text Fitting: Shrinking and Growing”](https://github.com/w3c/csswg-drafts/issues/12887) — about having one or two ways to approach the fitting thing.
+
+	My initial thought was that we should have just one `text-grow` property, and in my previous post I [described why](/fit-to-width-discussions-and-feedback/#problems-of-text-shrink).
+
+	Chrome team’s insists that authors want to have `text-shrink` too. I can see that there are use cases where approaching fitting from the `text-grow` will be awkward (although possible), and in this issue propose an alternative approach: to use a single `text-fit` property with two possible values of the used method — `text-fit: grow` and `text-fit: shrink`. This allows using only one of them, eliminating a bunch of possible issues (like the conflict with the 200% limit).
+
+	If you were to want to use this feature — how would you want to use it? Would you ever want to use both methods at the same time? Is the potential accessibility problems (not being able to rely on the 200% limit) worth doing so when having a single method will allow doing everything anyways?
+
+3. [“Text Fitting: Scaling of things based on font-size”](https://github.com/w3c/csswg-drafts/issues/12888) — about the core of how the new feature should work.
+
+	My [hacky technique](https://kizu.dev/fit-to-width/) works in a finite number of steps, and allows scaling the text in a “true” manner, where any elements or properties that have values based on our element’s font-size would follow the scaling change, including applying the optical sizing axis of variable fonts properly (although, with an acceptable approximation).
+
+	Chrome’s team argues that this won’t be possible to implement in a performant manner. I am not a browser engineer, and can’t argue about this, but I doubt it is impossible to implement a solution that won’t be faster than my hacky way of doing it via containers and copies of the content. Chrome’s team proposes to make this implementation-dependent, which I strongly opposed, as this undermines the predictibility and power this feature can give authors in controlling typography.
+
+	I don’t know what non-browser engineers can contribute to this discussion. Maybe provide their use cases for things scaling that Chrome team things are ok to omit? And if you’re a browser engineer, please, look at my technique, and tell me you want to see it used everywhere in place of the native subpar solution. Because this is what will happen if the native feature will not cover the common use cases that people have.
+
+- - -
+
+Initially, it was resolved that I will become a co-editor for this spec. I wanted to start a draft of things how I see them, but with the Chrome team’s prototype, I don’t really have anything to draft, as their vision is very far from mine. First, we need to find a common ground and only then I could try writing something. After all, I never edited a spec before, and starting from something _in this state_ might not be a good idea.
+
+If you care about typography and accessibility, please, provide any feedback, privately or publicly. It’s difficult to move in the darkness, without almost any feedback from authors. I am grateful for the critique of the accessibility issues that folowed the resolution to add the feature to CSS, but since then, it was silent so far, with proposed solutions not getting evaluated.
+
+It would be great to have a constructive discussion, and work on making this feature a reality without compromising on anything.
