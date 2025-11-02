@@ -297,6 +297,9 @@ html:has(#theme-dark:checked) {
 		max-width: var(--MAX-PAGE-WIDTH);
 		margin: 0 auto;
 	}
+
+	--captured-length3: calc(100vw - 100cqw);
+	--scrollbar-width: var(--captured-length3);
 }
 
 @property --captured-length {
@@ -312,6 +315,12 @@ html:has(#theme-dark:checked) {
 }
 
 @property --captured-length2 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: true;
+}
+
+@property --captured-length3 {
 	syntax: "<length>";
 	initial-value: 0px;
 	inherits: true;
@@ -755,14 +764,6 @@ ul ul > li::marker {
 img {
 	max-inline-size: 100%;
 	height: auto;
-}
-
-p.starts-with-tag > img:only-child {
-	display: block;
-}
-
-p.starts-with-tag:has(> img:only-child) {
-	margin-inline: calc(-1 * var(--content-padding));
 }
 
 figure {

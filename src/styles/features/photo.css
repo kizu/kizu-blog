@@ -12,14 +12,29 @@
 }
 
 .photo-frame-container {
+	position: relative;
 	container-type: inline-size;
 	margin-inline-end: 0;
+
+	--mode: var(--mode--article);
+	--mode--article: var(--mode,);
+	--mode--details: var(--mode,);
+
+	--type: var(--type--framed);
+	--type--framed: var(--type,);
+	--type--full: var(--type,);
 
 	&::before {
 		content: "";
 	}
 
+	section& {
+		--type: var(--type--full);
+	}
+
 	&:target {
+		--mode: var(--mode--details);
+
 		visibility: visible;
 		position: fixed;
 		inset: 0;
@@ -31,6 +46,7 @@
 
 		overflow: auto;
 		scrollbar-gutter: stable;
+		margin: 0;
 
 		.photo-details:not(& > *) {
 			display: none;
@@ -38,30 +54,24 @@
 
 		& > * {
 			max-inline-size: min(
-				var(--width, 100cqw) / var(--MIN-RESOLUTION),
-				100vw - 2 * var(--padding, 0px),
-				(100vh - 2 * var(--padding, 0px)) * var(--ratio, 1)
+				var(--type--framed,
+					var(--width, 100cqw) / var(--MIN-RESOLUTION),
+					(100vh - 2 * var(--padding, 0px)) * var(--ratio, 1)
+				)
+				var(--type--full, var(--MAX-PAGE-WIDTH))
+				,
+				100vw - 2 * var(--padding, 0px)
 			);
 			margin: auto;
 		}
+		& .photo {
+			margin-top: max(
+				0px,
+				var(--top-offset) /  1.618 + var(--padding)
+			);
+		}
 
 		& > .photo-frame {
-			& > .photo {
-				margin-top: max(
-					0px,
-					var(--top-offset) /  1.618 + var(--padding)
-				);
-			}
-
-			& > figcaption {
-
-				& > nav > a[href$='--full'] {
-					display: none;
-				}
-				& > nav > a:not([href$='--full']) {
-					display: flex;
-				}
-			}
 
 			&::after {
 				display: none;
@@ -76,15 +86,17 @@
 	}
 }
 
-
 .photo-frame {
-	max-inline-size: min(
-		var(--width) / var(--MIN-RESOLUTION),
-		100cqw - 2 * var(--padding),
-		(100vh - 2 * var(--padding)) * var(--ratio)
-	);
+	max-inline-size:
+		var(--type--framed, min(
+			var(--width) / var(--MIN-RESOLUTION),
+			100cqw - 2 * var(--padding),
+			(100vh - 2 * var(--padding)) * var(--ratio)
+		))
+		var(--type--full, 100%)
+	;
 
-	--padding: var(--border-radius);
+	--padding: var(--border-radius, 0px);
 
 	--top-offset: calc(
 		0.5
@@ -111,11 +123,67 @@
 		& > nav {
 			margin-inline-start: auto;
 		}
-		& > nav > a {
-			padding: 0;
+	}
 
-			&:not([href$='--full']) {
-				display: none;
+	& nav > a {
+		padding: 0;
+
+		&[href$='--full'] {
+			display:
+				var(--mode--article, flex)
+				var(--mode--details, none)
+			;
+		}
+		&:not([href$='--full']) {
+			display:
+				var(--mode--article, none)
+				var(--mode--details, flex)
+			;
+		}
+	}
+
+	section > & {
+		position: relative;
+
+		& nav {
+			width: max-content;
+			padding-block-start: calc(.5 * var(--MIN-CONTENT-PADDING));
+			padding-inline: min(
+				var(--MIN-CONTENT-PADDING),
+				var(--text-indent) - var(--padding)
+			);
+			margin-left: auto;
+
+			font-size: var(--FONT-SIZE--SMALL);
+
+			background:
+				var(--mode--article, var(--CONTENT-BG))
+				var(--mode--details, transparent)
+			;
+			border-top-left-radius: 0.8em;
+    		corner-shape: bevel;
+
+			position:
+				var(--mode--article, absolute)
+				var(--mode--details, static)
+			;
+			bottom: 0;
+			right: 0;
+
+			opacity:
+				var(--mode--article, 0)
+				var(--mode--details, 1)
+			;
+
+			transition: opacity 0.25s 0.25s;
+
+			&:focus-within,
+			section:hover & {
+				opacity: 1;
+				transition-delay: 0.125s;
+			}
+			&:focus-within {
+				transition-delay: 0s;
 			}
 		}
 	}
@@ -131,3 +199,11 @@
 	}
 }
 
+p.starts-with-tag > img:only-child {
+	display: block;
+}
+
+p.starts-with-tag:has(> img:only-child),
+section.photo-frame-container {
+	margin-inline: calc(-1 * var(--content-padding));
+}

@@ -3,7 +3,7 @@ import type { ImageMetadata } from "astro";
 import type { HTMLAttributes } from 'astro/types';
 import { Image as AstroImage } from 'astro:assets';
 import { photoData } from '@content/photos/_photoData';
-import { MAIN_CAMERA, MAIN_LENS } from "@lib/expandPhotoData";
+import { MAIN_CAMERA, MAIN_LENS, CAMERAS, LENSES } from "@lib/expandPhotoData";
 
 interface Props extends Omit<HTMLAttributes<'img'>, 'src'> {
 	src: ImageMetadata | `pixelfed:${string}`,
@@ -54,10 +54,14 @@ const getPixelfedImage = (pixelfedSrc?: string) => {
 		? foundItem.photos[firstIndex].data?.photos[secondIndex]
 		: foundItem.data?.photos[firstIndex];
 
-	return foundPhoto;
+	return {
+		pixelfedPhoto: foundPhoto,
+		camera: CAMERAS[foundItem.group?.camera || MAIN_CAMERA],
+		lens: LENSES[foundItem.group?.lens || MAIN_LENS],
+	};
 }
 
-const pixelfedPhoto = getPixelfedImage(pixelfedId);
+const { pixelfedPhoto, lens, camera } = getPixelfedImage(pixelfedId) || {};
 
 // TODO: Maybe use the caption or something else?
 const id = pixelfedId?.replace(/[^\w\d]+/g, '-');
@@ -69,28 +73,52 @@ if (pixelfedPhoto?.post.created_at) {
 	}).format(new Date(pixelfedPhoto.post.created_at))
 }
 
+const hasDescription = Boolean(alt && pixelfedPhoto?.alt);
+const PhotoFrameContainer = hasDescription ? 'div' : 'section';
+
 ---
 
 {typeof src === 'string'
 	? pixelfedPhoto
-		? ((img) => alt && pixelfedPhoto.alt ? (
-			<div
+		? (
+			<PhotoFrameContainer
 				class="photo-frame-container" id={`${id}--full`}
 				style={`
 					--width: ${pixelfedPhoto.width}px;
 					--ratio: ${(pixelfedPhoto.width || 1) / (pixelfedPhoto.height || 1)};
 				`}
 			>
-				<figure class="photo-frame">
-					{img}
-					<figcaption>
-						{alt}
+				{
+					((img, nav) => hasDescription ? (
+					<figure class="photo-frame">
+						{img}
+						<figcaption>
+							{alt}
+							{nav}
+						</figcaption>
+					</figure>
+					): (
+						<div class="photo-frame">
+							{img}
+							{nav}
+						</div>
+					))(
+						<img
+							id={id}
+							class="photo"
+							src={pixelfedPhoto.url}
+							alt={pixelfedPhoto.alt || alt}
+							width={pixelfedPhoto.width}
+							height={pixelfedPhoto.height}
+							loading="lazy"
+						/>,
 						<nav>
 							<a href={`#${id}--full`}>See details</a>
 							<a href={`#${id}`}>Back to the post</a>
 						</nav>
-					</figcaption>
-				</figure>
+					)
+				}
+
 				<dl class="photo-details">
 					<dt>Published:</dt>
 					<dd>
@@ -101,22 +129,12 @@ if (pixelfedPhoto?.post.created_at) {
 					<dt>Alt:</dt>
 					<dd>{pixelfedPhoto.alt}</dd>
 					<dt>Camera:</dt>
-					<dd>{MAIN_CAMERA}</dd>
+					<dd>{camera}</dd>
 					<dt>Lens:</dt>
-					<dd>{MAIN_LENS}</dd>
+					<dd>{lens}</dd>
 				</dl>
-			</div>
-		) : (
-			img
-		))(<img
-			id={id}
-			class="photo"
-			src={pixelfedPhoto.url}
-			alt={pixelfedPhoto.alt || alt}
-			width={pixelfedPhoto.width}
-			height={pixelfedPhoto.height}
-			loading="lazy"
-		/>)
+			</PhotoFrameContainer>
+		)
 		: <aside class="warning">There should’ve been an image, but something went wrong!</aside>
 	: <AstroImage src={src} alt={alt} />}
 

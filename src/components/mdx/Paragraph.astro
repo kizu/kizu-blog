@@ -8,7 +8,7 @@ const html = await Astro.slots.render('default');
 
 const { class: className, ...props } = Astro.props;
 
-const shouldSkip = html.match(/^<(div|figure)/);
+const shouldSkip = html.match(/^<(div|figure|section)/);
 ---
 
 {shouldSkip
