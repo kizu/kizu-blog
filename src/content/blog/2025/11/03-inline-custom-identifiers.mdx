@@ -1,0 +1,90 @@
+---
+title: 'Inline Custom Identifiers'
+fancyTitle: 'Inline Custom Identifiers'
+description: 'This is a quick post about a pattern that I use more and more: a way to connect elements that require named custom or dashed identifiers for various CSS features.'
+tags: ['CSS Variables', 'Anchor Positioning', 'Scroll-Driven Animations', 'CSS']
+pubDate: '2025-11-03'
+mastodonPostId: ''
+
+current: {
+	drink: '',
+	music: '',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## The Context
+
+This is a quick post about a pattern that I use more and more: a way to connect elements that require named custom or [dashed identifiers](/dashed-idents-for-everything/) for various CSS features.
+
+I constantly use this pattern, but never explicitly wrote about it, even though I used it in many of my experiments.
+
+The reason I finally do it now is because of [a question](https://mastodon.social/@Meyerweb/115472719015829847) by [Eric Meyer](https://meyerweb.com/) in Mastodon about how to connect two elements for anchor positioning in absence of the `anchor` attribute (which is [in limbo of standardization](https://github.com/whatwg/html/pull/9144): it is uncertain if we will ever have it).
+
+## The Pattern
+
+The pattern is pretty simple: we use inline styles to add custom properties with the same custom identifier, and then use these custom properties in CSS.
+
+<LiveExample class="require-anchor-name" caption="A simple example with anchor positioning: the “World” word is positioning at the bottom-right corner of the “Hello”.">
+```html
+<p>
+	<strong style="--is: --hello">
+		Hello
+	</strong>
+	<em style="--for: --hello" class="anchored">
+		World
+	</em>
+</p>
+```
+```css
+[style*='--is:'] {
+	anchor-name: var(--is);
+}
+.anchored {
+	position: absolute;
+	position-anchor: var(--for);
+	top: anchor(outside);
+	left: anchor(outside);
+}
+```
+</LiveExample>
+
+The names I like to use: `--is` for naming something, and `--for` (similar to `<label>`’s `for` attribute) for referencing.
+
+### Inline Styles?
+
+I often see people either neglect inline styles, or putting too much stuff into them. In my opinion, the proper way to use inline styles is for putting custom properties into them.
+
+Regular properties will be too high in the cascade when put inline, which is why we should never use them there.
+
+Custom properties, on the other hand, are much safer: we can use them as an API and abstract certain features through them. Of course, it is possible to have cascade conflicts with them as well, but it is up to use to design that API in a way the conflicts could be avoided.
+
+That’s why I recommend this pattern, and recommend using inline styles for assigning unique custom properties per element.
+
+### Attribute Selector
+
+This is another pattern that I never wrote about, and an article about which is long overdue, although I gave a lightning talk about it at dotCSS 2019 conference ([video](https://www.youtube.com/watch?v=ciu1rQjmnIA&list=PLMW8Xq7bXrG7h_ujkOx8wu6kb7vZsvcyv&index=8), [slides](https://kizu.dev/inline/)). Many things changed since then, and if I were to write about this approach properly, I’ll need to revisit many of my past assumptions.
+
+But, in short, the idea is that we can use [attribute selectors](https://drafts.csswg.org/selectors/#attribute-selectors) to match any elements with inline custom property definitions, like `[style*='--is:']` in the above example. The `*=` means that the part afterwards can be present at any place in the attribute, and if we match on the name of the custom property alongside the `:`, then unless we use very funky whitespace, or have variable names that include our name partially, like `--foo--is` for the above example, we can be pretty certain that we will only select elements that define such properties.
+
+After matching, we know that we have this custom property, and can use it right away.
+
+## Other Examples
+
+I used this pattern at least in the following articles on my main site:
+
+- [“Future CSS: Anchor Positioning”](https://kizu.dev/anchor-positioning-experiments/)
+- [“Future CSS: Wishes Granted by Scroll-driven Animations”](https://kizu.dev/scroll-driven-animations/)
+- [“Scroll-Driven State Transfer”](https://kizu.dev/scroll-driven-state-transfer/)
+- [“The Shrinkwrap Problem: Possible Future Solutions”](https://kizu.dev/shrinkwrap-problem/)
+
+I am pretty sure I used this pattern somewhere else, but I can’t remember where.
+
+## Try it Out!
+
+That’s it for today! We are getting more and more features in CSS that rely on connecting things through dashed idents, and, in the absence of something better, inline styles are a great way to do so.
+
+If you evern find yourself needing these types of references — try this pattern, and let me know if it was helpful!

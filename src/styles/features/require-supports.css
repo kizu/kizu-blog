@@ -54,12 +54,6 @@
 	}
 }
 
-@supports not (anchor-name: --foo) {
-	.require-anchor-name {
-		--require-anchor-name: 'anchor-name';
-	}
-}
-
 @supports not (animation-range: entry-crossing) {
 	.require-animation-range {
 		--require-animation-range: 'animation-range';
