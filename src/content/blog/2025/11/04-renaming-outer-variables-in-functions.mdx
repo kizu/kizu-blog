@@ -1,0 +1,98 @@
+---
+title: 'Renaming Outer Variables in CSS Functions'
+description: 'In which, I continue a series of posts about my initial experiments with custom CSS functions. This one is about a not very useful, but fun, nuance about their arguments.'
+tags: ['CSS Functions', 'CSS Variables', 'CSS']
+pubDate: '2025-11-04'
+mastodonPostId: ''
+
+current: {
+	drink: 'Thyme, rosemary & lemon infusion',
+	music: 'österreich — I’ll Take You Everywhere',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+In [one of the first drafts](https://github.com/w3c/csswg-drafts/issues/9350#issuecomment-1930463996) of the custom CSS functions by [Tab Atkins-Bittner](https://xanthir.com/), if you wanted to use variables from the outer scope, you had to explicitly list them when defining the function like this:
+
+```CSS
+@function --foo(--arg1, --arg2) using (--var1, --var2) {…}
+```
+
+There was some pushback from many people about this, [including from me](https://github.com/w3c/csswg-drafts/issues/9350#issuecomment-1935575164), and, eventually, this restriction was removed, with all custom properties from the outer scope now being available inside the custom functions without listing them. Great!
+
+At the time, [I wondered](https://github.com/w3c/csswg-drafts/issues/9350#issuecomment-1939748123) if we could reintroduce the `using` keyword or something similar as something that could allow us to _rename_ the variables in the outer scope, allowing us to use them in the function’s scope with different names.
+
+```CSS
+@function --foo() {
+	@return var(--bar);
+}
+
+@function --baz() using (--bar as --outer-bar) {
+	--bar: something;
+	/* will be `--a: something` */
+	--a: --foo();
+	 /* We can still access outer `--bar` */
+	--b: var(--outer-bar);
+}
+```
+
+Later, while playing with the currently specified custom functions in Chrome Canary, I found out that we already can kinda do the same with the optional arguments and defaults. The above example could be written as:
+
+```CSS
+@function --foo() {
+	@return var(--bar);
+}
+
+@function --baz(--outer-bar: var(--bar)) {
+	--bar: something;
+	/* will be `--a: something` */
+	--a: --foo();
+	 /* We can still access outer `--bar` */
+	--b: var(--outer-bar);
+}
+```
+
+And here is a live, although not very practical, example:
+
+<LiveExample class="require-custom-functions">
+```CSS
+@function --double() {
+	result: calc(2 * var(--x));
+}
+@function --plus-one-and-double(--outer-x: var(--x)) {
+	--x: calc(var(--outer-x) + 1);
+	result: --double();
+}
+```
+```HTML
+<div style="
+	--x: 2;
+	--preview: --double();
+">2 * x = </div>
+<div style="
+	--x: 2;
+	--preview: --plus-one-and-double();
+">2 * (x + 1) = </div>
+```
+</LiveExample>
+
+The problem we are solving: if we have some function like `--double()`, which does not use arguments, and is just accessing the variables from its outer scope, can we use it inside another function with a different `--x` without overriding it in that outer scope?
+
+The solution: use an argument, and assign its default value using that variable. This way, the function will get that variable’s value and assign it to a different variable:
+
+```CSS
+@function --plus-one-and-double(--outer-x: var(--x)) {…}
+```
+
+Now, inside that function’s body, we’re free to redefine that variable, with the original value staying accessible with the old value in our argument!
+
+This allows us to redefine this variable, call our function in question, all without touching and modifying the outermost scope.
+
+Neat. I don’t know if this will ever be useful, but hey!
+
+- - -
+
+This is the second post from the series that I started with [“Functional Capturing”](/functional-capturing/) about some of my initial experiments with custom functions. It was in my drafts for a long time, but because the feature is relatively useless, I did not end up finishing it.
+
+Until now — all because with the ongoing work on `inherit()`, there was [an issue](https://github.com/w3c/csswg-drafts/issues/12987) opened by [Anders Hartvoll Ruud](https://github.com/andruud), in which I managed to use this feature in an argument. Fun!

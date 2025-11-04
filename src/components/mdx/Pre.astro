@@ -1,7 +1,9 @@
 ---
 import { Code } from 'astro:components';
 import PreWrapper from './PreWrapper.astro';
-const [,,lang = 'css', code = ''] = (await Astro.slots.render('default')).match(/^<code( class="language-([^"]+)")?>([\s\S]+)<\/code>$/) || [];
+const rendered = await Astro.slots.render('default');
+// TODO: properly accept metastring attribute.
+const [,,lang = 'css', code = ''] = rendered.match(/^<code( class="language-([^"]+)")?>([\s\S]+)<\/code>$/) || [];
 
 const theme = 'solarized';
 const finalCode = code
@@ -11,11 +13,24 @@ const finalCode = code
 	.replaceAll('&#39;', '\'')
 	.replaceAll('&amp;', '&');
 
+// TODO: We can pass `transformers` to `Code`, so we could implement
+// highlighting of certain keywords/etc if needed.
+// Like
+// 		transformers={[{ span(node, line, col) {
+// 			console.log({node, line, col})
+// 		} }]}
+// Etc.
+// OR we could use "@shikijs/twoslash" which provides transformers.
+
 ---
 <PreWrapper lang={lang}>
-	<Code themes={{
-		light: `${theme}-light`,
-		L: `${theme}-light`,
-		D: `${theme}-dark`,
-	}} code={finalCode} lang={lang.toLowerCase() as any} />
+	<Code
+		themes={{
+			light: `${theme}-light`,
+			L: `${theme}-light`,
+			D: `${theme}-dark`,
+		}}
+		code={finalCode}
+		lang={lang.toLowerCase() as any}
+	/>
 </PreWrapper>

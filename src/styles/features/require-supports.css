@@ -1,6 +1,6 @@
 [class*='require-']::before {
 	content:
-		"\26A0 \FE0F  Your browser does not support `"
+		"\26A0 \FE0F  Your browser does not support ‘"
 		var(--require-custom-functions,
 			var(--require-anchor-name,
 				var(--require-animation-range,
@@ -8,7 +8,7 @@
 						var(--require-at-scope,
 							var(--require-cap,
 								var(--require-style-queries)))))))
-		'`';
+		'’';
 	display: block;
 	border: 2px dashed #FFCA51;
 	padding: 8px;
