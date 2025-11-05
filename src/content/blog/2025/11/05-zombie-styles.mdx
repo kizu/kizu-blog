@@ -1,0 +1,108 @@
+---
+title: 'Zombie Styles'
+fancyTitle: 'Zombie Styles'
+description: 'Zombie Styles (noun): Dormant styles that break the UI after a configuration change.'
+tags: ['CSS']
+pubDate: '2025-11-05'
+mastodonPostId: ''
+
+current: {
+	drink: 'Ceylon tea',
+	music: 'Daughter — Burn It Down',
+}
+---
+
+<style>{`
+h1 {
+	font-size: 3.125rem;
+}
+`}</style>
+
+This is a short post about one thing I encounter a lot, but never saw explicitly defined for easy reference. This is my attempt:
+
+<dl style="display: block; font-size: 1em;">
+	<dt>Zombie Styles <em>(noun)</em></dt>
+	<dd>Dormant styles that break the UI after a configuration change.</dd>
+</dl>
+
+## Table of Contents
+
+## What do _Zombie Styles_ mean?
+
+_Zombie Styles_ refer to CSS styles that exist in the document’s stylesheet, but are _dead_, usually due to being overridden by other declarations. In their dormant form, they do not impact anything in the UI, and do not activate under normal circumstances.
+
+However, some confuguration change can bring them to life unintentionally, and now that they’re applying, they affect the UI and wreak havoc.
+
+## Examples of _Zombie Styles_
+
+### Forgotten Styles
+
+The most common case of this happens when the same styles exist in multiple files, or in the same file but separated by other rules or declarations.
+
+```CSS
+.Foo {
+	background: pink;
+	/* 100 very useful design-tokens */
+	background: lightgreen;
+}
+```
+
+Or
+
+```CSS
+.Foo {
+	background: pink;
+}
+
+/* Many rules after, or maybe even in another file */
+
+.Foo {
+	background: lightgreen;
+}
+```
+
+When you look at a long stylesheet and only see a portion of styles, you might think “Maybe, I want the background of this `Foo` component to be transparent” and you then remove the `background: lightgreen` declaration. But somewhere there was a declaration hidden: it never applied before, but now it jumps and makes you spend another few minutes debugging your code.
+
+The first case is easy to catch if you use [Stylelint](https://stylelint.io/) via a [`declaration-block-no-duplicate-properties` rule](https://stylelint.io/user-guide/rules/declaration-block-no-duplicate-properties/), but more complex cases can be harder to spot.
+
+Generally, it is a good idea to never repeat selectors, separating styles that are applied together in the code.
+
+### Import Order Change
+
+In SPAs (Shitty-Produced Applications) that load chunks of CSS based on the import order, different “pages” can include components in different order.
+
+Let’s say we have this HTML:
+
+```HTML
+<section class="ComponentA">
+	<p class="ComponentB">I am alive</p>
+</section>
+```
+
+And these two that components have the following styles:
+
+```CSS
+.ComponentA > * {
+	background: pink;
+}
+```
+
+```CSS
+.ComponentB {
+	background: lightgreen;
+}
+```
+
+Both of these styles have the same specificity, and a page can be built with the expectation that the `ComponentA` will always be imported before the `ComponentB`. The `background: pink` never applies.
+
+Then, suddenly, somewhere in the app, `ComponentB` is included _before_ the `ComponentA`, and now the styles' order changes.
+
+The declaration that was previously “dormant” activates. Oops. It might be the time to rethink your whole CSS architecture.
+
+## Were You Also Bitten?
+
+Confess. Do you have bite marks from zombie styles? It is safe to confide in this: unlike normal zombies, zombie styles, usually, don’t convert you into CSS declarations.
+
+Usually.
+
+Please let me know which examples of zombie styles you have encountered. How did you fight them? Or did you just run away?
