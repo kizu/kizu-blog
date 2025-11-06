@@ -1,0 +1,89 @@
+---
+title: 'Box-Decoration-Break'
+fancyTitle: 'Box-Decoration-Break'
+description: 'In the last few days, coincidentally, I saw two cases where the obscure `box-decoration-break` CSS property could help. This might be a good sign that it is worth it to remind everyone about its existence!'
+tags: ['Obscure CSS', 'CSS']
+pubDate: '2025-11-06'
+mastodonPostId: ''
+
+current: {
+	drink: 'Green tea with bergamot, kiwi, yellow peach, orange blossom and violet flower',
+	music: '',
+}
+---
+
+import Image from '@components/mdx/Image.astro';
+
+In the last few days, coincidentally, I saw two cases where the obscure [`box-decoration-break` property](https://drafts.csswg.org/css-break/#break-decoration) CSS could help.
+
+This might be a good sign that it is worth it to remind everyone about its existence!
+
+One reason why, I think, this property is not yet well-known is that it is not “baseline”. Its standard version is implemented in Firefox and Chrome, but Safari is still using the older prefixed `-webkit-box-decoration-break` version.
+
+There is [a pull request to WebKit](https://github.com/WebKit/WebKit/pull/17007) from [Karl Dubost](https://www.la-grange.net/karl/) about unprefixing it, although it is a bit stale: the last time it was updated was a year ago. Hopefully, one day it will be finished!
+
+I won’t go into details about what `box-decoration-break` does, as I will link to many different articles and resources about it.
+
+## Quick Resources
+
+If you are keen to learn about the property itself before continuing, read one of these:
+
+- [“CSS box-decoration-break”](https://12daysofweb.dev/2024/css-box-decoration-break/) — an introductory article by [Kilian Valkhof](https://kilianvalkhof.com/) from last year’s [“12 Days of Web”](https://12daysofweb.dev/) curated by [Stephanie Eckles](https://thinkdobecreate.com/).
+
+- [An MDN reference for `box-decoration-break`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/box-decoration-break).
+
+- [The current draft of CSSWG specification about it](https://drafts.csswg.org/css-break/#break-decoration).
+
+But let’s look at what were the questions that brought me to this topic.
+
+## Multi-line Padded Text
+
+First case was [a question](https://mastodon.social/@urlyman/115497124207727749) from [Jonathan Schofield](https://mastodon.social/@urlyman) about a certain cross-browser issue with some text effect. While it could be interesting to investigate the actual interop issue, I noticed that the author was likely pursuing a very specific decorative style, which would be achieved much easier with `box-decoration-break`.
+
+I took the name for this section from an eleven-years-old [“Multi-Line Padded Text”](https://css-tricks.com/multi-line-padded-text/) article by [Chris Coyier](https://chriscoyier.net/). Alongside this property that was “new” at the time, Chris presented a few workarounds that worked then. Can’t wait until this property will become “newly available”.
+
+A newer article that involved `box-decoration-break` for a similar, although much more elaborated effect, was [“A Deep Dive into the Inline Background Overlap Problem”](https://frontendmasters.com/blog/overlapping-inline-backgrounds/) by [Ana Tudor](https://thebabydino.github.io/) from this March. Which, of course, involves some SVG filters magic. Just know that the further you’ll go into the article, the more you’ll start to see the matrix, and the slower your browser will render the page. Sadly, browsers neglected SVG for a long time, including working on its performance.
+
+## Pseudo-Random SVG Underlines
+
+Second example is something that I forgot to use when I was working on my last long-form article [“Passing Data into SVG: Linked Parameters Workaround”](https://kizu.dev/svg-linked-parameters-workaround/) (if you did not read it _fully_ — I highly recommend, it contains many fun details).
+
+That article was, in part, thanks to [Ivan Reese](https://ivanish.ca/), and after some research I proposed to use the method that I later explained in my article instead of the work-in-progress solution that he was working on.
+
+The solution was for a tiny decorative detail of the Ink & Switch’s website — pseudo-randomized underlines for links.
+
+Recenly, I saw one of their projects — [Automerge](https://automerge.org/) — [mentioned on Mastodon](https://front-end.social/@piccalilli/115486132187200932) by [https://piccalil.li/](Piccalilli), which reminded if Ivan ended up using my weird SVG solution for the underlines’ implementation on [Ink & Switch’s website](https://www.inkandswitch.com/).
+
+It was, with a proper credit inside [the SVG file used for the undelines](https://www.inkandswitch.com/static/inks/ul.svg)!
+
+It is fun to see your highly experimental technique used in practice.
+
+When looking at the links on the page, especially on the bottom of its page, I noticed something: while in general links looked nice, when they were wrapping, they had a “hard cut” on the edges:
+
+import Before from "./links_before.png";
+
+<figure>
+<Image src={Before} alt="A screenshot of two columns with some text and links: the links have decorative thick “as if drawn” underlines that look different on every link. When the links wrap, their edges are hard, as if they were cut with scissors." />
+<figcaption>Links wrap not nicely.</figcaption>
+</figure>
+
+When I saw this, I remembered that we have `box-decoration-break: clone`, and immediately tried it in the dev tools:
+
+import After from "./links_after.png";
+
+<figure>
+<Image src={After} alt="A very similar screenshot to before, but now each underline looks like its own separate line, including on the wrapped links. Another difference from the previous screenshot is in how words wrap in the second column." />
+<figcaption>Links wrap nicely.</figcaption>
+</figure>
+
+It works! Browsers create separate fragments for each part of the wrapped links, and apply the SVG for each of them.
+
+One other difference that we can notice: the wrapping of the last part changed — and this happened only in Firefox. Probably something to report!
+
+## Conclusion
+
+I hope `box-decoration-break` will become standard sooner rather than later. There are some very fun use cases for it that I did omit in this post: maybe one day I’ll write about them as well.
+
+This property [was proposed](https://github.com/web-platform-tests/interop/issues/486) to be included in the last year’s Interop initiative by [Jason Kuhn](https://github.com/jsnkuhn), but not included there.
+
+Please — play with it, see if you could use it to enhance your designs, and let browsers know that you want it to be baseline.
