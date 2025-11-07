@@ -4,7 +4,7 @@ fancyTitle: 'Fixing Baselines'
 description: 'Do you know how to center things in CSS? In year 2025? Easy! You just… align… or justify…, ok, maybe just place? your content… or items? …Forget it, this post is not about alignment. Or is it? This post is about another common alignment concept that might seem simple: baseline alignment. In it, I share a technique I have already used for twelve years.'
 tags: ['Typography', 'Obscure CSS', 'CSS']
 pubDate: '2025-11-07'
-mastodonPostId: ''
+mastodonPostId: '115510510399674122'
 
 current: {
 	drink: 'Lapsang Souchong tea',
@@ -63,6 +63,21 @@ If you pay a close attention to the previous sentence, you might get the idea
 ### Overflowing Inline Elements
 
 This is the simplest problem, which, today, has a simple solution. The problem: if you have an element with `inline-block`, giving it `overflow: hidden` (or `auto`, `scroll`, etc.) will break the baseline:
+
+<style>{`
+figure > p::before {
+	content: "";
+	display: inline-block;
+	height: 1px;
+	background: deeppink;
+	width: 100cqw;
+	margin-left: -0.215em;
+	margin-right: -100cqw;
+	opacity: 0.75;
+	position: relative;
+	z-index: 1;
+}
+`}</style>
 
 <LiveExample>
 ```HTML
