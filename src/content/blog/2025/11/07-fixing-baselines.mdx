@@ -1,0 +1,255 @@
+---
+title: 'Fixing Baselines'
+fancyTitle: 'Fixing Baselines'
+description: 'Do you know how to center things in CSS? In year 2025? Easy! You just… align… or justify…, ok, maybe just place? your content… or items? …Forget it, this post is not about alignment. Or is it? This post is about another common alignment concept that might seem simple: baseline alignment. In it, I share a technique I have already used for twelve years.'
+tags: ['Typography', 'Obscure CSS', 'CSS']
+pubDate: '2025-11-07'
+mastodonPostId: ''
+
+current: {
+	drink: 'Lapsang Souchong tea',
+	music: '夢中夢 — Unforgiven',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+Do you know how to center things in CSS? In year 2025? Easy! You just… align… or justify…, ok, maybe just place? your content… or items? …Forget it, this post is not about alignment. Or is it?
+
+This post is about another common alignment concept that might seem simple: baseline alignment. In it, I share a technique I have already used for twelve years.
+
+## Table of Contents
+
+## The Definition
+
+To quote from [the specs](https://drafts.csswg.org/css-inline/#css-metrics),
+
+> A <dfn>baseline</dfn> is a line along the inline axis of a line box along which individual glyphs of text are aligned.
+
+<figure>
+	<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 176.1 48.4" fill="currentColor">
+	<text transform="translate(0 31.091)"><tspan x="0" y="0" font-family="Arial, Helvetica" font-size="17">Apple</tspan><tspan x="46" y="0" font-family="Arial, Helvetica" font-size="35"> Orange</tspan></text>
+	<path fill="none" stroke="#3fa9f5" stroke-miterlimit="10" d="M0 31.7h175"/>
+	<g fill="none" stroke="#2e3192" stroke-miterlimit="10">
+		<path d="M44.8 16.7v-1h-1"/>
+		<path stroke-dasharray="2,2" d="M42 15.7H3"/>
+		<path d="M1.5 15.7h-1v1"/>
+		<path stroke-dasharray="2,2" d="M.5 19.2v15"/>
+		<path d="M.5 34.7v1h1"/>
+		<path stroke-dasharray="2,2" d="M4 35.7h39"/>
+		<path d="M43.8 35.7h1v-1"/>
+		<path stroke-dasharray="2,2" d="M44.5 33.2v-15"/>
+	</g>
+	<g fill="none" stroke="#2e3192" stroke-miterlimit="10">
+		<path d="M175 1.5v-1h-1"/>
+		<path stroke-dasharray="2,2" d="M172 .7H59"/>
+		<path d="M58.2.5h-1v1"/>
+		<path stroke-dasharray="2,2" d="M57.5 3.2v36"/>
+		<path d="M57.2 40.7v1h1"/>
+		<path stroke-dasharray="2,2" d="M60 41.7h113"/>
+		<path d="M174 41.7h1v-1"/>
+		<path stroke-dasharray="2,2" d="M174.5 38.2v-36"/>
+	</g>
+	</svg>
+	<figcaption>Figure from the spec: Alphabetic text in two font sizes with the baseline and em-boxes</figcaption>
+</figure>
+
+The specs go into many details, and if you will start reading them (or if you have enough practice), you’ll get that it <span style="display: inline-block; overflow: hidden">is</span> not <span style="display: inline-flex; place-items: center;"><span style="font-size: 2em;line-height: 0.5;">⭐️</span>simple</span>.
+
+## The Problems & Solutions
+
+If you pay a close attention to the previous sentence, you might get the idea.
+
+### Overflowing Inline Elements
+
+This is the simplest problem, which, today, has a simple solution. The problem: if you have an element with `inline-block`, giving it `overflow: hidden` (or `auto`, `scroll`, etc.) will break the baseline:
+
+<LiveExample>
+```HTML
+<p>Hello, <span class="block-world">world</span>!</p>
+```
+```CSS
+.block-world {
+	display: inline-block;
+	outline: 1px solid;
+	overflow: hidden;
+}
+```
+</LiveExample>
+
+The solution: use `inline-flex` or `inline-grid` instead. They will retain the baseline!
+
+<LiveExample>
+```HTML
+<p>Hello, <span class="flex-world">world</span>!</p>
+```
+```CSS
+.flex-world {
+	display: inline-flex;
+	outline: 1px solid;
+	overflow: hidden;
+}
+```
+</LiveExample>
+
+More than eleven years ago — almost twelve — I wrote a dedicated article about this topic: [“Battle for Baseline”](https://kizu.dev/flex-baseline/). If you want to read about all the crossbrowser issues I had to dig through to make this work at that time, I invite you to read it.
+
+But today, now that `inline-flex` and `inline-grid` are [_baseline_](https://developer.mozilla.org/en-US/docs/Glossary/Baseline/Compatibility) (sorry), we no longer have the same bugs and issues. Hooray.
+
+### Icons Before Text
+
+The second problem can be much more pronounced today, and does _not_ have a solution built into the specs (or — I don’t know about it).
+
+It is what happens when you have some inline element, for example, a button, and then inside of it, but before its text, you add some icon. And then, you want to center everything vertically inside, but, at the same time, align this button’s content with the baseline of the nearby text. It doesn’t work:
+
+<LiveExample>
+```HTML
+<p>
+	Hello,
+	<button type="button" class="button-world">
+		<span class="icon">🌐</span>
+		world
+	</button>!
+</p>
+```
+```CSS
+.button-world {
+	display: inline-flex;
+	padding: 0 0.5em;
+	gap: 0.5em;
+	place-items: center;
+	border: 1px solid;
+	border-radius: 9em;
+	overflow: hidden;
+	font: inherit;
+}
+
+.icon {
+	font-size: 2em;
+}
+```
+</LiveExample>
+
+If the `font-size` of the icon that contains an emoji was the same as of the text, it would look ok. But if we modify this element’s font-size, or use an empty element or a replaced element instead, then _this element_ will be used for determining the baseline of our button.
+
+This is because, by default, the button uses the _first_ “baseline set” for aligning that `inline-flex` element, and that first baseline will come from our icon!
+
+### `baseline-source`
+
+If we dig a bit into the specs, we could find a partial solution for our problem: the very obscure [`baseline-source`](https://drafts.csswg.org/css-inline/#propdef-baseline-source) property.
+
+Why is it obscure?
+
+First, it is not [_baseline_](https://developer.mozilla.org/en-US/docs/Glossary/Baseline/Compatibility) (I am so sorry again), and is [only supported](https://caniuse.com/wf-baseline-source) in Firefox and Chrome, with support missing from Safari. It is not even present on MDN.
+
+Then, if we were to use it in browsers that _do_ support it to address our problem, it will help for a simple case:
+
+<LiveExample shouldHideHTML class="require-baseline-source">
+```HTML
+<p>
+	Hello,
+	<button type="button" class="button-world with-baseline-source">
+		<span class="icon">🌐</span>
+		world
+	</button>!
+</p>
+```
+```CSS
+.with-baseline-source {
+	baseline-source: last;
+}
+```
+</LiveExample>
+
+But — the only value other than `auto` and `first` is `last`. And, guess what will happen if we would also add an icon to the end of our button:
+
+<LiveExample shouldHideHTML class="require-baseline-source">
+```HTML
+<p>
+	Hello,
+	<button type="button" class="button-world with-baseline-source">
+		<span class="icon">🌐</span>
+		world
+		<span class="icon">🙀</span>
+	</button>!
+</p>
+```
+</LiveExample>
+
+And, the second problem will happen if we were to have a multiline button — and would want, for some reason, to still use the default behavior of aligning it via its _first_ line:
+
+<LiveExample shouldHideHTML class="require-baseline-source">
+```HTML
+<p>
+	Hello,
+	<button type="button" class="button-world with-baseline-source">
+		<span class="icon">🌐</span>
+		wrapped<br/>world
+	</button>!
+</p>
+```
+</LiveExample>
+
+It is not just the _last element_ that defines the baseline now — it is the _last line box_ of the last element. Oops.
+
+<aside>
+Fun fact: before starting to write this article, I did not know about the `baseline-source` property! Now I know — and you know too. I hope Safari will pick this property up, and we will have it… everywhere.
+
+Even though it doesn’t resolve our problem, I can see how it can be useful in some other niche cases.
+</aside>
+
+### An Extra Element Solution
+
+So, how can we solve this problem today, and more reliably?
+
+The solution that I used for years, but I don’t think I ever shared (or saw mentioned elsewhere — if someone did write about it, please let me know!) — to just use an extra element _before_ the element that otherwise breaks our baseline. That extra element should have the same font metrics as the real content, and we need to make this element to not contribute any space, but otherwise this works pretty well:
+
+<LiveExample shouldHideHTML>
+```HTML
+<p>
+	Hello,
+	<button type="button" class="button-world with-extra-element">
+		<span class="icon">🌐</span>
+		world
+	</button>!
+</p>
+```
+```CSS
+.with-extra-element {
+	--gap: 0.5em;
+	gap: var(--gap);
+}
+.with-extra-element::before {
+	content: '\a0'; /* &nbsp; */
+	width: 0;
+	display: inline-block;
+	visibility: hidden;
+	margin-left: calc(-1 * var(--gap, 0));
+}
+```
+</LiveExample>
+
+A few things to note:
+
+- Because our element uses a `gap`, we have to _remove_ the extra gap that will appear when we insert the pseudo-element.
+- I am using a `'\a0'` — a no-break space. I found it to work the best. Extra tip: whenever you use escaped characters in your CSS, add comments that communicate what they are.
+- For it to not impact anything other than the baseline, we give it `width: 0` and hide it via `visibility`.
+- Of course, if you don’t have a gap, you can skip the margin stuff.
+
+And that’s it!
+
+#### Prior Art
+
+While I am using this technique for [almost twelve years already](https://github.com/stylobate/stylobate/commit/9686fba68ec125fb472b9f54f7964c5d43081f52#diff-1ecb88dbb1890d2ca80274dc15f41eb5de8aefae213e8e50733cf44bb993287a), I used [Marginalia search](https://marginalia-search.com/) to look up if anyone else mentioned it elsewhere.
+
+I might’ve missed something, but the closest thing I found is [“SVG icon sizing and alignment”](https://dimiterpetrov.com/blog/svg-icon-sizing-and-alignment/) article by [Dimiter Petrov](https://dimiterpetrov.com/).
+
+## Could There Be a Better Way?
+
+Currently, we can only control which baseline set is used for our element _on the wrapper_ element.
+
+But what if we could have something like `baseline-presence: exclude` that could be used on our inner elements, so we could add it to our icons, and then they won’t participate in the definition of our baseline?
+
+Right after published this post, I opened [an issue about this in CSSWG](https://github.com/w3c/csswg-drafts/issues/13080), as I did not find any others that would cover this. I work on design systems for a very long time, and this problem appears over and over in all of them.
+
+And — if you know of a different solution — please let me know, or — even better — write your own post about it and share it!
