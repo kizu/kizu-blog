@@ -1,0 +1,95 @@
+---
+title: 'Embedding Bandcamp Tracks'
+description: 'Long time ago, back in LiveJournal, sometimes people embedded various music players in their posts. It was fun! I already had a “Current music” field added to most of my posts, but now I also added a way to enrich this field by adding an optional Bandcamp track reference, and spent my evening updating existing posts in the blog to have it.'
+tags: ['Music', 'Process', 'Personal', 'IndieWeb']
+pubDate: '2025-11-08'
+mastodonPostId: ''
+
+current: {
+    drink: 'Ceylon tea',
+    music: 'The Album Leaf — An Interview',
+}
+
+bandcamp: {
+	track: '4284146026',
+	link: 'https://thealbumleaf.bandcamp.com/track/an-interview',
+}
+---
+
+import BandCamp from '@components/BandCamp.astro';
+
+Long time ago, back in LiveJournal, sometimes people embedded various music players in their posts. It was fun! You could read the posts of your online friends, and sometimes listen to random music they shared with everyone.
+
+## Table of Contents
+
+## What I Did
+
+I already had a [“Current music”](/current-music/) field added to most of my posts, replicating one small bit from the LiveJournal experience, but now I also added a way to enrich this field by adding an optional Bandcamp track reference, and spent my evening updating existing posts in the blog to have it.
+
+[Bandcamp embeds](https://get.bandcamp.help/hc/en-us/articles/23020711574423-How-do-I-create-a-Bandcamp-embedded-player) are just a `<iframe>`s, so by placing one inside an HTML `<details>` tag and adding the `loading="lazy"` to the `<iframe>` we can make it so the `<iframe>`’s code won’t be loaded before the details are open.
+
+I did’t use any APIs to retrieve the ID to embed, so I had to add the necessary metadata to this and other posts manually.
+
+In total, unless I miscounted, I added Bandcamp links to a bit less than 70% of my ~78 posts with the “Current Music” field. Which is fun! Nice to see that many artists I listen to on Bandcamp. It went _almost_ to the point where I could start thinking about the automation, but [it did not hurt](https://indieweb.org/manual_until_it_hurts), and whenever I added a track to another post, I always tested it out and nodded at my past choices.
+
+## Example
+
+You can go to the top of this post, click on the track name that is prefixed by the disclosure triangle, and see what happens. Maybe even listen to that track that is there!
+
+Or — here is another example, from [another post](/toc-scroll-markers/):
+
+<figure>
+	<div>Haru Nemuri — <BandCamp
+		isInDetails
+		id="880123683"
+		link="https://audiotree.bandcamp.com/track/shunka-ryougen"
+		artist="Haru Nemuri"
+		track="Shunka Ryougen - Audiotree Live Version"
+	/></div>
+	<figcaption>Example of a minimal embed inside the details tag.</figcaption>
+</figure>
+
+And, while I am not using this anywhere yet, I made it so it is possible to configure the same embed inside to expand in the bigger version that Bandcamp provides, this is yet [from another post](/recent-css-bookmarks-017/):
+
+<figure>
+	<div>This is The Kit — <BandCamp
+		isInDetails
+		id="1863122901"
+		link="https://thisisthekit.bandcamp.com/track/two-wooden-spoons"
+		artist="This is The Kit"
+		track="Two Wooden Spoons"
+		mode="artwork"
+		albumId="1777921490"
+	/></div>
+	<figcaption>Example of an embed with an album cover inside.</figcaption>
+</figure>
+
+I remember in LiveJournal I sometimes posted custom embeds like that but the photos that I took instead of the album cover, trying to match the mood. Maybe I’ll implement something like that one day here as well.
+
+## Implementation?
+
+I [kinda promised](/november-again/#the-plan) not to talk a lot about frontend or CSS on weekends, even though I found there might be a lot to share while writing this post and implementing the embedded Bandcamp player. However, I’ll try to stick to my plan, and stop before going into more details.
+
+I noted down a few things I’d want to share regardless, so, maybe, one day!
+
+## Potential Issues
+
+### Possible Future Bias
+
+What I have now presents a slight problem: if some artist or a specific track is not present on the Bandcamp, I cannot currently link to it in any way. Having a “richer” experience for Bandcamp might make me choose artists that are present there more when adding them to my posts.
+
+Some artists might be present on platforms I don’t want to link that much, like YouTube, but maybe its ok? Some of them might not be present anywhere outside of the streaming platforms, which might make things even worse.
+
+I need to contemplate what to do: should I add alternative types of metadata and presentation for other services? Just link to artists’ pages when possible? Hm hm.
+
+### Future Link/Embed Rot
+
+Another thing that could happen because I am not self-hosting the Current Music (duh) — if the tracks will disappear from Bandcamp, the embeds will stop working. Which is not the end of the world, but I currently don’t have any tools to detect that.
+
+## That’s It, For Now
+
+Yep. What I like about having my own website — I can do whatever I want with it. Even the more independent and federated networks became very limited in what they allow. While I was not on it, I looked with interest at [Cohost](https://en.wikipedia.org/wiki/Cohost) with all the [CSS Crimes](https://css-tricks.com/the-lost-css-tricks-of-cohost-org/) you could do there (post by [Blackle Mori](https://www.blackle-mori.com/) — author of many such contraptions).
+
+The older, asocial, pseudonymous networks were much more relaxed in what you could post and do with your personal spaces. Custom themes, embeds, quizes, custom avatars per post, inline CSS.
+
+I understand how in modern web there are now many concerns over privacy and security which close some of the past doors, but I hope that with newer CSS features like `@scope` we could maybe unlock some of them, and allow the chaotic creativity to invade our niche spaces.

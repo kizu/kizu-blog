@@ -1,0 +1,59 @@
+---
+export interface Props {
+	artist: string;
+	track: string;
+	link: string;
+	id: string;
+	albumId?: string;
+	isInDetails?: boolean;
+}
+
+const {
+	isInDetails = true,
+	id,
+	albumId,
+	artist,
+	link,
+	track,
+} = Astro.props;
+
+const mode = albumId ? 'artwork' : 'minimal';
+
+const size = {
+	minimal: 'small',
+	artwork: 'large',
+}[mode];
+
+const album = albumId ? `album=${albumId}/` : '';
+const artwork = albumId ? '' : 'artwork=none/';
+
+// <iframe style="border: 0; width: 350px; height: 350px;" src="https://bandcamp.com/EmbeddedPlayer/album=717666330/size=large/bgcol=ffffff/linkcol=0687f5/minimal=true/track=1616963365/transparent=true/" seamless><a href="https://thealbumleaf.bandcamp.com/album/seal-beach">Seal Beach by The Album Leaf</a></iframe>
+
+---
+{(() => {
+	const fallback = (
+		<a href={link}>
+			{artist}<span class="nowrap"> —</span> {track}
+		</a>
+	);
+	const iFrame = (
+		<iframe
+			class:list={['bandcamp', mode]}
+			loading="lazy"
+			src={`https://bandcamp.com/EmbeddedPlayer/${album}size=${size}/minimal=true/theme=light/bgcol=f9ffe9/linkcol=0066b7/transparent=true/${artwork}track=${id}/`}
+			width="100%"
+			height="42"
+		>
+			{fallback}
+		</iframe>
+	);
+	if (!isInDetails) {
+		return iFrame
+	}
+	return (
+		<details class="inline">
+			<summary><u>{track}</u></summary>
+			{iFrame}
+		</details>
+	);
+})()}

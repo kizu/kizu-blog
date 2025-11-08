@@ -27,6 +27,10 @@ const blog = defineCollection({
 			drink: z.string().optional(),
 			location: z.string().optional(),
 		}).optional(),
+		bandcamp: z.object({
+			track: z.string().optional(),
+			link: z.string(),
+		}).optional(),
 		tags: z.array(z.string()),
 	}),
 });

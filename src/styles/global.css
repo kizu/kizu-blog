@@ -619,6 +619,29 @@ summary {
 	}
 }
 
+details.inline,
+details.inline > summary {
+	display: inline;
+}
+details.inline > summary {
+	display: inline list-item;
+
+	@supports not (display: inline list-item) {
+		display: inline-block;
+		&summary::before {
+			display: list-item;
+			float: left;
+			content: "";
+			font-size: 0.75em;
+			line-height: 2.25;
+		}
+
+		&:is([open] > *)::before {
+			content: "";
+		}
+	}
+}
+
 summary:focus:not(:focus-visible),
 :root:not(:active) label:hover,
 label:active {
@@ -1044,4 +1067,26 @@ scroll-markers > ul {
 
 #table-of-contents + ul {
 	font-size: var(--FONT-SIZE--SMALL);
+}
+
+.bandcamp {
+	width: 100%;
+	max-width: 700px;
+	height: 42px;
+	overflow: hidden;
+	border: 0;
+	background: #FFF;
+	outline: 1px solid #d2d2d2;
+	outline-offset: -1px;
+
+	filter: var(--LIGHT, none) var(--DARK, hue-rotate(180deg) invert(1));
+
+	&.artwork {
+		background: transparent;
+		outline: none;
+		max-width: 350px;
+		height: auto;
+		aspect-ratio: 1;
+		filter: none;
+	}
 }

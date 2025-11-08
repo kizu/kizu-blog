@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Base from '@layouts/Base.astro';
+import BandCamp from '@components/BandCamp.astro';
 import FormattedDate from '@components/FormattedDate.astro';
 import FitToWidth from '@components/FitToWidth.astro';
 import { tagInURL } from '@lib/tagInURL';
@@ -19,6 +20,7 @@ const {
 	updatedDate,
 	heroImage,
 	current,
+	bandcamp,
 	tags = [],
 } = Astro.props;
 const { pathname } = Astro.url;
@@ -64,14 +66,35 @@ const allMusic = await getAllMusic();
 				</>) : null }
 				{current ? Object.entries(current).filter(([_, value]) => value !== '').map(([key, _value]) => {
 					let value = _value as string;
+					const separator = <><span class="nowrap"> —</span> </>;
 					if (key === 'music') {
 						const [musicArtist, musicValue] = getMusicTag(value) || [];
 						if (musicArtist) {
+							let musicTrack = musicValue;
+							if (musicTrack && bandcamp?.track) {
+								musicTrack = (<BandCamp
+									isInDetails
+									id={bandcamp.track}
+									link={bandcamp.link}
+									artist={musicArtist}
+									track={musicTrack}
+								/>)
+							}
+
+							if (musicTrack && bandcamp && !bandcamp.track) {
+								musicTrack = <a href={bandcamp?.link}>{musicTrack}</a>;
+
+							}
+
 							const artistCount = allMusic.get(musicArtist)?.length;
 							if (artistCount && artistCount > 1) {
 								value = (<>
-									<a href={`/music/${tagInURL(musicArtist)}`}>{musicArtist}</a>{musicValue ? ` — ${musicValue}` : ''}
+									<a href={`/music/${tagInURL(musicArtist)}`}>{musicArtist}</a>{musicTrack ? <>{separator}{musicTrack}</> : ''}
 								</>);
+							} else if (musicTrack) {
+								value = <>{musicArtist}{separator}{musicTrack}</>;
+							} else {
+								value = <>{musicArtist}</>;
 							}
 						}
 					}
