@@ -48,6 +48,23 @@ export const rawPhotoData: PhotoData = [
 			{ url: 'https://pixey.org/i/web/post/814417117161899268' },
 		],
 	},
+	{
+		name: 'A walk on March 29, 2025',
+		date: '2025-03-29',
+		camera: 'om-3',
+		lens: '17mm',
+		photos: [
+			{ url: 'https://pixey.org/i/web/post/817451066421086522' },
+			{ url: 'https://pixey.org/i/web/post/817676335075935894' },
+			{ url: 'https://pixey.org/i/web/post/817864172297932484' },
+			{ url: 'https://pixey.org/i/web/post/818047444271492157' },
+			{ url: 'https://pixey.org/i/web/post/818175015462030871' },
+			{ url: 'https://pixey.org/i/web/post/818397337686912029' },
+			{ url: 'https://pixey.org/i/web/post/818556849380953329' },
+			{ url: 'https://pixey.org/i/web/post/818821045448530424' },
+			{ url: 'https://pixey.org/i/web/post/818936118950300362' },
+		],
+	},
 ];
 
 export const photoData = await expandPhotoData(rawPhotoData);
