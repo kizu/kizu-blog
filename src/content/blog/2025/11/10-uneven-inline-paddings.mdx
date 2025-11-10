@@ -3,7 +3,7 @@ title: 'Uneven Inline Paddings'
 description: 'Today, I want to share one tiny design tweak you can do to your content styles. I have used it in my blog’s design for a while, and recently decided to improve it a bit, and will take this as an opportunity to share it.'
 tags: ['Design', 'Typography', 'CSS']
 pubDate: '2025-11-10'
-mastodonPostId: ''
+mastodonPostId: '115525890517691862'
 
 current: {
 	drink: 'Green tea with bergamot, kiwi, yellow peach, orange blossom and violet flower',
@@ -132,13 +132,13 @@ This might not look that impactful on a minimal example, but the more text you
 
 Should you go and change all your paddings? Probably not. Especially, given there might be potential issues with this solution:
 
-1. You could think that the bigger the padding, the bigger chunk of it we could remove. To an extent this is true, but it can be very easy to shift the unevenness in the other direction. This is something that should be done “by an eye”, although as a rule of thumb a good starting point could be to apply a half of the original padding.
+1. You could think that the bigger the padding, the bigger chunk of it we could remove. To an extent, this is true, but it can be very easy to shift the unevenness in the other direction. This is something that should be done “by an eye”, although as a rule of thumb a good starting point could be to apply a half of the original padding.
 
-2. Often, people include things other than the text in their content. Images, code blocks, etc. If those have backgrounds or borders on their own, an uneven padding around those elements _will_ look uneven. This is where you’d want to either add an extra margin to those element to compensate, or invert things and keep the original even padding intact and only add a negative margin on the children that might need it like paragraphs, list items, and so on.
+2. Often, people include things other than the text in their content. Images, code blocks, etc. If those have backgrounds or borders on their own, an uneven padding around those elements _will_ look uneven. This is where you’d want to either add an extra margin to those elements to compensate, or invert things and keep the original even padding intact and only add a negative margin on the children that might need it like paragraphs, list items, and so on.
 
 3. After addressing the problem with the full-width elements above, and if the padding is pretty large, then cutting it in half can lead to the unevenness being pretty obvious. These pronounced blocky elements will visually reinforce the “expected” edge, making the “hanging” text in the rag stick out.
 
-4. If your text has `text-wrap: balance` or `pretty`, the effect of the fix will often be smaller because then all the lines will wrap sooner, so the chances of the text not going till the edge will be higher, and a small padding tweak won’t help. And if the width of the container will be equal to the longest wrapping lines, it is likely things could feel unbalanced similar to if we had `text-align: justify`.
+4. If your text has `text-wrap: balance` or `pretty`, the effect of the fix will often be smaller because then all the lines will wrap sooner, so the chances of the text not going until the edge will be higher, and a small padding tweak won’t help. And if the width of the container will be equal to the longest wrapping lines, it is likely things could feel unbalanced, similar to if we had `text-align: justify`.
 
 <aside>
 For example, you can <label><input class="no-article-fix" type="checkbox" /> <u>disable the fix for this whole post</u></label>,<br/> or <label><input class="article-edge-highlight" type="checkbox" /> <u>highlight the unfixed padding edge</u></label>!
