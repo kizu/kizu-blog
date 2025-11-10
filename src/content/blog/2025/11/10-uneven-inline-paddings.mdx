@@ -1,0 +1,164 @@
+---
+title: 'Uneven Inline Paddings'
+description: 'Today, I want to share one tiny design tweak you can do to your content styles. I have used it in my blog’s design for a while, and recently decided to improve it a bit, and will take this as an opportunity to share it.'
+tags: ['Design', 'Typography', 'CSS']
+pubDate: '2025-11-10'
+mastodonPostId: ''
+
+current: {
+	drink: 'Green tea with bergamot, kiwi, yellow peach, orange blossom and violet flower',
+	music: 'COVET — Ares',
+}
+
+bandcamp: {
+	track: '3352986632',
+	link: 'https://covetband.bandcamp.com/track/ares',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+Today, I want to share one tiny design tweak you can do to your content styles. I have used it in my blog’s design for a while, and recently decided to improve it a bit, and will take this as an opportunity to share it.
+
+## Table of Contents
+
+## The Ragged Edge
+
+No, this is not about Babylon <span class="normal">5</span>’s 100<sup class="alt">th</sup> episode that had “The Ragged Edge” as its title, in which <q>Garibaldi’s relapse into alcoholism jeopardises a covert mission to the Drazi homeworld</q> (quoting Wikipedia’s [episode summary](https://en.wikipedia.org/wiki/List_of_Babylon_5_episodes#ep100) that I found when doing some research; good show, <abbr>BTW</abbr>).
+
+I will be talking about the left-aligned text, also known as “flush left” or “ragged right”. Actually, this could also work for right-aligned text — the main idea is that we need to have the rag, and not have the text justified.
+
+The problem with the ragged edge — if the padding on both sides of your column of content is even, it will get perceived as uneven.
+
+<style>{`
+.container {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+
+	resize: horizontal;
+	max-width: calc(100cqi + 2 * var(--padding));
+	box-sizing: border-box;
+	margin: calc(-1 * var(--padding));
+	margin-bottom: 0;
+	border-radius: var(--border-radius) var(--border-radius) 0 0;
+	box-shadow:
+		1px 0 color-mix(in oklch, var(--BLUE), transparent),
+		1px 0 var(--CONTENT-BG)
+	;
+
+	&:has(+ fieldset > label.with-background > input:checked) {
+		background: var(--GREEN);
+	}
+
+	&:has(+ fieldset > label.with-fix > input:not(:checked)) {
+		padding: 32px;
+	}
+
+	&:has(+ fieldset > label.with-edge > input:checked) {
+		&::before {
+			content: '';
+			position: absolute;
+			border-left: 1px solid var(--RED);
+			inset-block: 0;
+			inset-inline: auto 31px;
+			z-index: -1;
+		}
+	}
+
+	& p {
+		overflow: hidden;
+		margin: 0;
+		text-wrap: inherit;
+
+		& > span {
+			padding: 0.25em 0;
+			background: var(--CONTENT-BG);
+		}
+	}
+}
+`}</style>
+
+<LiveExample shouldHideHTML caption="An example of an uneven-looking padding.">
+```CSS
+.container {
+	padding: 32px;
+}
+```
+```HTML
+<div class="container">
+	<p><span>This is a paragraph of text that will wrap, and will create a ragged edge because it is not justified, which can result in the perceived uneveness of the paddings on both sides of it. If this doesn’t happen, then maybe the width of its lines matches very precisely the width of the container.</span></p>
+	<p><span>If you can resize your window or this example, you might have a better chance to be able to spot the difference.</span></p>
+</div>
+<fieldset>
+	<legend>Tweak this example</legend>
+	<label class="with-background"><input type="checkbox" checked /> <u>with green background</u></label>
+	<label class="with-edge"><input type="checkbox" /> <u>highlight the padding edge</u></label>
+</fieldset>
+```
+</LiveExample>
+
+Very rarely any of the words in the text will get flush with its right edge: usually, they will wrap before reaching it, and thus will always leave some extra space.
+
+In the above example, by default, all the padding around the paragraph is shown with a green background, excluding the background under the actual text content. This makes it easy to spot the unevenness: removing the background “hides” this, but only to an extent.
+
+## The Solution
+
+The solution for this is to apply a smaller padding to the ragged edge:
+
+<LiveExample shouldHideHTML caption="Example showing how adjusting the padding on the ragged edge can help.">
+```CSS
+.uneven-padding {
+	padding-inline-end: 16px;
+}
+```
+```HTML
+<div class="container uneven-padding">
+	<p><span>This is a paragraph of text that will wrap, and will create a ragged edge because it is not justified, which can result in the perceived uneveness of the paddings on both sides of it. If this doesn’t happen, then maybe the width of its lines matches very precisely the width of the container.</span></p>
+	<p><span>If you can resize your window or this example, you might have a better chance to be able to spot the difference.</span></p>
+</div>
+<fieldset>
+	<legend>Tweak this example</legend>
+	<label class="with-background"><input type="checkbox" checked /> <u>with green background</u></label>
+	<label class="with-edge"><input type="checkbox" /> <u>highlight previous padding edge</u></label>
+	<label class="with-fix"><input type="checkbox" checked /> <u>with uneven padding fix</u></label>
+</fieldset>
+```
+</LiveExample>
+
+This might not look that impactful on a minimal example, but the more text you have, the bigger the change. This can be even more important for narrow contexts: on my blog I initially only applied this in the desktop version, but on smaller screens the padding ended up being equal.
+
+## Downsides
+
+Should you go and change all your paddings? Probably not. Especially, given there might be potential issues with this solution:
+
+1. You could think that the bigger the padding, the bigger chunk of it we could remove. To an extent this is true, but it can be very easy to shift the unevenness in the other direction. This is something that should be done “by an eye”, although as a rule of thumb a good starting point could be to apply a half of the original padding.
+
+2. Often, people include things other than the text in their content. Images, code blocks, etc. If those have backgrounds or borders on their own, an uneven padding around those elements _will_ look uneven. This is where you’d want to either add an extra margin to those element to compensate, or invert things and keep the original even padding intact and only add a negative margin on the children that might need it like paragraphs, list items, and so on.
+
+3. After addressing the problem with the full-width elements above, and if the padding is pretty large, then cutting it in half can lead to the unevenness being pretty obvious. These pronounced blocky elements will visually reinforce the “expected” edge, making the “hanging” text in the rag stick out.
+
+4. If your text has `text-wrap: balance` or `pretty`, the effect of the fix will often be smaller because then all the lines will wrap sooner, so the chances of the text not going till the edge will be higher, and a small padding tweak won’t help. And if the width of the container will be equal to the longest wrapping lines, it is likely things could feel unbalanced similar to if we had `text-align: justify`.
+
+<aside>
+For example, you can <label><input class="no-article-fix" type="checkbox" /> <u>disable the fix for this whole post</u></label>,<br/> or <label><input class="article-edge-highlight" type="checkbox" /> <u>highlight the unfixed padding edge</u></label>!
+
+You will then see that I added a pretty small overhang for the content, especially compared to the padding itself on the wider screens.
+<style>{`
+article:has(> aside > p > label > input.no-article-fix:checked) {
+	--ragged-margin-fix-override: 0;
+}
+article:has(> aside > p > label > input.article-edge-highlight:checked)::before {
+	background-image: linear-gradient(var(--RED));
+	background-size: 1px 100%;
+	background-repeat: no-repeat;
+	background-position: right calc(var(--content-padding) - 1px) top 0;
+}
+`}</style>
+</aside>
+
+## Closing Thoughts
+
+I hope you found this short post interesting. I consider myself bad at design, but many people tell me that they like how my main website and this blog look. Blame all the years that I iterated on them!
+
+Over these years, gradually, I implemented more and more ideas, small and big, regarding their design and typography. Did you spot some already? Or are they subtle enough that you’re now wondering what exactly do I mean? <del>Let me know in the comments down below.</del>

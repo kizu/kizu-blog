@@ -1,0 +1,45 @@
+
+@font-face {
+	font-family: --small;
+	/* Firefox fonts panel is helpful for getting this */
+	src: local('Iowan Old Style Roman');
+	font-feature-settings: 'dnom' 1;
+	unicode-range: U+0030-0039;
+	size-adjust: 140%;
+}
+
+html {
+	/* https://modernfontstacks.com/ */
+	--FONT-FAMILY: 'Iowan Old Style',
+		'Palatino Linotype',
+		'URW Palladio L',
+		P052,
+		/* To use the sans-serif version for the `music` fields. */
+		/* Taken from https://stackoverflow.com/a/14573813/885556 */
+		'Hiragino Kaku Gothic ProN',
+		Osaka,
+		'メイリオ',
+		Meiryo,
+		'ＭＳ Ｐゴシック',
+		'MS PGothic',
+		serif;
+}
+
+/* Alternative superscript styles. Needed for glyphs that don't have them, so the browsers won't attempt to synthesize things, as we can't detect this and there will be interop issues. */
+sup.alt {
+	font-family: --small, var(--FONT-FAMILY);
+	bottom: 0px;
+	font-size: 0.75em;
+	font-variant-position: normal;
+	vertical-align: super;
+	line-height: 0.8;
+}
+
+abbr,
+.small-caps {
+	font-variant-caps: all-small-caps;
+}
+
+q {
+	font-style: italic;
+}

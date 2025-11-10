@@ -5,9 +5,10 @@ import { markdown } from '@astropub/md'
 interface Props extends HTMLAttributes<'a'> {
 	caption?: string;
 	shouldHideHTML?: boolean;
+	shouldHideCSS?: boolean;
 }
 
-const { shouldHideHTML, caption, ...props } = Astro.props;
+const { shouldHideHTML, shouldHideCSS, caption, ...props } = Astro.props;
 
 // TODO: use a proper sanitizer, lol.
 let html = await Astro.slots.render('default');
@@ -19,13 +20,17 @@ if (shouldHideHTML) {
 	html = html.replaceAll(/<pre[^>]*language-html[^>]*>([\s\S]+?)<\/pre>/gi, '');
 }
 
+if (shouldHideCSS) {
+	html = html.replaceAll(/<pre[^>]*language-css[^>]*>([\s\S]+?)<\/pre>/gi, '');
+}
+
 const captionHTML = caption ? (await markdown(caption)).toString().trim().replace(/^<p>(.+)<\/p>$/, '$1') : undefined;
 
 ---
 
 <figure {...props}>
 	<Fragment set:html={foundHTML} />
-	<style set:html={foundCSS} />
 	<Fragment set:html={html} />
 	{captionHTML ? <figcaption set:html={captionHTML} /> : null}
+	<style set:html={foundCSS} />
 </figure>

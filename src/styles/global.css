@@ -4,6 +4,7 @@
 @import './features/scroll-markers.css';
 @import './features/progress.css';
 @import './features/photo.css';
+@import './features/typography.css';
 
 html {
 	scrollbar-gutter: stable;
@@ -220,21 +221,7 @@ html:has(#theme-dark:checked) {
 	);
 
 	font-size: var(--FONT-SIZE--BODY);
-	/* https://modernfontstacks.com/ */
-	font-family:
-		'Iowan Old Style',
-		'Palatino Linotype',
-		'URW Palladio L',
-		P052,
-		/* To use the sans-serif version for the `music` fields. */
-		/* Taken from https://stackoverflow.com/a/14573813/885556 */
-		'Hiragino Kaku Gothic ProN',
-		Osaka,
-		'メイリオ',
-		Meiryo,
-		'ＭＳ Ｐゴシック',
-		'MS PGothic',
-		serif;
+	font-family: var(--FONT-FAMILY);
 
 	color: var(--TEXT-COLOR);
 
@@ -532,17 +519,21 @@ p, li, dd {
 	/* We want the code blocks to have more recognizable numbers as well. */
 	& code,
 	/* Same for the first letter, so we won't start a paragraph from a small letter. Is there a way to extend this to sentences? */
-	&::first-letter {
+	&::first-letter,
+	/* Same for any places we'd want to restore explicitly. */
+	& .normal {
 		font-variant-numeric: normal;
 	}
 }
 
 /* Optically adjust the right edge for most elements, balancing the ragged edge. */
 article > :not(figure, pre, aside) {
-	margin-inline-end: max(
+	--ragged-margin-fix-override: inherit;
+	margin-inline-end: var(--ragged-margin-fix-override, clamp(
 		-1 * var(--MIN-CONTENT-PADDING),
-		var(--MIN-CONTENT-PADDING) - var(--content-padding)
-	);
+		var(--MIN-CONTENT-PADDING) - var(--content-padding),
+		-0.5 * var(--MIN-CONTENT-PADDING)
+	));
 }
 
 :is(article, blockquote) > p:not(.starts-with-tag:has(> img:only-child)) {
@@ -610,6 +601,7 @@ summary {
 	/* text-decoration-thickness: max(1.5px, 0.125em); */
 }
 
+label,
 summary {
 	cursor: pointer;
 
@@ -647,6 +639,30 @@ summary:focus:not(:focus-visible),
 label:active {
 	-webkit-user-select: none;
 	user-select: none;
+}
+
+label input[type=checkbox] {
+	cursor: inherit;
+}
+
+fieldset {
+	border: 1px solid color-mix(in oklch, var(--BLUE), transparent);
+	padding: var(--MIN-CONTENT-PADDING);
+
+	&:not(:has(> :not(legend, label))) {
+		display: flex;
+		flex-wrap: wrap;
+		padding: 0;
+
+		& > label {
+			position: relative;
+			padding: var(--MIN-CONTENT-PADDING);
+
+			&:hover {
+				background: color-mix(in oklch, var(--GREEN), transparent 75%);
+			}
+		}
+	}
 }
 
 .nowrap {
@@ -817,6 +833,50 @@ figure {
 	&:not(:has( > figcaption))::after {
 		inset-block-end: 0;
 	}
+
+	& > fieldset:last-of-type:not(:first-child) {
+		border-width: 1px 0 0;
+		margin: calc(-1 * var(--padding));
+		margin-top: 0;
+
+		&:has(+ pre) {
+			border-width: 1px 0;
+		}
+
+		&:has(> legend) {
+			margin-top: calc(
+				-0.5
+				*
+				var(--LINE-HEIGHT--BODY-UNITLESS)
+				*
+				var(--FONT-SIZE--SMALL)
+				+
+				0.5px
+			);
+		}
+
+		& > legend {
+			position: relative;
+			background: var(--CONTENT-BG);
+			border-radius: var(--border-radius) var(--border-radius) 0 0;
+			padding: 0 calc(0.5 * var(--MIN-CONTENT-PADDING));
+			font-size: var(--FONT-SIZE--SMALL);
+			line-height: var(--LINE-HEIGHT--BODY-UNITLESS);
+			margin-inline: var(--MIN-CONTENT-PADDING);
+			margin-block-end: -0.25lh;
+
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--BLUE), transparent);
+				border-radius: inherit;
+				clip-path: content-box;
+				padding-bottom: calc(0.5lh - 0.5px);
+				z-indez: -1;
+			}
+		}
+	}
 }
 
 figcaption {
@@ -869,11 +929,11 @@ figure > pre {
 	border-radius: 0;
 }
 
-figure > *:nth-last-child(1 of :not(style, figcaption)) {
+figure > *:nth-last-child(1 of :not(style, figcaption, fieldset)) {
 	margin-block-end: 0;
 }
 
-figure > pre:nth-last-child(1 of :not(style, figcaption)) {
+figure > pre:nth-last-child(1 of :not(style, figcaption, fieldset)) {
 	margin-block-end: min(calc(-1 * var(--padding)), 0px);
 	border-end-start-radius: calc(var(--BORDER-RADIUS) + 1px);
 	border-end-end-radius: calc(var(--BORDER-RADIUS) + 1px);
@@ -901,7 +961,15 @@ pre {
 }
 
 *[style*='--D:'] {
-	color: var(--LIGHT, var(--L)) var(--DARK, var(--D));
+	--darken: 1.25;
+	color: oklch(
+		from var(--LIGHT, var(--L)) var(--DARK, var(--D))
+		calc(l / var(--darken)) c h / alpha
+	);
+
+	@media (prefers-contrast: more) {
+		--darken: 1.45;
+	}
 }
 
 *[style*='--D-bg:'] {
