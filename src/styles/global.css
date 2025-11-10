@@ -961,14 +961,15 @@ pre {
 }
 
 *[style*='--D:'] {
-	--darken: 1.25;
+	--adjust: 0;
 	color: oklch(
 		from var(--LIGHT, var(--L)) var(--DARK, var(--D))
-		calc(l / var(--darken)) c h / alpha
+		var(--LIGHT, min(l, 0.6 - var(--adjust))) var(--DARK, max(l, 0.75))
+		c h / alpha
 	);
 
 	@media (prefers-contrast: more) {
-		--darken: 1.45;
+		--adjust: 0.1;
 	}
 }
 
