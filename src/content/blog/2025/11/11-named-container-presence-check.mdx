@@ -1,6 +1,6 @@
 ---
 title: 'Named Container Presence Check'
-description: 'I was doing some styling recently, and I wanted to know if my element is inside a certain container. While I could reuse the same selector that I used to apply the container with, this did not feel right: what if I would apply the same container via a different selector? Or have a version of that element where the container is removed via some modifier? Can we somehow use just the container’s name for this?'
+description: 'I was doing some styling recently, and I wanted to know if my element was inside a certain container. While I could reuse the same selector that I used to apply the container with, this did not feel right: what if I were to apply the same container via a different selector? Or have a version of that element where the container is removed via some modifier? Can we somehow use just the container’s name for this?'
 tags: ['CSS Containers', 'CSS']
 pubDate: '2025-11-11'
 mastodonPostId: ''
@@ -22,7 +22,7 @@ import LiveExample from '@components/LiveExample.astro';
 
 ## The Task
 
-I was doing some _styling_ recently, and I wanted to know if my element is inside a certain container.
+I was doing some _styling_ recently, and I wanted to know if my element was inside a certain container.
 
 <div class="aside-wrapper" style="--span: 6; --position: static;">
 	<aside>
@@ -54,7 +54,7 @@ I was doing some _styling_ recently, and I wanted to know if my element is�
 </div>
 ```
 
-While I could reuse the same selector that I used to apply the container with, this did not feel right: what if I would apply the same container via a different selector? Or have a version of that element where the container is removed via some modifier?
+While I could reuse the same selector that I used to apply the container with, this did not feel right: what if I were to apply the same container via a different selector? Or have a version of that element where the container is removed via some modifier?
 
 Given I already had `container-type: inline-size`, and I literally wanted to know if this exact containment from this exact element was applied, as a way to differentiate between it and the viewport, using a named container to check this was pretty obvious.
 
@@ -146,7 +146,7 @@ One could ask a question: couldn’t we just use style queries and then check 
 
 If we wanted to check if that container is the _closest_ to our element — sure, that would be the way. However, what we want is to check if the container is _present at all_, without checking for its proximity.
 
-## Aren't Those Hacky?
+## Aren’t Those Hacky?
 
 While the size containment check is pretty simple, we still _have to establish the size containment_. As for style queries, the check is very verbose. We could try to simplify it as `not style(--\-)` — use a name that will unlikely be present in our document, but it won’t be _guaranteed_.
 
@@ -155,3 +155,9 @@ Currently, `@container --my-container {}` won’t ever do anything: the follow-
 I opened [a CSSWG issue about this](https://github.com/w3c/csswg-drafts/issues/13093). If you have any use cases for this, write about them in this issue, otherwise, if you think it is a good idea — please, upvote it!
 
 And — that’s it for today’s post! As it often goes: I thought it will be a simple one, but then ended up filling a Firefox bug and a CSSWG issue. Even more: this post was actually a side effect from starting to write another post, in which I used this “technique”, so I wanted to first briefly explain it in a separate post.
+
+## Update
+
+After I published this post, [Miriam](https://www.miriamsuzanne.com/) noted that CSSWG already [resolved on this](https://github.com/w3c/csswg-drafts/issues/9192#issuecomment-1789850349) 2 years ago, and [Rune Lillesveen](https://social.vivaldi.net/@rune) [contributed WPT tests](https://github.com/web-platform-tests/wpt/pull/49093), which, as also tested by me, are [not passing](https://wpt.fyi/results/css/css-conditional/container-queries/query-container-name.html?label=experimental&label=master&aligned).
+
+I closed the issue I created as a duplicate. Now, I guess, the onus is on browsers: this feels like a _very_ low-hanging fruit, as all necessary for verifying the presence of a container should be already done, this new feature is only _excluding_ some of the checks browsers do when there is a query present.
