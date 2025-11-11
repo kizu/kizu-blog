@@ -556,6 +556,10 @@ article > :not(figure, pre, aside) {
 		var(--MIN-CONTENT-PADDING) - var(--content-padding),
 		-0.5 * var(--MIN-CONTENT-PADDING)
 	));
+
+	&:has(+ .aside-wrapper) {
+		margin-inline-end: 0;
+	}
 }
 
 :is(article, blockquote) > p:not(.starts-with-tag:has(> img:only-child)) {
@@ -1135,7 +1139,7 @@ scroll-markers > ul {
 
 	& > aside {
 		pointer-events: auto;
-		position: sticky;
+		position: var(--position, sticky);
 		inset-block-start: 0;
 		--aside-padding: calc(
 			var(--DOUBLE-PADDING) * var(--has-aside)

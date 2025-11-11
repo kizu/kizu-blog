@@ -1,0 +1,157 @@
+---
+title: 'Named Container Presence Check'
+description: 'I was doing some styling recently, and I wanted to know if my element is inside a certain container. While I could reuse the same selector that I used to apply the container with, this did not feel right: what if I would apply the same container via a different selector? Or have a version of that element where the container is removed via some modifier? Can we somehow use just the container’s name for this?'
+tags: ['CSS Containers', 'CSS']
+pubDate: '2025-11-11'
+mastodonPostId: ''
+
+current: {
+	drink: 'Cappuccino',
+	music: 'Haisuinonasa — Shower',
+}
+
+bandcamp: {
+	track: '4154576877',
+	link: 'https://zankyorecord.bandcamp.com/track/shower',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## The Task
+
+I was doing some _styling_ recently, and I wanted to know if my element is inside a certain container.
+
+<div class="aside-wrapper" style="--span: 6; --position: static;">
+	<aside>
+		If you're new to _containers_, you can familiarize yourself with them via one of these resources:
+
+		- [“An Interactive Guide to CSS Container Queries”](https://ishadeed.com/article/css-container-query-guide/) by [Ahmad Shadeed](https://ishadeed.com/).
+
+		- [“Container Queries Unleashed”](https://www.joshwcomeau.com/css/container-queries-unleashed/) by [Josh W. Comeau](https://www.joshwcomeau.com/).
+
+		- [“CSS Containers, What Do They Know?”](https://www.youtube.com/watch?v=-Fw8GSksUIo) — a talk by [Miriam Suzanne](https://www.miriamsuzanne.com/).
+	</aside>
+</div>
+
+```CSS
+.my-container {
+	container-type: inline-size;
+}
+```
+
+```HTML
+<div class="my-container">
+	<div class="some-element">
+		Where am I?
+	</div>
+</div>
+
+<div class="some-element">
+	And me, what about me?
+</div>
+```
+
+While I could reuse the same selector that I used to apply the container with, this did not feel right: what if I would apply the same container via a different selector? Or have a version of that element where the container is removed via some modifier?
+
+Given I already had `container-type: inline-size`, and I literally wanted to know if this exact containment from this exact element was applied, as a way to differentiate between it and the viewport, using a named container to check this was pretty obvious.
+
+## Checking Named Containers
+
+Generally, named containers — ones with the `container-name` property — are used for differentiating between them. What if you have multiple containers around an element, and you need to check the dimensions on a specific container? Is this a query for a _card_, or for _content_?
+
+Usually, you’d use these containers to query either elements’ dimensions, or, with style container queries, values of custom properties on them.
+
+For my purpose, I don’t care about any specific values: I only need to know about the _presence_ of some named container. For different types of them, we can do this differently.
+
+### Querying a Size Container
+
+For size containers things are pretty simple: if we have an established size container, we can add a `container-name` to it (or join the name with its type into a `container` shorthand), and then query it in an always-positive way alongside its name:
+
+<LiveExample shouldHideHTML caption="Example showing a green outline around an element inside a container. A containerless element does not have any outlines.">
+```CSS
+.my-container {
+	container: --my-container / inline-size;
+}
+
+@container --my-container (min-width: 0) {
+	.some-element {
+		outline: 3px solid var(--GREEN);
+	}
+}
+```
+```HTML
+<div class="my-container">
+	<div class="some-element">
+		Where am I?
+	</div>
+</div>
+
+<div class="some-element">
+	And me, what about me?
+</div>
+```
+</LiveExample>
+
+Some notes:
+
+- I am setting the name for our container using the shorthand. I am also using a dashed ident for it, even though containers allow any custom idents. I wrote a post about why I am doing this two years ago: [“Dashed Idents for Everything”](/dashed-idents-for-everything/).
+
+- A container cannot have a _negative_ width, so a `min-width: 0` check will always match, but only if there is a `--my-container` somewhere in the tree around our `some-element`.
+
+- This will work only if we apply any `container-type` on our container: both `size` and `inline-size` will work for `min-width`, and if we’d want to check if our container is specifically `size` container, we’d need to check `min-height: 0`.
+
+### Style Querying any Container
+
+Container style queries are _almost here_: Firefox should get them pretty soon. For querying _styles_ of custom properties, we don’t need to have any containment, thus with container style queries we will be able to just name any element, and then query if we have this specific container somewhere in our element’s ancestors.
+
+<aside class="warning">
+At the time of writing this, the style queries implementation in Firefox Nightly has [a bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1999555), where it considers this _always_ true without looking at the name of the container.
+</aside>
+
+<LiveExample class="require-style-queries" shouldHideHTML caption="Example showing blue outline around an element inside a container. A containerless element does not have any outlines.">
+```CSS
+.my-styletainer {
+	container-name: --my-styletainer;
+}
+
+@container --my-styletainer not (
+	style(--a:a) and style(--a:b)
+) {
+	.my-element {
+		outline: 3px solid var(--BLUE);
+	}
+}
+```
+```HTML
+<div class="my-styletainer">
+	<div class="my-element">
+		Where am I?
+	</div>
+</div>
+
+<div class="my-element">
+	And me, what about me?
+</div>
+```
+</LiveExample>
+
+In order to match a style container regardless of what its styles are, we can use a `not (style(--a:a) and style(--a:b))` condition: it will be always truthy, as it is not possible to have some custom property that has two different values at the same time.
+
+#### Why Not Regular Style Queries?
+
+One could ask a question: couldn’t we just use style queries and then check some custom property like `--container-name: --my-styletainer` instead?
+
+If we wanted to check if that container is the _closest_ to our element — sure, that would be the way. However, what we want is to check if the container is _present at all_, without checking for its proximity.
+
+## Aren't Those Hacky?
+
+While the size containment check is pretty simple, we still _have to establish the size containment_. As for style queries, the check is very verbose. We could try to simplify it as `not style(--\-)` — use a name that will unlikely be present in our document, but it won’t be _guaranteed_.
+
+Currently, `@container --my-container {}` won’t ever do anything: the follow-up condition is required. But what if we could use this simple notation to check for the named container’s presence? It will be pretty straighforward and simple.
+
+I will open a CSSWG issue about this. If you have any use cases for this, write about them in this issue, otherwise, if you think it is a good idea — please, upvote it!
+
+And — that’s it for today’s post! As it often goes: I thought it will be a simple one, but then ended up filling a Firefox bug and a CSSWG issue. Even more: this post was actually a side effect from starting to write another post, in which I used this “technique”, so I wanted to first briefly explain it in a separate post.
