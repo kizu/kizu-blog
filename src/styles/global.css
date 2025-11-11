@@ -447,9 +447,31 @@ hr {
 code {
 	font: inherit;
 	white-space: pre-wrap;
-	tab-size: 2;
 	word-break: keep-all;
 	hyphens: none;
+
+	/* As soon as the content will not be at its max width, collapse */
+	--content-width: var(--MAX-PAGE-WIDTH);
+
+	@container --figure (min-width: 0) {
+		--content-width: (var(--CONTENT-WIDTH) - 4 * var(--MIN-CONTENT-PADDING));
+	}
+
+	--limit: calc(var(--content-width) / 2 - 1px);
+	--available-width: min(100cqi, var(--content-width));
+
+	@supports not (z-index: calc(1px/1px)) {
+		--captured-length: var(--available-width);
+		--captured-length2: var(--limit);
+		--ratio: tan(atan2(
+			var(--captured-length),
+			var(--captured-length2)
+		));
+		tab-size: round(up, var(--ratio), 2);
+	}
+	@supports (z-index: calc(1px/1px)) {
+		tab-size: round(up, var(--available-width) / var(--limit), 2);
+	}
 }
 
 :not(pre) > code,
@@ -812,6 +834,7 @@ figure {
 	--padding: var(--MIN-CONTENT-PADDING);
 	padding: var(--padding);
 	margin: 0;
+	container-name: --figure;
 	container-type: inline-size;
 	max-inline-size: calc(1px * var(--width) / 2 + 2 * var(--padding));
 	--border-radius: var(--BORDER-RADIUS);
