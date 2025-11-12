@@ -923,7 +923,7 @@ figcaption {
 }
 
 
-pre {
+pre:has(> code) {
 	max-inline-size: 100cqi;
 	padding: var(--MIN-CONTENT-PADDING);
 	padding-inline: max(

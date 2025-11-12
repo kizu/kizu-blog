@@ -1,0 +1,132 @@
+---
+title: 'Responsive tab-size'
+description: 'There exists a not well-known CSS property: `tab-size`. It sets the width, in spaces, of the tab indentation, usually found in code blocks of authors who use tabs instead of spaces (good job, authors). However, who says that this value should be static?'
+tags: ['Obscure CSS', 'CSS']
+pubDate: '2025-11-12'
+mastodonPostId: ''
+
+current: {
+	drink: 'Thyme, rosemary & lemon infusion',
+	music: 'This is The Kit — Birchwood Beaker',
+}
+
+bandcamp: {
+	track: '2319544418',
+	link: 'https://thisisthekit.bandcamp.com/track/birchwood-beaker',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## The `tab-size`
+
+There exists a not well-known CSS property: [`tab-size`](https://drafts.csswg.org/css-text/#tab-size-property). It sets the width, in spaces, of the tab indentation, usually found in code blocks of authors who use tabs instead of spaces (good job, authors).
+
+One of the benefits of using tabs for indentation: it is possible to control how big the indentation will be. CSS is not exception, and that’s why `tab-size` property is very useful. Especially, given its default value is the enormous `8` spaces. It is very likely you’d want to override it for your code blocks:
+
+<LiveExample class="example" shouldHideCSS>
+```HTML
+<pre>
+	One default tab here!
+</pre>
+<pre style="tab-size: 4">
+	One overridden tab here!
+</pre>
+```
+```CSS
+.example {
+}
+.example[class] pre:not(:has(> code)) {
+	border: 2px solid var(--PINK);
+	margin: 0;
+	border-radius: 0;
+
+	& + &,
+	&:is(div + div > *) {
+		margin-top: 1rem;
+	}
+}
+.example2 .container {
+	overflow: hidden;
+	resize: horizontal;
+	max-width: 100cqi;
+}
+
+```
+</LiveExample>
+
+
+## Responsiveness
+
+However, who says that this value should be static?
+
+<LiveExample class="example example2" caption="Example showing `tab-size` being dynamic based on its container width.">
+```HTML
+<div class="container">
+	<pre class="dynamic-tab">	One tab here!</pre>
+</div>
+<div class="container" style="width: 66%">
+	<pre class="dynamic-tab">	One tab here!</pre>
+</div>
+<div class="container" style="width: 33%">
+	<pre class="dynamic-tab">	One tab here!</pre>
+</div>
+```
+```CSS
+.container {
+	container-type: inline-size;
+}
+.dynamic-tab {
+	--available-width: 100cqi;
+	--step-size: 10ch;
+	@supports not (z-index: calc(1px/1px)) {
+		--captured-length: var(--available-width);
+		--captured-length2: var(--step-size);
+		--ratio: tan(atan2(
+			var(--captured-length),
+			var(--captured-length2)
+		));
+		tab-size: round(up, var(--ratio), 2);
+	}
+	@supports (z-index: calc(1px/1px)) {
+		tab-size: round(
+			up,
+			var(--available-width) / var(--step-size),
+			2
+		);
+	}
+}
+```
+</LiveExample>
+
+Ok, that CSS looks scary! If all browsers supported [typed arithmetic](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/calc#css_typed_arithmetic) — an ability to divide two values of the same type to get the unitless ratio between them — we could simplify it to just this:
+
+```CSS
+.dynamic-tab {
+	tab-size: round(up, 100cqi / 10ch, 2);
+}
+```
+
+Now, that’s much more readable, right? We divide the available space by some length to get the number of times it fits in it, and then round it up to be even.
+
+This makes the `tab-size` start from being two spaces wide, and increase with the available space. If needed, a `min()` could be added if we’d wanted to limit how high it could grow.
+
+But — typed arithmetic is _not_ currently available in all browsers. That said, we can work around this.
+
+I am using the [`tan(atan2())` hack](https://dev.to/janeori/css-type-casting-to-numeric-tanatan2-scalars-582j) by [Jane Ori](https://propjockey.io/) alongside [“Captured Custom Properties”](/captured-custom-properties/) to capture some values that compute to `px` and then get the ratio between them via `tan(atan2())`.
+
+I am also using `@supports` for the browsers to see only what they need to based on the typed arithmetic support. If we were not abstracting the values into custom properties, we could rely on fallbacks, but when custom properties are present we can’t use them.
+
+## That’s It
+
+I first experimented with this [almost exactly 2 years ago](https://codepen.io/kizu/details/QWYgbMZ), and earlier this year [shared](https://front-end.social/@kizu/114587260534234618) an updated version of this technique on Mastodon.
+
+This time, I finally wrote a proper blog post about it, and at the same time slightly updated it to use the typed arithmetic alongside the `@supports` rule.
+
+I also updated my blog’s CSS to use this, although here it only switches between values of `2` and `4` spaces, and maybe a bit overcomplicated due to some of my blog’s implementation details — I even used the [“Named Container Presence Check”](/named-container-presence-check/) that I described in the previous post.
+
+It is fun finding places where the typed arithmetic could help with responsiveness: any place you see an integer or a unitless number could be an opportunity to try it. How can we connect our container’s size with it? Maybe use for color components? `z-index`? Number of repeats in grid’s `repeat()`? Something else?
+
+Go on, and experiment. We need more experiments!
