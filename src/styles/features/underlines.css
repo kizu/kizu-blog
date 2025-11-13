@@ -1,0 +1,57 @@
+u,
+.u {
+	text-decoration: underline;
+}
+
+a[href],
+summary,
+u,
+.u {
+	text-decoration-thickness: max(1px, 0.075em);
+	text-underline-offset: clamp(2px, 0.075em, 4px);
+	/* https://github.com/web-platform-tests/wpt/pull/42940 */
+	text-decoration-color: color-mix(in srgb, var(--mix), transparent calc(100% - 100% * var(--decoration-thickness-override, 1)));
+	--mix-alpha: 0.5;
+}
+
+a[href^='#'],
+summary {
+	text-decoration-style: dotted;
+	--mix-alpha: 0.75;
+}
+
+:is(a[href], summary):is(:hover, :focus-visible),
+:is(a[href], summary):is(:hover, :focus-visible) > u {
+	--mix-alpha: 1;
+	/* TODO: Fill a Safari bug: with code elements */
+	/* Also, with the mix working, I might not need this. */
+	/* text-decoration-thickness: max(1.5px, 0.125em); */
+}
+
+label,
+summary {
+	cursor: pointer;
+
+	/* We need `<u>` inside, as otherwise some browsers won’t show the text-decoration */
+	& > :is(u, .u) {
+		text-decoration-style: dotted;
+	}
+
+	&:is(:hover, :focus-visible, label:has(> input:focus-visible)) {
+		color: var(--BLUE);
+	}
+}
+
+.nou {
+	white-space: nowrap;
+
+	&::before,
+	&::after {
+		content: "\200d"; /* zero-width joiner */
+	}
+
+	/* A good case for `::content` */
+	& > span {
+		display: inline-block;
+	}
+}

@@ -1,0 +1,102 @@
+---
+title: 'Styles For Secondary Interactive Elements'
+fancyTitle: 'Styles For Secondary|Interactive Elements'
+description: 'This is a post about another design tweak that I adopted while iterating on my site’s and blog’s designs over the years. I use it a lot, and really like how it feels and works: and I invite you to consider trying it as well.'
+tags: ['Design', 'CSS']
+pubDate: '2025-11-13'
+mastodonPostId: ''
+
+current: {
+	drink: 'Lapsang Souchong tea',
+	music: 'Raised By Swans — how do these hearts unfold',
+}
+
+bandcamp: {
+	track: '352296163',
+	link: 'https://raisedbyswans6.bandcamp.com/track/how-do-these-hearts-unfold',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+This is a post about another design tweak that I adopted while iterating on my site’s and blog’s designs over the years. I use it a lot, and really like how it feels and works: and I invite you to consider trying it as well.
+
+## Table of Contents
+
+## What are “Secondary Interactive Elements”?
+
+I don’t know if there is a better term — this is just something I came up when trying to describe them. By “them” I mean interactive elements that are not _buttons_ or _links_.
+
+These — I know how to style: hover states, focus states, underlines for links, `cursor: pointer` for both. I know, I know, that last part is pretty contentious, but I stand by it _for a long time_, and wrote a [“Correct Cursor on Active Elements”](https://kizu.dev/cursor-pointer/) article more than 12 years ago about this. Fun fact: [my first CSSWG issue](https://github.com/w3c/csswg-drafts/issues/1936) was about this!
+
+Regular text inputs could also be considered “primary”, and have established conventions over how to style them.
+
+But what about `<label>`, `<summary>`? They’re also interactive! I will refer to them as “secondary”. And will try to convince you that they deserve some extra styling. Aside from the `cursor: pointer`, of course.
+
+## Dotted Underlines
+
+Yes, dotted underlines. I don’t remember where exactly this came from, but in my early days of browsing cyrillic webs, dashed or dotted underlines were a thing, often for ligher JS-based interactive elements that are not exactly buttons and are not links.
+
+I think, this type of styling fits the `<label>` and `<summary>` elements the best:
+
+<LiveExample caption="Example showing pretty nice underlines, in my opinion.">
+```HTML
+<label for="test-checkbox">
+	<input id="test-checkbox" type="checkbox" />
+	<span class="u">Example of a label</span>
+</label>
+<details>
+	<summary>
+		<span class="u">Example of a summary</span>
+	</summary>
+	<p>Demo details’ content. Hello.</p>
+</details>
+```
+</LiveExample>
+
+Adding such underlines helps to communicate that these elements are, in fact, interactive. Especially for inputs because authors often forget to add proper labels, users might not know that they don’t have to be very precise and end up clicking only on the checkbox or radio buttons. We can help by adding extra affordance here.
+
+## Extra Inner Element
+
+One thing you could notice: I have an extra `.u` span inside the label and summary, wrapping the actual text content.
+
+The reason for this: this is the least hacky way for styling only the text. Here is what would happen if we were to apply the underlines to the `<label>` and `<summary>` on their own:
+
+<LiveExample caption="These are not nice underlines in this example." shouldHideCSS shouldHideHTML>
+```HTML
+<label for="test-checkbox2" class="u">
+	<input id="test-checkbox2" type="checkbox" />
+	Example of a label
+</label>
+<details>
+	<summary class="u">
+		Example of a summary
+	</summary>
+	<p>Demo details’ content. Hello.</p>
+</details>
+```
+```CSS
+label.u,
+summary.u {
+	text-decoration-style: dotted;
+}
+```
+</LiveExample>
+
+In all browsers, the chheckbox is treated as an inline element, and Firefox also treats the `summary`’s marker as such, and thus the `text-decoration` might go over them.
+
+I found that adding an extra element around the content and delegating the underline to it is the most reliable way to handle this.
+
+## Why Not Dashed?
+
+While this could seem like a personal preference, I consider dashed style to not work very well for thickier underlines. I also see more cross-browser difference for dashed underlines compared to the dotted ones.
+
+Dotted underlines still look vastly different in all browsers, but because my main browser is Firefox — and it renders them the best — I ended up using them.
+
+If I were to pursuit cross-browser styles, I would go for background images and used SVG with `stroke-dasharray` instead, alongside applying [“Box Decoration Break”](/box-decoration-break/).
+
+## Other Underline Styles
+
+My blog’s design has more going on with the underlines: the color, the thickness, the hover, — but it is not limited only with dotted ones, but extends to regular links as well. That might be a topic on its own; I’ll blog about it on some other day.
+
+But for today, that’s enough. Do you have styles that you apply to `<details>` and `<summary>`, or do you rely on browser defaults? I would be happy to hear from others!

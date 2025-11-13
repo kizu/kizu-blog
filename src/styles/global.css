@@ -5,6 +5,7 @@
 @import './features/progress.css';
 @import './features/photo.css';
 @import './features/typography.css';
+@import './features/underlines.css';
 
 html {
 	scrollbar-gutter: stable;
@@ -593,48 +594,19 @@ a[href] {
 	padding-block: 0.115em;
 	font-weight: 600; /* Slightly better contrast */
 
-	color: var(--BLUE);
 	--link-color: var(--BLUE);
+	color: var(--link-color);
 
 	&:visited:not(:hover, :focus-visible) {
-		color: var(--PURPLE);
-		/* We can't just use the `--link-color` due to the security limitations, so we have to duplicate it. */
 		--link-color: var(--PURPLE);
+		/* We can’t use just the `--link-color` due to the security limitations, so we have to duplicate it. */
+		color: var(--PURPLE);
 	}
-}
-
-a[href],
-summary,
-u {
-	text-decoration-thickness: max(1px, 0.075em);
-	text-underline-offset: clamp(2px, 0.075em, 4px);
-	/* https://github.com/web-platform-tests/wpt/pull/42940 */
-	text-decoration-color: color-mix(in srgb, var(--mix), transparent calc(100% - 100% * var(--decoration-thickness-override, 1)));
-	--mix-alpha: 0.5;
-}
-
-a[href^='#'],
-summary {
-	text-decoration-style: dotted;
-	--mix-alpha: 0.75;
-}
-
-:is(a[href], summary):is(:hover, :focus-visible),
-:is(a[href], summary):is(:hover, :focus-visible) > u {
-	--mix-alpha: 1;
-	/* TODO: Fill a Safari bug: with code elements */
-	/* Also, with the mix working, I might not need this. */
-	/* text-decoration-thickness: max(1.5px, 0.125em); */
-}
-
-label,
-summary {
-	cursor: pointer;
-
-	/* We need `<u>` inside, as otherwise some browsers won't show the text-decoration */
-	& > u {
-		text-decoration-style: dotted;
-	}
+	/* Need to find a better color for hover. */
+	/*
+	&:is(:hover, :focus-visible) {
+		--link-color: color-mix(in oklch, var(--BLUE), #FFF)
+	} */
 }
 
 details.inline,
@@ -696,20 +668,6 @@ fieldset {
 	/* Need this, otherwise it is buggy */
 	& > * {
 		white-space: nowrap;
-	}
-}
-
-.nou {
-	white-space: nowrap;
-
-	&::before,
-	&::after {
-		content: "\200d"; /* zero-width joiner */
-	}
-
-	/* A good case for `::content` */
-	& > span {
-		display: inline-block;
 	}
 }
 
