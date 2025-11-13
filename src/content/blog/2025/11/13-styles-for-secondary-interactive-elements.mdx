@@ -58,7 +58,18 @@ Adding such underlines helps to communicate that these elements are, in fact, 
 
 ## Extra Inner Element
 
-One thing you could notice: I have an extra `.u` span inside the label and summary, wrapping the actual text content.
+One thing you could notice: I have an extra `.u` span inside the label and summary, wrapping the actual text content, and applying the underline only to it:
+
+```CSS
+.u {
+	text-decoration: underline;
+	text-decoration-style: dotted;
+}
+```
+
+<aside class="warning">
+In theory, we could have used just a `text-decoration: underline dotted` shorthand, but Safari does not support it yet.
+</aside>
 
 The reason for this: this is the least hacky way for styling only the text. Here is what would happen if we were to apply the underlines to the `<label>` and `<summary>` on their own:
 
@@ -83,7 +94,7 @@ summary.u {
 ```
 </LiveExample>
 
-In all browsers, the chheckbox is treated as an inline element, and Firefox also treats the `summary`’s marker as such, and thus the `text-decoration` might go over them.
+In all browsers, the checkbox is treated as an inline element, and Firefox also treats the `summary`’s marker as such, and thus the `text-decoration` might go over them.
 
 I found that adding an extra element around the content and delegating the underline to it is the most reliable way to handle this.
 
