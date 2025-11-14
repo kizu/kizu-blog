@@ -1113,11 +1113,6 @@ scroll-markers > ul {
 	}
 }
 
-/* Right now using because of a Firefox bug with hyphenation. */
-.no-ligatures {
-	font-feature-settings: "liga" 0, "dlig" 0;
-}
-
 #table-of-contents + ul {
 	font-size: var(--FONT-SIZE--SMALL);
 }
