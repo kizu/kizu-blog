@@ -1143,3 +1143,8 @@ scroll-markers > ul {
 		filter: none;
 	}
 }
+
+ins {
+	text-decoration: none;
+	font-weight: 800;
+}

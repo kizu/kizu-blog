@@ -1,0 +1,46 @@
+---
+title: 'It is OK to Say “CSS Variables” Instead of (or Alongside) “Custom Properties”'
+fancyTitle: 'It is OK to Say|“CSS Variables”|Instead of (or Alongside)|“Custom Properties”'
+description: 'TPAC 2025 just ended, and I am positively tired. Attending it remotely, my sleep schedule is chaotic right now. I have many ideas for CSS-related posts in my list of ideas for November, but almost all of them require at least some amount of research and crafting demos. Well! I found one note that I wanted to expand on, and which sounds tiny enough to be able to finish it in my altered state.'
+tags: ['CSS Variables', 'CSS']
+pubDate: '2025-11-14'
+mastodonPostId: ''
+
+current: {
+	drink: 'Ceylon Tea',
+	music: 'Rökkurró — Sjónarspil',
+}
+
+bandcamp: {
+	track: '4270294216',
+	link: 'https://rokkurro.bandcamp.com/track/sjo-narspil',
+}
+---
+
+<style>{`
+h1 {
+	font-size: 2.75rem;
+}
+`}</style>
+
+[TPAC 2025](https://www.w3.org/2025/11/TPAC/) just ended, and I am positively tired. Attending it remotely, my sleep schedule is chaotic right now. I have many ideas for CSS-related posts in my list of ideas for November, but almost all of them require at least some amount of research and crafting demos.
+
+Well! I found one note that I wanted to expand on, and which sounds tiny enough to be able to finish it in my altered state.
+
+Let me repeat the title of this post: **it is OK to say “CSS Variables” instead of (or Alongside) “Custom Properties”**.
+
+I won’t say that this is something contentious, but it was always mostly a thing where I always stumbled a bit before continuing using the terminology.
+
+The official name of the [corresponding CSS module](https://drafts.csswg.org/css-variables/) is “CSS Custom Properties for Cascading Variables”. It’s URL’s slug is `css-variables`.
+
+They are _variables_. More specifically: _cascading_ variables. They change with the cascade: when different rules match, values can be overridden and change.
+
+We can have animations that involve custom properties, or custom properties with values based on the viewport, containers, or something else — dynamic, responsive values that can _vary_ for multitudes of reasons.
+
+They are _also_ custom properties, and even the more property-like when using [`@property`](https://drafts.css-houdini.org/css-properties-values-api/#at-property-rule). They can also be explicitly typed, while the rest of CSS is often typed implicitly. But — typed, unlike some other “programming languages”.
+
+Ah, yes, CSS (and HTML) _are_ **programming** languages, and anyone thinking otherwise is wrong. The **best** programming languages, according to me, by the way.
+
+- - -
+
+Oh, I am tired. But also right after finishing this last <del>day</del> <ins>night</ins> of CSSWG <span class="normal">F2F</span>, I successfully experimented a bit with one ongoing idea of mine, and now planning to write a proper nice article, for my main site, like I sometimes do. Stay in touch.
