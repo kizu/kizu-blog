@@ -15,6 +15,7 @@ u,
 }
 
 a[href^='#'],
+a[href^='obsidian://'],
 summary {
 	text-decoration-style: dotted;
 	--mix-alpha: 0.75;

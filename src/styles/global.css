@@ -929,7 +929,7 @@ figure > pre:nth-child(1 of :not(style, script)) {
 	border-start-end-radius: calc(var(--BORDER-RADIUS) + 1px);
 }
 
-pre {
+pre, kbd {
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 	text-align: left;
 	white-space: pre-wrap;
@@ -1110,6 +1110,7 @@ scroll-markers > ul {
 			+
 			9999px * var(--has-no-aside)
 		);
+		max-width: max-content;
 	}
 }
 
