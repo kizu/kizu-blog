@@ -12,6 +12,7 @@ export const CAMERAS = {
 }
 
 export const LENSES = {
+	'75mm': 'Olympus M.Zuiko Digital ED 75mm f/1.8',
 	'45mm': 'Olympus M.Zuiko Digital 45mm f/1.8',
 	'25mm': 'Olympus M.Zuiko Digital 25mm f/1.8',
 	'17mm': 'OM System M.Zuiko Digital 17mm f/1.8 II',
