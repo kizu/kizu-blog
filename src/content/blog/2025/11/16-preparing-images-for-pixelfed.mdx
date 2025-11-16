@@ -1,0 +1,75 @@
+---
+title: 'Preparing Images for Pixelfed'
+description: 'I wanted to share for quite some time how I prepare photos before uploading them to Pixelfed, and now is a good opportunity to do so. There were a few things I noticed that made a difference in how pictures are displayed there.'
+tags: ['Pixelfed', 'Process']
+pubDate: '2025-11-16'
+mastodonPostId: ''
+
+current: {
+    drink: 'Thyme, rosemary & lemon infusion',
+    music: 'mewithoutYou — January, 1979',
+}
+bandcamp: {
+	track: '1727175237',
+	link: 'https://mewithoutyou.bandcamp.com/track/january-1979',
+}
+---
+
+I wanted to post another batch of already published photos from [my Pixelfed](https://pixey.org/kizu), but something in its API does not allow me to fetch the photos as it previously allowed me to do, and I won’t have time to fix _that_ part of my workflow for publishing them here.
+
+However, I wanted to share for quite some time how I prepare photos before uploading them to Pixelfed, and now is a good opportunity to do so. There were a few things I noticed that made a difference in how pictures are displayed there.
+
+I don’t know the details of how different Pixelfed instances can affect things, so what I will be talking about was tested on [Pixey.org](https://pixey.org/).
+
+## Table of Contents
+
+## Problems
+
+In order from the most impactful, to less.
+
+### Color Profiles
+
+Pixelfed strips ICC color profiles from the photos, which can lead to them being less saturated and not looking how you would expect them to. There is an [open issue about this](https://github.com/pixelfed/pixelfed/issues/4459) on Pixelfed’s GitHub.
+
+This might be obvious, but it is pretty easy to forget about that.
+
+**Solution: ** Export in sRGB, or, ideally, run the image through [Squoosh](#squoosh).
+
+### Image’s Dimensions
+
+Pixelfed instances have limits on the image dimensions, resizing the images when uploading, and doing it not with the best algorithm, resulting in images not being as sharp as you could want.
+
+The limits for vertical and horizontal images (or — for the images’ width and height) can be different! At my instance it is `1440px` for width, and `1350px` for height.
+
+**Solution: ** Resizing images on your own before uploading, matching the limits. Then, Pixelfed will only _recompress_ the image, but won’t _resize_ it.
+
+### Image Compression
+
+Pixelfed will re-compress your images regardless of how much you managed to optimize them before uploading.
+
+This is the common issue I have with almost any services: it doesn’t matter how much you care and how much you optimize an image before uploading it. Services almost never look at the resulting size of the image you upload, and always run their optimization, replacing your image with it. Even if the new image will weight more, and result in a worse result visually!
+
+**Solution: ** Export images in 100% quality. As Pixelfed will recompress the image anyways, this way you won’t lose on quality _twice_.
+
+<aside>
+When checking, there was [an issue about this](https://github.com/pixelfed/pixelfed/issues/2342), but it was closed as fixed in the beginning of 2024. I will need to check if this is really fixed, at least for my workflow.
+
+When I last test the Pixelfed upload — in April of this year — I think I still noticed that Pixelfed did something to images that resulted in a worse quality after upload in not 100% quality. But, again, more testing is needed.
+</aside>
+
+## Squoosh App
+
+I am using [Squoosh](https://squoosh.app) to solve all these problems:
+
+1. It will save the image as sRGB by default, applying the color profile if it is present.
+
+2. I export as MozJPEG with 100% quality.
+
+3. I use the “Resize” option and make sure width&height are not bigger than the limit.
+
+This results in an image that, in my opinion, looks the best once uploaded to Pixelfed.
+This is a web app, it is free, it runs all the processing on your own device and doesn’t upload the image anywhere.
+
+- - -
+
+I hope this helps someone! And maybe I am missing something that could make the images look even better? Do you have your own workflow that you use for this? Share it with me if so!
