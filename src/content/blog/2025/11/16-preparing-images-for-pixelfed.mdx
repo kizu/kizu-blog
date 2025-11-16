@@ -25,7 +25,7 @@ I don’t know the details of how different Pixelfed instances can affect thin
 
 ## Problems
 
-In order from the most impactful, to less.
+In order, from the most impactful, to less.
 
 ### Color Profiles
 
@@ -39,20 +39,20 @@ This might be obvious, but it is pretty easy to forget about that.
 
 Pixelfed instances have limits on the image dimensions, resizing the images when uploading, and doing it not with the best algorithm, resulting in images not being as sharp as you could want.
 
-The limits for vertical and horizontal images (or — for the images’ width and height) can be different! At my instance it is `1440px` for width, and `1350px` for height.
+The limits for vertical and horizontal images (or — for the images’ width and height) can be different! On my instance, it is `1440px` for width, and `1350px` for height.
 
 **Solution: ** Resizing images on your own before uploading, matching the limits. Then, Pixelfed will only _recompress_ the image, but won’t _resize_ it.
 
 ### Image Compression
 
-Pixelfed will re-compress your images regardless of how much you managed to optimize them before uploading.
+Pixelfed will re-compress your images, regardless of how much you managed to optimize them before uploading.
 
 This is the common issue I have with almost any services: it doesn’t matter how much you care and how much you optimize an image before uploading it. Services almost never look at the resulting size of the image you upload, and always run their optimization, replacing your image with it. Even if the new image will weight more, and result in a worse result visually!
 
-**Solution: ** Export images in 100% quality. As Pixelfed will recompress the image anyways, this way you won’t lose on quality _twice_.
+**Solution:** Export images in 100% quality. As Pixelfed will recompress the image anyways, this way you won’t lose on quality _twice_.
 
 <aside>
-When checking, there was [an issue about this](https://github.com/pixelfed/pixelfed/issues/2342), but it was closed as fixed in the beginning of 2024. I will need to check if this is really fixed, at least for my workflow.
+When checking, there was [an issue about this](https://github.com/pixelfed/pixelfed/issues/2342), but it was closed as fixed at the beginning of 2024. I will need to check if this is really fixed, at least for my workflow.
 
 When I last test the Pixelfed upload — in April of this year — I think I still noticed that Pixelfed did something to images that resulted in a worse quality after upload in not 100% quality. But, again, more testing is needed.
 </aside>
