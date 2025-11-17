@@ -1,0 +1,87 @@
+---
+title: 'Whitespace in Code'
+fancyTitle: true
+description: 'I always liked to pay a lot of attention to how I format my CSS, with the roots of it coming from the conventions that Vadim Makeev shared when we worked together in ~2007–2008. Currently, I don’t have spoons for formatting my CSS, but I try to polish my CSS examples manually that I put them in my articles, and, sometimes, for the components I am working. If I were to give one advice for formatting CSS, it would be “use more whitespace”.'
+tags: ['CSS Formatting', 'CSS']
+pubDate: '2025-11-17'
+mastodonPostId: ''
+
+current: {
+	drink: 'Ginger & apple tea',
+	music: 'Balmorhea — In the Rowans',
+}
+
+bandcamp: {
+	track: '1971165763',
+	link: 'https://balmorhea.bandcamp.com/track/in-the-rowans',
+}
+---
+
+I am working on a new article for my main site, for a new technique I invented, so this will be a shorter and lower-effort post (as, probably, those for the rest of the week).
+
+I always liked to pay a lot of attention to how I format my CSS, with the roots of it coming from the conventions that [Vadim Makeev](https://pepelsbey.dev/) shared when we worked together in ~2007–2008.
+
+Some other conventions that I used at the time were enforced via the [CSScomb formatter](https://github.com/csscomb/csscomb.js), to which I even contributed a bit at the time. It is sad that this project is no longer maintained, and that Prettier does such a poor job of formatting CSS.
+
+I also already wrote one post in this blog about formatting CSS: [“Calculation Indentation”](/calc-indent/).
+
+## Use More Whitespace
+
+Currently, I don’t have spoons for formatting my CSS, but I try to polish my CSS examples manually that I put them in my articles, and, sometimes, for the components I am working.
+
+If I were to give one advice for formatting CSS, it would be “use more whitespace”.
+
+Put extra lines between rules:
+
+```CSS
+.button {
+	…
+}
+
+.card {
+	…
+}
+```
+
+Put extra lines before comments, but no additional lines after:
+
+```CSS
+/* My beautiful button. */
+.button {
+	…
+}
+
+/* A responsive card component. */
+.card {
+	/* We shrink the card to fit its contents. */
+	width: max-content;
+
+	/* Without `width: auto`, we need to limit the max. */
+	max-width: 100%;
+}
+```
+
+Group common groups of properties together:
+
+```CSS
+.tooltip {
+	/* It is year 42025, we support anchor positioning. */
+	position: absolute;
+	position-anchor: --anchor;
+	position-area: bottom;
+
+	/* TODO: use design tokens, maybe. */
+	background: pink;
+	box-shadow: 0 0.2em 0.4em -0.2em deepPink;
+}
+```
+
+The reason to do all of these instead of lumping everything together is that having extra whitespace allows you to group related things together.
+
+It is easier to tell two rules apart if they’re separated by extra lines, and especially if there are comments alongside: a comment will look more like a header when it has a bigger space before it and less after — and a common design principle is to “glue” headers to the content after.
+
+Grouping common properties together makes it easier to tell what is going on, and makes it easier to put new declarations in the rule. That’s where CSScomb was very useful!
+
+- - -
+
+Do you have your own rules for formatting your CSS? It is often a very subjective matter, but it would be great to hear if there is anything you do differently.

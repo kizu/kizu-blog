@@ -14,7 +14,7 @@ type Props = Partial<CollectionEntry<'blog'>['data']>;
 
 const {
 	title = SITE_TITLE,
-	fancyTitle,
+	fancyTitle: fancyTitleProp,
 	pubDate,
 	eventDate,
 	updatedDate,
@@ -27,6 +27,11 @@ const { pathname } = Astro.url;
 
 const allTags = await getAllTags();
 const allMusic = await getAllMusic();
+
+const fancyTitle =
+	typeof fancyTitleProp === 'boolean' && fancyTitleProp
+		? title
+		: fancyTitleProp;
 
 ---
 <Base bodyClass="h-entry" {...Astro.props}>
