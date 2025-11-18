@@ -1,0 +1,38 @@
+---
+title: 'Minimal Reproductions'
+fancyTitle: true
+description: 'I am continuing working on my new article, and while making examples for it, I stumbled upon a crash in Safari — both in its stable version and in Technology Preview. I managed to reduce it to a minimal reproduction and reported it — and in this post I want to encourage you to create minimal reproductions of any bugs you encounter too — for more than one reason.'
+tags: ['CSS']
+pubDate: '2025-11-18'
+mastodonPostId: ''
+
+current: {
+	drink: 'Thyme, rosemary & lemon infusion',
+	music: 'GoGo Penguin — Murmuration',
+}
+
+bandcamp: {
+	track: '244952700',
+	link: 'https://gogopenguin.bandcamp.com/track/murmuration-2',
+}
+---
+
+I am continuing working on my new article, and while making examples for it, I stumbled upon a crash in Safari — both in its stable version and in Technology Preview. I managed to reduce it to a minimal reproduction and reported it — and in this post I want to encourage you to create minimal reproductions of any bugs you encounter too — for more than one reason.
+
+Here is the bug that I reported: [“Tab crashes when an element containing a scoped scroll-driven animation from an inner pseudo-element repeatedly changes display while depending on cqw”](https://bugs.webkit.org/show_bug.cgi?id=302703).
+
+That’s a long title! But the conditions are also pretty specific — as it often goes with my experiments.
+
+That said — the code I reported is as minimal of a reproduction as I could manage to reduce the original CSS to. From around 150 lines to around 30. There was a lot more going on before I stripped everything that did not impact the crash!
+
+The first reason the minimal reproduction is helpful: you will understand what is going on much easier, and will be able to confirm to yourself if that’s really a bug, or some interaction in the specs you’re missing. Of course, for a crash this is not as important, but then by understanding what’s going on you will be able to report it better — with proper title and description. Not just “something is wrong”.
+
+The second reason: it will be much easier to understand where the issue is for the engineers that will be working on fixing the bug. You’re likely already in the context of your code, you know what is likely to be not related, and it will be much faster for you to reduce it. You also know exactly about what the issue is, and could verify that it still happens with ease. And if the engineers working on the bug are more efficient with their time, and if the bug does not look intimidating to take from the backlog — the chances are it will be fixed much, much faster than otherwise.
+
+The final reason: after creating a minimal reproduction, you will be left with a limited number of puzzle pieces that explode together. In CSS, it is always possible to do the same thing in multiple ways. Sometimes this is a hindrance which leads to the choice paralyzis, but in case of bugs, this is an advantage: for any code path that leads to the bug you can look for another road to your desired result. And anothe method might not cause the bug!
+
+That’s what happened in my case: it wouldn’t be very nice if examples in my new article — and the technique at large — would cause random browser crashes. But by reducing things, I was able to identify a simple solution: while most conditions in the bug I reported related to the scroll-driven animations and setup around them, the simplest outlier was the presence of pseudo-element: simple tests shown that replacing a pseudo-element with a real element eliminated the crash. Oh well, the code will be not as efficient and with a more verbose HTML, but still working.
+
+- - -
+
+So — please, whenever you encounter bugs, try to find the minimal reproduction, understand what’s going on, and then report it. This will make the fix to become available faster _for everyone_, but, specifically for you, a possible workaround will be closer as well.
