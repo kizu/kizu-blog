@@ -1,0 +1,210 @@
+---
+title: 'Anchoring to a Containing Block'
+fancyTitle: 'Anchoring|to a Containing Block'
+description: 'Today I stumbled upon a CSS issue that I and some others had in the past: an inability to use an anchored element’s containing block with anchor positioning. At least — to do so easily. This post is about how we can actually do so with just a few small changes to your usual anchor positioning setup.'
+tags: ['Anchor Positioning', 'CSS']
+pubDate: '2025-11-19'
+mastodonPostId: ''
+
+current: {
+	drink: 'Fruity infusion (pear, kiwi, mango, etc.)',
+	music: 'Haru Nemuri — Lost Planet',
+}
+
+bandcamp: {
+	track: '3032014724',
+	link: 'https://specific.bandcamp.com/track/lost-planet',
+}
+---
+
+<style>{`h1 > :first-child { font-size: 4rem; }`}</style>
+
+import LiveExample from '@components/LiveExample.astro';
+
+I am still working on my new article! And today I stumbled upon an issue that I and some others had in the past: an inability to use an anchored element’s containing block with anchor positioning.
+
+At least — to do so easily. This post is about how we can actually do so with just a few small changes to your usual anchor positioning setup.
+
+I did not end up using this in my article, so decided to share today regardless.
+
+## Table of Contents
+
+## The Problem
+
+Look at this example:
+
+<LiveExample isScoped require="anchor-name">
+```CSS
+fieldset {
+	position: relative;
+	anchor-name: --fieldset;
+	margin-top: 1.5lh;
+}
+
+legend {
+	position: absolute;
+	position-anchor: --fieldset;
+	left: anchor(inside);
+	bottom: calc(anchor(outside) - 1px);
+
+	padding-inline: inherit;
+	border: inherit;
+	border-bottom: 0;
+	background: var(--CONTENT-BG);
+}
+```
+```HTML
+<fieldset>
+	<legend>Some legend</legend>
+	<div>Some fieldset’s content</div>
+</fieldset>
+```
+</LiveExample>
+
+Here, we could expect the `<legend>` to be positioned correctly… but it doesn’t. It does not see the mentioned anchor, and thus the values for the corresponding inset properties become initial. This behavior is [per spec](https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element):
+
+> _possible anchor_ and _positioned el_ have the same original containing block and either
+
+Basically, if our anchor _is_ our positioned element’s original containing block, this condition won’t match.
+
+Last year, I opened [an issue about this](https://github.com/w3c/csswg-drafts/issues/10412), and I saw other people also stumble upon this issue, for example, [James Stuckey Weber](https://jamessw.com/) also opened [another issue](https://github.com/w3c/csswg-drafts/issues/11769) about this.
+
+Eventually, it was [resolved](https://github.com/w3c/csswg-drafts/issues/11769#issuecomment-2776545248) to not change anything, but consider a way to adjust the containing block in the future.
+
+But what can we do today?
+
+## The Solutions
+
+### Not Using Anchor Positiong
+
+Ok, in this exact case we don’t even have to use anchor positioning, and could do just this:
+
+<LiveExample isScoped require="anchor-name" shouldHideHTML>
+```CSS
+fieldset {
+	position: relative;
+	margin-top: 1.5lh;
+}
+
+legend {
+	position: absolute;
+	left: -1px;
+	bottom: 100%;
+
+	padding-inline: inherit;
+	border: inherit;
+	border-bottom: 0;
+	background: var(--CONTENT-BG);
+}
+```
+```HTML
+<fieldset>
+	<legend>Some legend</legend>
+	<div>Some fieldset’s content</div>
+</fieldset>
+```
+</LiveExample>
+
+If you compare the two examples, you’ll notice one difference: where the “magical” `1px` goes. In the non-working example it was in the `bottom` property, but in the working example it moves to `left`.
+
+This is because anchor positioning takes borders into account, while regular absolute positioning uses a padding box for positioning.
+
+In my today’s experiments, I actually wanted to _measure_ the width of the border, so I needed to anchor to the _outside_ of the containing block.
+
+Basically, whenever we need to take the border into account, anchor positioning could help — but not easily if our anchor is our containing block.
+
+### Using `position: fixed`
+
+The proper solution: to use `position: fixed`, as then we won’t be bound by the same containing block.
+
+#### Without Scoping
+
+However, we can’t just replace `absolute` with it: if we’d have several elements, then their containing block will become the viewport, and both anchored elements will use the same last visible anchor for the positioning:
+
+<LiveExample isScoped require="anchor-name" shouldHideHTML>
+```CSS
+fieldset {
+	position: relative;
+	anchor-name: --fieldset;
+	margin-top: 1.5lh;
+}
+
+legend {
+	position: fixed; /* The only change */
+	position-anchor: --fieldset;
+	left: anchor(inside);
+	bottom: calc(anchor(outside) - 1px);
+
+	padding-inline: inherit;
+	border: inherit;
+	border-bottom: 0;
+	background: var(--CONTENT-BG);
+}
+```
+```HTML
+<fieldset>
+	<legend>First fieldset’s legend</legend>
+	<div>Some fieldset’s content</div>
+</fieldset>
+
+<fieldset>
+	<legend>Second legend</legend>
+	<div>Some fieldset’s content</div>
+</fieldset>
+```
+</LiveExample>
+
+We don’t want that!
+
+#### Adding Scoping
+
+Thankfully, we have an `anchor-scope` property, and if we add it to our anchor with the same name, this element will be the last elements any children will see when looking for the corresponding anchor name, and use it:
+
+<LiveExample isScoped require="anchor-name" shouldHideHTML>
+```CSS
+fieldset {
+	position: relative;
+	anchor-name: --fieldset;
+	anchor-scope: --fieldset; /* Required! */
+	margin-top: 1.5lh;
+}
+
+legend {
+	position: fixed; /* Not `absolute` */
+	position-anchor: --fieldset;
+	left: anchor(inside);
+	bottom: calc(anchor(outside) - 1px);
+
+	padding-inline: inherit;
+	border: inherit;
+	border-bottom: 0;
+	background: var(--CONTENT-BG);
+}
+```
+```HTML
+<fieldset>
+	<legend>First fieldset’s legend</legend>
+	<div>Some fieldset’s content</div>
+</fieldset>
+
+<fieldset>
+	<legend>Second legend</legend>
+	<div>Some fieldset’s content</div>
+</fieldset>
+```
+</LiveExample>
+
+
+#### The Only Issue…
+
+If you look at this example in Safari (even in Technology Preview) or Firefox Nightly, then you might notice a few rendering issues with the anchored elements that use `position: fixed`.
+
+Sometimes it works there, sometimes it doesn’t, with the position not updating correctly from time to time.
+
+I will open bugs about this, but not today (unless someone else will beat me to it, wink wink).
+
+## Conclusion
+
+While it might seem that anchor positioning is already present in some stable versions of browsers, in reality it is further from being even baseline. If, today, Firefox would release anchor positioning into its stable version, even if Firefox itself will be perfect, there are enough issues, starting from feature’s usability (absent features like being able to change the containing block) to bugs in stable versions of browsers that prevent many use cases from being viable.
+
+The Safari bug above is not the only issue I found when testing anchor positioning: Chrome also has at least [one blocker](https://issues.chromium.org/issues/425894800) that prevents many use cases. Maybe I will write about it some other day.

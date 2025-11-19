@@ -2,13 +2,24 @@
 import type { HTMLAttributes } from 'astro/types';
 import { markdown } from '@astropub/md'
 
+type Feature = 'anchor-name' | 'custom-functions' | 'animation-range' | 'timeline-scope' | 'baseline-source' | 'at-scope' | 'cap' | 'style-queries';
+
 interface Props extends HTMLAttributes<'a'> {
 	caption?: string;
 	shouldHideHTML?: boolean;
 	shouldHideCSS?: boolean;
+	isScoped?: boolean;
+	require?: Feature | Feature[];
 }
 
-const { shouldHideHTML, shouldHideCSS, caption, ...props } = Astro.props;
+const {
+	shouldHideHTML,
+	shouldHideCSS,
+	caption,
+	isScoped = false,
+	require: requireProp,
+	...props
+} = Astro.props;
 
 // TODO: use a proper sanitizer, lol.
 let html = await Astro.slots.render('default');
@@ -26,11 +37,17 @@ if (shouldHideCSS) {
 
 const captionHTML = caption ? (await markdown(caption)).toString().trim().replace(/^<p>(.+)<\/p>$/, '$1') : undefined;
 
+const css = isScoped ? `@scope{${foundCSS}}` : foundCSS;
+
+const require = requireProp
+	? [requireProp].flat().map(feature => `require-${feature}`)
+	: undefined;
+
 ---
 
-<figure {...props}>
+<figure {...props} class:list={[props.class, require]}>
 	<Fragment set:html={foundHTML} />
 	<Fragment set:html={html} />
 	{captionHTML ? <figcaption set:html={captionHTML} /> : null}
-	<style set:html={foundCSS} />
+	<style set:html={css} />
 </figure>
