@@ -1,0 +1,91 @@
+---
+title: 'Scope for Examples'
+fancyTitle: true
+description: 'With yesterday’s post, — “Anchoring to a Containing Block” — I started to use `@scope` for my CSS code examples.'
+tags: ['CSS Scope', 'CSS Scopes', 'CSS']
+pubDate: '2025-11-20'
+mastodonPostId: ''
+
+current: {
+	drink: 'Thyme, rosemary & lemon infusion',
+	music: 'Jenn Champion — Going Nowhere',
+}
+
+bandcamp: {
+	link: 'https://jennchampion.bandcamp.com/track/going-nowhere',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+With yesterday’s post, — [“Anchoring to a Containing Block”](/anchoring-to-a-containing-block/) — I started to use `@scope` for my code examples.
+
+This is one of the most exciting use cases I saw for the `@scope` — an ability to do something like this:
+
+<LiveExample isScoped require="at-scope">
+```CSS
+p {
+	outline: 2px solid var(--PINK);
+}
+```
+```HTML
+<p>Hello!</p>
+```
+</LiveExample>
+
+See how I render this code inline in my post, and the `p` selector is not applying to this literal paragraph that I am writing right now?
+
+And, actually, let me show you how this looks like in my markdown:
+
+<div class="aside-wrapper" style="--span: 2;">
+<aside>
+	I am not mentioning it in this post, but I also have a `require` prop to signify the support of the feature and add a warning to browsers that do not support it yet.
+</aside>
+</div>
+
+````mdx
+<LiveExample isScoped require="at-scope">
+```CSS
+p {
+	outline: 2px solid var(--PINK);
+}
+```
+```HTML
+<p>Hello!</p>
+```
+</LiveExample>
+````
+
+This is how I write all the examples in my blog: I have my custom Astro `<LiveExample>` component, which takes the Markdown code blocks inside, and both shows the corresponding code, but also outputs these code blocks’ content on the page, so I can just write my examples once, have their code visible, and not have to duplicate the effort when I need to update something.
+
+In the above case you can see the `isScoped` prop: before I had it, all examples did output their code _literally_, so whenever I had to have similar examples, I had always to come up with some prefix or unique class names for them.
+
+With `isScoped`, I wrap the content of the inner CSS block with just `@scope {}`, so that code will be equivalent to
+
+```CSS
+@scope {
+	p {
+		outline: 2px solid var(--PINK);
+	}
+}
+```
+
+Which can be called “local scoping”, see the [“Identifying Scoping Roots and Limits”](https://drafts.csswg.org/css-cascade-6/#scope-limits) section of the Cascading and Inheritance Module 6.
+
+How it works is: if we add an HTML `<style>` tag in our HTML, and inside this tag there will be an `@scope` without the scope start selector, it will be scoped to that `<style>`’s parent element:
+
+> If no `<scope-start>` is specified, the scoping root is the parent element of the owner node of the stylesheet where the `@scope` rule is defined.
+
+And that is very useful for any blog posts with code examples — this makes every example to work independently of others.
+
+There are a few things I will need to improve with how I use these types of examples:
+
+- Sometimes, there is a need to share some styles across different examples. Possible solution: use named scopes, and overload the prop to allow also doing `isScoped="foo"`, where I could mention some ident, and then both the example will get this ident automatically added as a class name to the example’s wrapper, and it will go into the `@scope` like `@scope (.scope-foo)` or something.
+
+- It can still be useful for understanding of the examples to have their full code, so maybe there could also be something done on the LiveExample’s side to add some automatic diffing of consequtive examples, where we could highlight the changed lines in some way? In yesterday’s post, that would’ve been pretty handy.
+
+## But… `@scope` is not Baseline?
+
+Yeah, but I also write about non-baseline things. When writing about CSS features like anchor positioning or scroll-driven animations, or anything newer, there is no reason _not_ to use `@scope`.
+
+If you have a blog, write about modern CSS, and create inline demos there (not by embedding CodePens or anything else as `<iframe>`s), I highly recommend you to try `@scope`. It is cool.
