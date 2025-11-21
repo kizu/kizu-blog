@@ -1,0 +1,38 @@
+---
+title: 'I Want to Rewrite Everything'
+fancyTitle: 'I Want to Rewrite|Everything'
+description: ''
+tags: ['Process']
+pubDate: '2025-11-21'
+mastodonPostId: ''
+
+current: {
+	drink: 'Fruity infusion (pear, kiwi, mango, etc.)',
+	music: 'COVET — falkor',
+}
+
+bandcamp: {
+	track: '2509984814',
+	link: 'https://covetband.bandcamp.com/track/falkor',
+}
+---
+
+<style>{`h1 { font-size: 3.75rem; }`}</style>
+
+This whole week, I am switching between writing posts in this blog, and working on my next article for my [main site](https://kizu.dev/).
+
+My blog has a much more modern setup for writing posts: it is based on [Astro](https://astro.build/), and I enjoy tweaking the components that I use with it, like with my yesterday’s [“Scope for Examples”](/scope-for-examples/) post.
+
+Writing posts with this setup is a joy, where it is effortless to add new interactive examples, and adjust things.
+
+The old setup? It is an abomination of some old [gulp](https://gulpjs.com/) custom config, with a bunch of custom JS and [Hugo](https://gohugo.io/) on top of it. The templating system that it has? One of the worst I used. Honestly, screw React, but JSX and the idea of components are a much better fit for what I usually want for building complex HTML pages. And with Astro not outputting any actual JS and pre-building everything in HTML is just great.
+
+So, all of this might be one of the reasons why I am not writing longer and more polished articles on my site as often. I really would like to rewrite everything that I have there to use the same architecture I am using for my blog.
+
+There are still many features that my old setup has that I did not yet implement here: sidenotes are much better there, examples with screenshots/video alternatives, some other aspects. But, eventually, I would really like to have just one system I maintain and use in both places. Ideally, in the same repo: currently, the sources for both are separate, and this makes it harder to maintain things or deploy things simultaneously.
+
+If only I had more time! My current paid time off is running out, but I am already planning to return to this idea of rewriting everything at the end of December.
+
+I need to still find a way to somehow keep the old setup alongside the new one, as it is likey impossible to (quickly) migrate _everything_ from the old system to the new one. So what I am planning is to try and make it possible to _merge_ both, and keep the old posts rendered with the old system, while allow writing new posts with Astro. We’ll see if it will work out!
+
+I guess, this was a much less useful post for anyone reading, but I really want to just document — even if for myself — the process of me working on my website.
