@@ -563,6 +563,10 @@ article > :not(figure, pre, aside) {
 	}
 }
 
+h1:has(> .root) {
+	--ragged-margin-fix-override: 0;
+}
+
 :is(article, blockquote) > p:not(.starts-with-tag:has(> img:only-child)) {
 	&,
 	& + .aside-wrapper {
