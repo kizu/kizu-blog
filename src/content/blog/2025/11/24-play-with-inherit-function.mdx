@@ -1,0 +1,238 @@
+---
+title: 'Play With Inherit Function'
+fancyTitle: true
+description: 'One of the things that might flight under many people’s radars is the incoming `inherit()`. Not the `inherit` keyword — we had it for quite a while already. Now it is available in Chrome Canary with the “experimental web platform features” flag, so, if you want, you can go play with it!'
+tags: ['CSS Variables', 'CSS']
+pubDate: '2025-11-24'
+mastodonPostId: ''
+
+current: {
+	drink: 'Thyme, rosemary & lemon infusion',
+	music: 'MASS OF THE FERMENTING DREGS — New Order',
+}
+
+bandcamp: {
+	track: '4043733721',
+	link: 'https://massofthefermentingdregs.bandcamp.com/track/new-order',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+One of the things that might flight under many people’s radars is the incoming [`inherit()` functional notation](https://drafts.csswg.org/css-values-5/#inherit-notation). Not the `inherit` keyword — we had it for quite a while already.
+
+## Table of Contents
+
+## The Context
+
+In 2018, [Lea Verou](https://lea.verou.me/) opened an [“inherit() function: like var() for parent value, for any property”](https://github.com/w3c/csswg-drafts/issues/2864) issue in CSSWG GitHub, in 2021 CSSWG [resolved to adopt it](https://github.com/w3c/csswg-drafts/issues/2864#issuecomment-816280875), and was stale since then, until, finally, last month, [Anders Hartvoll Ruud](https://github.com/andruud) sent an [Intent to Prototype](https://groups.google.com/a/chromium.org/g/blink-dev/c/nCUNGmfAOMU/m/YOCfBQV6BwAJ) for it, and [started implementing](https://issues.chromium.org/issues/452071846) it in Chromium. Did this happen because I pestered him at this year’s [CSS Day](https://cssday.nl/) asking how hard it would be to do? Who knows!
+
+But now it is available in Chrome Canary with the “experimental web platform features” flag, so, if you want, you can go play with it! It only works for custom properties for now, for similar reasons of why we don’t have style queries for regular properties, but maybe one day this will change, although I won’t wait for this.
+
+So, yeah, experiment!
+
+Like, for example, [Stuart Robson](https://www.alwaystwisted.com/) already did with his [“Making Context-Aware Components: How CSS `inherit()` Could Simplify Design Systems”](https://www.alwaystwisted.com/articles/making-context-aware-components) article.
+
+Or — how I did last year with my [“Self-Modifying Variables: the `inherit()` Workaround”](https://kizu.dev/self-modifying-variables/), although there I wrote about a workaround that we can use instead today. This workaround relies on container style queries though, so not really production-ready, but still better than nothing!
+
+## Some Examples
+
+The following examples will not work anywhere where the `inherit()` is not supported — so, you can open Chrome Canary if you want to look at them!
+
+I will just adapt some of the examples I had in [my article about its workaround](https://kizu.dev/self-modifying-variables/), so nothing too new. But, hey, that article was not super popular, so maybe you missed it.
+
+I won’t provide any screenshots here — if you want to check how things should look like, go to the above article — it has both live examples and screenshots for them.
+
+### Element Depth
+
+I slightly adjusted [my original example](https://kizu.dev/self-modifying-variables/#the-technique): we can have a `--depth` custom property, and bump its value for every component of the same type that is nested inside itself:
+
+<LiveExample require="inherit-function" isScoped>
+```CSS
+.test {
+	--depth: calc(inherit(--depth, 0) + 1);
+
+	--padding: 1em;
+	padding: var(--padding);
+	background:
+		oklch(
+			from var(--BG-FROM)
+			l c
+			calc(var(--depth) * 127)
+		)
+	;
+	border-radius: calc(
+		4.5 * var(--padding)
+		-
+		var(--depth) * var(--padding)
+	);
+	border-start-start-radius:
+		calc(0.5 * var(--padding));
+
+	&::before {
+		counter-reset: depth var(--depth);
+		content: counter(depth);
+	}
+}
+```
+```HTML
+<div class="test">
+	<div class="test">
+		<div class="bar">
+			<div class="test">
+				<div class="test">
+					<div class="test"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+```
+</LiveExample>
+
+With the `--depth` incrementing on every element, we can then use it for _anything_: adjust colors via their [relative syntax](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Colors/Using_relative_colors), make the border-radius decrease with the depth level, and so on.
+
+### Nested Menu Lists
+
+I love my second example from this article: this is the use case that I very often stumble in my practice — the need to have a nested list, where the indentation of elements grows, but each line should be interactive from start to end. Without `inherit()` or its workaround, we generally had to express the depth in HTML in some way, but now this _just works_:
+
+<LiveExample require="inherit-function" isScoped shouldHideHTML>
+```CSS
+ul {
+	--depth: calc(inherit(--depth, 0) + 1);
+
+	display: block;
+	width: fit-content;
+	padding: 0 !important;
+	margin: 0 auto;
+}
+
+li {
+	padding: 0;
+	margin: 0 !important;
+	list-style-type: none;
+}
+li::before {
+	content: "";
+}
+li > a {
+	display: block;
+	padding: 1em;
+	padding-block: 0.25em;
+	padding-inline-start:
+		calc(var(--depth) * 2em - 1em);
+	background:
+		oklch(
+			from var(--BG-FROM)
+			l c
+			calc(var(--depth) * 127)
+		)
+	;
+	border-radius: 1em;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+	text-decoration: none;
+	color: var(--color);
+
+	&:is(:hover, :focus-visible) {
+		border-color:
+			oklch(30% 1 calc(var(--depth) * 75));
+	}
+}
+```
+```HTML
+<ul>
+	<li>
+		<a href="#">Menu item</a>
+	</li>
+	<li>
+		<a href="#">Menu item</a>
+		<ul>
+			<li>
+				<a href="#">Menu item</a>
+				<ul>
+					<li>
+						<a href="#">Menu item</a>
+					</li>
+					<li>
+						<a href="#">Menu item</a>
+						<ul>
+							<li>
+								<a href="#">Menu item</a>
+								<ul>
+									<li>
+										<a href="#">Menu item</a>
+									</li>
+									<li>
+										<a href="#">Menu item</a>
+									</li>
+								</ul>
+							</li>
+							<li>
+								<a href="#">Menu item</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</li>
+</ul>
+```
+</LiveExample>
+
+Again, the only thing we need to do here is this:
+
+```CSS
+--depth: calc(inherit(--depth, 0) + 1);
+```
+
+And then we’re free to use that custom property in any way we want.
+
+### Swapping Values
+
+The last example is a fun one: an ability to swap variables around:
+
+<LiveExample require="inherit-function" isScoped>
+```CSS
+:scope {
+	--a: var(--GREEN);
+	--b: var(--PINK);
+}
+
+.swapped {
+	--a: inherit(--b);
+	--b: inherit(--a);
+}
+
+.a { background: var(--a); }
+
+.b { background: var(--b); }
+
+p > span {
+  margin: 0.5em;
+  padding: 0.25em 0.5em;
+}
+```
+```HTML
+<p>
+	Regular:
+	<span class="a">A: green</span>
+	<span class="b">B: pink</span>
+</p>
+
+<p class="swapped">
+	Swapped:
+	<span class="a">A: pink</span>
+	<span class="b">B: green</span>
+</p>
+```
+</LiveExample>
+
+Again, without `inherit()` or my workaround this is not possible.
+
+## Go On!
+
+This is a really great feature: I hope that other browsers will also look into experimenting and implementing it. It might be simple, but it unlocks many nifty use cases.
+
+And even if you can’t think of one now — when you will be writing CSS, try to remember that we will get this in the future.

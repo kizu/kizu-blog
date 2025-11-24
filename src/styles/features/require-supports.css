@@ -2,13 +2,15 @@
 	content:
 		"\26A0 \FE0F  Your browser does not support ‘"
 		var(--require-custom-functions,
-			var(--require-anchor-name,
-				var(--require-animation-range,
-					var(--require-timeline-scope,
-						var(--require-baseline-source,
-							var(--require-at-scope,
-								var(--require-cap,
-									var(--require-style-queries))))))))
+		var(--require-anchor-name,
+		var(--require-animation-range,
+		var(--require-timeline-scope,
+		var(--require-baseline-source,
+		var(--require-at-scope,
+		var(--require-cap,
+		var(--require-style-queries,
+		var(--require-inherit-function
+		)))))))))
 		'’';
 	display: block;
 	border: 2px dashed #FFCA51;
@@ -82,5 +84,11 @@
 @supports not (margin: 1cap) {
 	.require-cap {
 		--require-cap: 'cap';
+	}
+}
+
+@supports not (margin: inherit(--foo)) {
+	.require-inherit-function {
+		--require-inherit-function: 'inherit()';
 	}
 }
