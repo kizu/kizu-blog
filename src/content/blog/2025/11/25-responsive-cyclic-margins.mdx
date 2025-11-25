@@ -1,7 +1,7 @@
 ---
 title: 'Responsive Cyclic Margins'
 fancyTitle: true
-description: 'The title of this post might not seem like a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context? I found a solution, which would be pretty useful if not for a Safari bug.'
+description: 'The title of this post might not seem like a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context?'
 tags: ['Obscure CSS', 'CSS']
 pubDate: '2025-11-25'
 mastodonPostId: '115612725378654218'
@@ -20,8 +20,6 @@ bandcamp: {
 import LiveExample from '@components/LiveExample.astro';
 
 The title of this post might not seem like a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context?
-
-I found a solution, which would be pretty useful if not for a Safari bug.
 
 ## Table of Contents
 
@@ -193,7 +191,7 @@ And so it will become just `0px`, so the total width of the whole button wil
 
 Then, knowing this width, we start to layout everything inside, and according to our formula the `margin` becomes `0.5em` as the width is quite large… but that _reduces_ the space available for our text, so it becomes truncated!
 
-## The Solution
+## The Solution?
 
 To solve this, we can _introduce even more percentages_ but in reverse!
 
@@ -251,12 +249,43 @@ button > span {
 
 Safari renders this example not as you would expect… Of course, I [opened a bug](https://bugs.webkit.org/show_bug.cgi?id=303109) about this.
 
+## The Working Solution
+
+Right after I published this post, I suddenly decided to test what will happen if, instead of a margin, we would use a `gap`? **It works! **
+
+<LiveExample isScoped="example" shouldHideHTML caption="No unnecessary truncation in sight! Even in Safari!">
+```HTML
+<p>
+	<button type="button" class="with-gap">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon">🌐</span>
+	</button>
+</p>
+<p style="width: 42px">
+	<button type="button" class="with-gap">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon">🌐</span>
+	</button>
+</p>
+```
+```CSS
+.with-gap {
+	--gap: 0.5em;
+	gap: clamp(
+		max(0px, var(--gap) - 100%)
+		,
+		100% - var(--min-width)
+		,
+		var(--gap)
+	);
+}
+```
+</LiveExample>
+
+So, this is the solution I will recommend: instead of a `margin`, use a `gap`, with the rest of our calculations remaining in place: without the negative cyclic percentage condition the button would still collapse, but now the `gap` works the same in all browsers — likely because it was implemented later than `margin`. Ooof.
+
 ## Conclusion
 
 Not always you stumble over a _cyclic percentage_ issues, and not always you can overcome them by exploiting the same substitution to zero with conditional calculations.
 
 I feel this is just a glimpse of what these kinds of calculations could achieve, and I invite you to also try and hack any similar places in the same way. Maybe you’ll stumble over something fun too!
-
-And, maybe, Safari will fix this bug, so we could benefit from this technique in the future.
-
-Or — maybe you know a workaround, or different working solution? If so, please, write about it!
