@@ -41,7 +41,7 @@ I won’t touch on if using ellipsis in cases like this one is a good idea
 		<span class="icon">🌐</span>
 	</button>
 </p>
-<p style="width: 42px">
+<p style="width: var(--min-width)">
 	<button type="button">
 		<span class="ellipsis">Hello, world!</span>
 		<span class="icon">🌐</span>
@@ -49,15 +49,7 @@ I won’t touch on if using ellipsis in cases like this one is a good idea
 </p>
 ```
 ```CSS
-p {
-	overflow: hidden;
-	resize: horizontal;
-	outline: 1px solid var(--PINK);
-	padding: 1em;
-	width: min-content;
-}
-
-button {
+:scope {
 	--border: 1px;
 	--padding: 8px;
 	--icon-size: 1em;
@@ -68,6 +60,17 @@ button {
 		+
 		2 * var(--padding)
 	);
+}
+
+p {
+	overflow: hidden;
+	resize: horizontal;
+	outline: 1px solid var(--PINK);
+	padding: 1em;
+	width: min-content;
+}
+
+button {
 	display: inline-flex;
 	max-width: 100%;
 	min-width: var(--min-width);
@@ -99,13 +102,13 @@ Any static margin added to either span there will be still there when we coll
 
 <LiveExample isScoped="example" shouldHideHTML caption="Expanding the resizable blocks will show the margin between the text and its icon.">
 ```HTML
-<p style="width: 42px;">
+<p style="width: var(--min-width);">
 	<button type="button">
 		<span class="ellipsis with-margin">Hello, world!</span>
 		<span class="icon">🌐</span>
 	</button>
 </p>
-<p style="width: 42px">
+<p style="width: var(--min-width)">
 	<button type="button">
 		<span class="ellipsis">Hello, world!</span>
 		<span class="icon with-margin">🌐</span>
@@ -137,7 +140,7 @@ You could think: hey, we can use `%` in CSS, which will be evaluated based on
 		<span class="icon with-naive-percentage">🌐</span>
 	</button>
 </p>
-<p style="width: 42px">
+<p style="width: var(--min-width)">
 	<button type="button">
 		<span class="ellipsis">Hello, world!</span>
 		<span class="icon with-naive-percentage">🌐</span>
@@ -203,7 +206,7 @@ To solve this, we can _introduce even more percentages_ but in reverse!
 		<span class="icon with-percentage">🌐</span>
 	</button>
 </p>
-<p style="width: 42px">
+<p style="width: var(--min-width)">
 	<button type="button">
 		<span class="ellipsis">Hello, world!</span>
 		<span class="icon with-percentage">🌐</span>
@@ -261,7 +264,7 @@ Right after I published this post, I suddenly decided to test what will happe
 		<span class="icon">🌐</span>
 	</button>
 </p>
-<p style="width: 42px">
+<p style="width: var(--min-width)">
 	<button type="button" class="with-gap">
 		<span class="ellipsis">Hello, world!</span>
 		<span class="icon">🌐</span>
