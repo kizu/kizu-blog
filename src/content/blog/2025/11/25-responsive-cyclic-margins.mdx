@@ -1,10 +1,10 @@
 ---
 title: 'Responsive Cyclic Margins'
 fancyTitle: true
-description: 'The title of this post might seem like not a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context? I found a solution, which would be pretty useful if not for a Safari bug.'
+description: 'The title of this post might not seem like a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context? I found a solution, which would be pretty useful if not for a Safari bug.'
 tags: ['Obscure CSS', 'CSS']
 pubDate: '2025-11-25'
-mastodonPostId: ''
+mastodonPostId: '115612725378654218'
 
 current: {
 	drink: 'Infusion of hibiscus, apples, rosehip, and orange peels, with cherry flavor.',
@@ -19,7 +19,7 @@ bandcamp: {
 
 import LiveExample from '@components/LiveExample.astro';
 
-The title of this post might seem like not a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context?
+The title of this post might not seem like a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context?
 
 I found a solution, which would be pretty useful if not for a Safari bug.
 
@@ -197,7 +197,7 @@ Then, knowing this width, we start to layout everything inside, and according 
 
 To solve this, we can _introduce even more percentages_ but in reverse!
 
-<LiveExample isScoped="example" shouldHideHTML caption="No unnecessary truncation in sight!">
+<LiveExample isScoped="example" shouldHideHTML caption="No unnecessary truncation in sight! Unless you look at this in Safari.">
 ```HTML
 <p>
 	<button type="button">
