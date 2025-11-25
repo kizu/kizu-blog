@@ -1,0 +1,262 @@
+---
+title: 'Responsive Cyclic Margins'
+fancyTitle: true
+description: 'The title of this post might seem like not a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context? I found a solution, which would be pretty useful if not for a Safari bug.'
+tags: ['Obscure CSS', 'CSS']
+pubDate: '2025-11-25'
+mastodonPostId: ''
+
+current: {
+	drink: 'Infusion of hibiscus, apples, rosehip, and orange peels, with cherry flavor.',
+	music: 'Mitski — Pearl Diver',
+}
+
+bandcamp: {
+	track: '2255289821',
+	link: 'https://mitski.bandcamp.com/track/pearl-diver',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+The title of this post might seem like not a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context?
+
+I found a solution, which would be pretty useful if not for a Safari bug.
+
+## Table of Contents
+
+## The Problem
+
+That might seem to be pretty specific, but let’s say we have an element with two parts like a button, with the text disappearing when there is not enough space:
+
+<div class="aside-wrapper" style="--span: 2">
+<aside>
+I won’t touch on if using ellipsis in cases like this one is a good idea. In an ideal world, you would have a better content strategy, but in Hell…
+</aside>
+</div>
+
+<LiveExample isScoped="example" shouldHideCSS>
+```HTML
+<p>
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon">🌐</span>
+	</button>
+</p>
+<p style="width: 42px">
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon">🌐</span>
+	</button>
+</p>
+```
+```CSS
+p {
+	overflow: hidden;
+	resize: horizontal;
+	outline: 1px solid var(--PINK);
+	padding: 1em;
+	width: min-content;
+}
+
+button {
+	--border: 1px;
+	--padding: 8px;
+	--icon-size: 1em;
+	--min-width: calc(
+		var(--icon-size)
+		+
+		2 * var(--border)
+		+
+		2 * var(--padding)
+	);
+	display: inline-flex;
+	max-width: 100%;
+	min-width: var(--min-width);
+	padding: 0 var(--padding);
+	border: var(--border) solid var(--GREEN);
+	background: var(--CONTENT-BG);
+	border-radius: 1lh;
+	font: inherit;
+	cursor: pointer;
+}
+
+.ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.icon {
+	display: inline-block;
+	width: var(--icon-size);
+	text-align: center;
+	flex-shrink: 0;
+}
+```
+</LiveExample>
+
+What we want is to add a margin between the text and icon here, but make it disappear when the button collapses.
+
+Any static margin added to either span there will be still there when we collapse the button to be narrower than the available space:
+
+<LiveExample isScoped="example" shouldHideHTML caption="Expanding the resizable blocks will show the margin between the text and its icon.">
+```HTML
+<p style="width: 42px;">
+	<button type="button">
+		<span class="ellipsis with-margin">Hello, world!</span>
+		<span class="icon">🌐</span>
+	</button>
+</p>
+<p style="width: 42px">
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon with-margin">🌐</span>
+	</button>
+</p>
+```
+```CSS
+.ellipsis.with-margin {
+	margin-right: 0.5em;
+}
+.icon.with-margin {
+	margin-left: 0.5em;
+}
+```
+</LiveExample>
+
+And, because our buttons has to shrink to fit its contents, we can’t use `inline-size` containment and size the margin via container query length units. So, what to do?
+
+## An Attempt
+
+You could think: hey, we can use `%` in CSS, which will be evaluated based on the width of the parent element… Could we use it in some way, like with a calculation?
+
+
+<LiveExample isScoped="example" shouldHideHTML>
+```HTML
+<p>
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon with-naive-percentage">🌐</span>
+	</button>
+</p>
+<p style="width: 42px">
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon with-naive-percentage">🌐</span>
+	</button>
+</p>
+```
+```CSS
+.icon.with-naive-percentage {
+	margin-left: clamp(
+		0px,
+		100% - var(--min-width),
+		0.5em
+	);
+}
+```
+</LiveExample>
+
+It seems to wor— oh wait, why is there an ellipsis? And even when we expand our resizable paragraph, it stays this way?
+
+What we attempted to do is to make it so we will have a margin that depends on the parent’s width, and goes from `0.5em` to `0px`. By subtracting the `--min-width` variable we can make it go to zero when approaching that min-width.
+
+And it kinda works: when it is narrow, there is no margin, when it is wider — margin appears, but something breaks.
+
+## Percentage Evaluation
+
+The answer to what is happening — why we have the text truncated even though it seems like we should have space available, lies in the [“Intrinsic Contributions of Percentage-Sized Boxes”](https://drafts.csswg.org/css-sizing-3/#cyclic-percentage-contribution) section of the [“CSS Box Sizing Module Level 3”](https://drafts.csswg.org/css-sizing-3/) spec, specifically the [paragraph “d.”](https://drafts.csswg.org/css-sizing-3/#min-percentage-contribution):
+
+> […] for margins and paddings (and gutters), a cyclic percentage is resolved against zero for determining intrinsic size contributions.
+
+Because the button shrunks to its max-content width when it is `inline-…`, this width is calculated by adding up all the childrens’s contibutions, and for our `margin` we substitute any `%` inside with `0`. So, for calculating this width, the following:
+
+```CSS
+margin-left: clamp(
+	0px,
+	100% - var(--min-width),
+	0.5em
+);
+```
+
+Can be treated as
+
+```CSS
+margin-left: clamp(
+	0px,
+	0px - var(--min-width),
+	0.5em
+);
+```
+
+And so it will become just `0px`, so the total width of the whole button will consist of its borders, paddings, text content, and the icon. Plus zero for our margin.
+
+Then, knowing this width, we start to layout everything inside, and according to our formula the `margin` becomes `0.5em` as the width is quite large… but that _reduces_ the space available for our text, so it becomes truncated!
+
+## The Solution
+
+To solve this, we can _introduce even more percentages_ but in reverse!
+
+<LiveExample isScoped="example" shouldHideHTML caption="No unnecessary truncation in sight!">
+```HTML
+<p>
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon with-percentage">🌐</span>
+	</button>
+</p>
+<p style="width: 42px">
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="icon with-percentage">🌐</span>
+	</button>
+</p>
+```
+```CSS
+.icon.with-percentage {
+	--margin: 0.5em;
+	margin-left: clamp(
+		max(0px, var(--margin) - 100%)
+		,
+		100% - var(--min-width)
+		,
+		var(--margin)
+	);
+}
+```
+</LiveExample>
+
+Now it works! When wide — without collapsing — the margin is `0.5em`, when narrow — it is zero.
+
+What we did is replaced the lower boundary of our `clamp()` with a `max()` that, when considered in a _cyclic percentage context_ results in `0.5em`, and otherwise results in `0px`. Whoa!
+
+## …Except for the Safari Bug
+
+Ooops. That’s what happens when you test out an obscure place in CSS, and check how it behaves in different browsers. Instead of only evaluating the `%` as zero, Safari just throws the whole calculation away and replaces the whole _margin_ with zero T_T
+
+<LiveExample isScoped>
+```HTML
+<p>
+	<button type="button">
+		<span>button</span>
+	</button>
+</p>
+```
+```CSS
+button > span {
+	margin: calc(0% + 50px);
+}
+```
+</LiveExample>
+
+Safari renders this example not as you would expect… Of course, I [opened a bug](https://bugs.webkit.org/show_bug.cgi?id=303109) about this.
+
+## Conclusion
+
+Not always you stumble over a _cyclic percentage_ issues, and not always you can overcome them by exploiting the same substitution to zero with conditional calculations.
+
+I feel this is just a glimpse of what these kinds of calculations could achieve, and I invite you to also try and hack any similar places in the same way. Maybe you’ll stumble over something fun too!
+
+And, maybe, Safari will fix this bug, so we could benefit from this technique in the future.
+
+Or — maybe you know a workaround, or different working solution? If so, please, write about it!
