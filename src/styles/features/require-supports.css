@@ -4,12 +4,12 @@
 		var(--require-custom-functions,
 		var(--require-anchor-name,
 		var(--require-animation-range,
-		var(--require-timeline-scope,
 		var(--require-baseline-source,
 		var(--require-at-scope,
 		var(--require-cap,
 		var(--require-style-queries,
-		var(--require-inherit-function
+		var(--require-inherit-function,
+		var(--require-timeline-scope
 		)))))))))
 		'’';
 	display: block;

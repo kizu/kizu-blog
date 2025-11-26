@@ -51,13 +51,13 @@ const css = isScoped
 
 const require = requireProp
 	? [requireProp].flat().map(feature => `require-${feature}`)
-	: undefined;
+	: [undefined];
 
 ---
 
 <figure
 	{...props}
-	class:list={[props.class, require, optionalScopeClass]}
+	class:list={[props.class, require, optionalScopeClass, isScoped ? 'require-at-scope' : undefined]}
 >
 	<Fragment set:html={foundHTML} />
 	<Fragment set:html={html} />
