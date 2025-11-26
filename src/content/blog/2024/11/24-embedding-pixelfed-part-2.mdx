@@ -3,6 +3,7 @@ title: 'Embedding Pixelfed, part 2'
 description: 'Since my last post about this, I did some progress on embedding Pixelfed images in my blog. There are still many things I want to implement before I could start using this properly, but this seems like a good checkpoint in my work on the feature.'
 tags: ['Pixelfed', 'Process', 'Astro', 'IndieWeb']
 pubDate: '2024-11-24'
+updatedDate: '2025-01-24'
 mastodonPostId: '113540109766028436'
 
 current: {
@@ -41,7 +42,7 @@ Looking at the [“Plans”](/embedding-pixelfed-part-1/#plans) section of my�
 
 - For now, I am using the [`dotenv`](https://www.npmjs.com/package/dotenv) NPM package for storing the API token. I know, there is likely a way to do this without depending on a package, but I’m lazy to explore this, ok?
 
-	**Update from 2025-01-24: **actually, Astro has build-in support for [env variables](https://docs.astro.build/en/guides/environment-variables/), so now I’m using it.
+	**Update from 2025-01-24:** actually, Astro has build-in support for [env variables](https://docs.astro.build/en/guides/environment-variables/), so now I’m using it.
 
 - I implemented fetching and caching the data for my Pixelfed posts. It is likely far from optimal, but it works. I’ll only fetch things when doing local development, then what I receive from the API is saved as `.json` files, one per post, so there won’t be any fetching done neither in the CI nor on the client (aside from the image’s `src`, of course).
 
