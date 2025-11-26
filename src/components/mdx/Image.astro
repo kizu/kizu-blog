@@ -9,7 +9,7 @@ interface Props extends Omit<HTMLAttributes<'img'>, 'src'> {
 	src: ImageMetadata | `pixelfed:${string}`,
 }
 
-const { src, alt = null } = Astro.props;
+const { src, alt = null, ...props } = Astro.props;
 
 const pixelfedUrlMatch =
 	typeof src === 'string' && src.match(/^pixelfed:(.+)$/) || undefined;
@@ -104,6 +104,7 @@ const PhotoFrameContainer = hasDescription ? 'div' : 'section';
 						</div>
 					))(
 						<img
+							{...props}
 							id={id}
 							class="photo"
 							src={pixelfedPhoto.url}
@@ -136,5 +137,5 @@ const PhotoFrameContainer = hasDescription ? 'div' : 'section';
 			</PhotoFrameContainer>
 		)
 		: <aside class="warning">There should’ve been an image, but something went wrong!</aside>
-	: <AstroImage src={src} alt={alt} />}
+	: <AstroImage style={props.style} hidden={props.hidden} src={src} alt={alt} />}
 

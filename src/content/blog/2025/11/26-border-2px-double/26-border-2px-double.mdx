@@ -1,0 +1,106 @@
+---
+title: 'Border: 2px double'
+fancyTitle: true
+description: 'I wanted to write a different post today, but did not have time to finish it, oops. So let me tell you one pretty useless but fun CSS fact.'
+tags: ['Obscure CSS', 'CSS']
+pubDate: '2025-11-26'
+mastodonPostId: ''
+
+current: {
+	drink: 'Lemongrass, Ginger & Black Pepper tea',
+	music: 'toe — all i understand is that i don’t understand',
+}
+
+bandcamp: {
+	track: '249647643',
+	link: 'https://toe-music.bandcamp.com/track/all-i-understand-is-that-i-dont-understand',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+import Image from '@components/mdx/Image.astro';
+
+I wanted to write a different post today, but did not have time to finish it, oops.
+
+So let me tell you one pretty useless but fun CSS fact.
+
+Look at this:
+
+<LiveExample>
+```HTML
+<div class="square"></div>
+```
+```CSS
+.square {
+	width: 1em;
+	aspect-ratio: 1;
+	border: 2px double;
+}
+```
+</LiveExample>
+
+On screens with good old 1x resolution this will render with a solid `2px` border.
+
+But on systems with _retina_ screens (or similar), this renders in a fully non-interop way:
+
+import ChromeLight from "./chrome_light.png";
+import FirefoxLight from "./firefox_light.png";
+import SafariLight from "./safari_light.png";
+import ChromeDark from "./chrome_dark.png";
+import FirefoxDark from "./firefox_dark.png";
+import SafariDark from "./safari_dark.png";
+
+<style>{`
+	.examples {
+		grid-column: --page;
+		display: grid;
+		grid-template: 'c f s';
+		gap: 1rem;
+		padding: var(--MIN-CONTENT-PADDING);
+		margin: 0;
+		text-align: center;
+	}
+    @media (prefers-color-scheme: light) {
+        img[src*="_light"] {
+            display: unset;
+        }
+        img[src*="_dark"] {
+            display: none;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        img[src*="_dark"] {
+            display: unset;
+        }
+        img[src*="_light"] {
+            display: none;
+        }
+    }
+`}</style>
+<div class="examples">
+	<figure>
+		<Image src={ChromeLight} alt="Zoomed-in screenshot showing a square with two solid borders and transparent space between." />
+		<Image src={ChromeDark} alt="Zoomed-in screenshot showing a square with two solid borders and transparent space between." hidden />
+		<figcaption>Chrome</figcaption>
+	</figure>
+	<figure>
+		<Image src={FirefoxLight} alt="Zoomed-in screenshot showing a square with two solid borders and grey space between." />
+		<Image src={FirefoxDark} alt="Zoomed-in screenshot showing a square with two solid borders and grey space between." hidden />
+		<figcaption>Firefox</figcaption>
+	</figure>
+	<figure>
+		<Image src={SafariLight} alt="Zoomed-in screenshot showing a square a thick solid border and grey artifacts in corners." />
+		<Image src={SafariDark} alt="Zoomed-in screenshot showing a square a thick solid border and grey artifacts in corners." hidden />
+		<figcaption>Safari</figcaption>
+	</figure>
+</div>
+
+Interestingly, there is no guidance (as far as I know) about this [in the specs](https://www.w3.org/TR/css-backgrounds-3/#valdef-line-style-double). They only say for `double`:
+
+> Two parallel solid lines with some space between them. (The thickness of the lines is not specified, but the sum of the lines and the space must equal `border-width`.)
+
+And browsers are free to interpret this as they wish.
+
+Curiously, both Firefox and Chrome also do `1.5px double` correctly, in which case it will be two `0.5px`-wide borders with `0.5px` space between, while `2px` results in whole `1px`-wide space between those two `0.5px` borders.
+
+If only Safari did follow suit… But hey, I mentioned that this is mostly useless fact. But I hope it was at least a bit fun!
