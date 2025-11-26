@@ -4,6 +4,7 @@ fancyTitle: true
 description: 'The title of this post might not seem like a big deal, but the problem I will talk about was pretty fun to work out: how do you make a margin between elements responsive based on the available space in their parent, and such that it does not collapse in a `min-content` context?'
 tags: ['Obscure CSS', 'CSS']
 pubDate: '2025-11-25'
+updatedDate: '2025-11-26'
 mastodonPostId: '115612725378654218'
 
 current: {
@@ -287,8 +288,46 @@ Right after I published this post, I suddenly decided to test what will happe
 
 So, this is the solution I will recommend: instead of a `margin`, use a `gap`, with the rest of our calculations remaining in place: without the negative cyclic percentage condition the button would still collapse, but now the `gap` works the same in all browsers — likely because it was implemented later than `margin`. Ooof.
 
+## An Alternative Flex Solution
+
+While I like the solution with the `gap`, and when Safari will fix the bug with margins/paddings, this technique could be potentially used in non-flex contexts (what about floats?), the next morning after publishing this article, I decided to think of possible alternative solutions.
+
+Thinking about `gap` and flexbox, I found a solution that was likely one people use to achieve this effect right now: having a shrinking spacer element.
+
+<LiveExample isScoped="example" caption="Works well everywhere.">
+```HTML
+<p>
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="spacer"></span>
+		<span class="icon">🌐</span>
+	</button>
+</p>
+<p style="width: var(--min-width)">
+	<button type="button">
+		<span class="ellipsis">Hello, world!</span>
+		<span class="spacer"></span>
+		<span class="icon">🌐</span>
+	</button>
+</p>
+```
+```CSS
+.spacer {
+	width: 0.5em;
+}
+```
+</LiveExample>
+
+Well, that’s pretty simple! The main con of this solution is that it requires one additional element per gap that you want to make responsive, but there are a few pros as well:
+
+- Unlike `gap` and similar to `margin`, it is possible to style each gap separately.
+- In previous solution, we had to know the min-width to describe the gap, here we rely on the default `flex-shrink` behavior.
+- The shrinking itself is much smoother, and we can control the ratio of how the gap shrinks compared to the other elements by using different values of `flex-shrink`.
+
 ## Conclusion
 
 Not always you stumble over a _cyclic percentage_ issues, and not always you can overcome them by exploiting the same substitution to zero with conditional calculations.
 
 I feel this is just a glimpse of what these kinds of calculations could achieve, and I invite you to also try and hack any similar places in the same way. Maybe you’ll stumble over something fun too!
+
+As usual, it is also fun how we can find different solutions for the same problem in CSS, each with its own pros and cons. Similar to what I wrote in [“Minimal Reproductions”](/minimal-reproductions/), knowing what exactly does not work allows you to pursue alternative solutions and find one that works.
