@@ -126,7 +126,7 @@ A good way to think about it if you’re approaching to this from React/Pre
 
 - You could even put the `Astro.props` as the argument of that IIFE, and then destructure props as if you were authoring a React component… But why?
 
-## Upgrading Astro
+## Offtopic: Upgrading Astro
 
 I love that Astro is prebuilt statically by default, so all this logic will exist only before build, and the final HTML will be clean and nice.
 
@@ -174,6 +174,8 @@ The solution: override the dependency specifically for `@astropub/md` in my `p
 ```
 
 Oof, this worked! Ideally, I guess, it might be time to remove the `@astropub/md` — I only use it to render markdown for RSS, and I think there is now a better way to do it through Astro, so maybe one day (when my solution stops working?) I’ll return to this.
+
+Ah, and I had to add `--legacy-peer-deps` to the `NPM_FLAGS` environmental variable in Netlify to make it run `npm install --legacy-peer-deps` as otherwise it was erroring out.
 
 ## That’s It
 
