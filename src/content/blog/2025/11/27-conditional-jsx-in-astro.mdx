@@ -1,0 +1,137 @@
+---
+title: 'Conditional JSX in Astro'
+fancyTitle: true
+description: 'This is me documenting the way I am handling some of the more complex conditional rendering in Astro’s JSX. Well, not strictly _JSX_ — but its “Component Template” part of `.astro` components and assigning them to variables.'
+tags: ['Astro', 'Process']
+pubDate: '2025-11-27'
+mastodonPostId: ''
+
+current: {
+	drink: 'Lemongrass, Ginger & Black Pepper tea',
+	music: 'Will Driving West — Walls',
+}
+
+bandcamp: {
+	track: '2997498431',
+	link: 'https://willdrivingwest.bandcamp.com/track/walls',
+}
+---
+
+This is me documenting the way I am handling some of the more complex conditional rendering in [Astro](https://astro.build/)’s JSX. Well, not strictly _JSX_ — but its “Component Template” part of `.astro` components and assigning them to variables.
+
+## Table of Contents
+
+## The Problem
+
+In React/Preact, inside a `.jsx`/`.tsx` it is possible to save snippets of JSX code to variables and then use them conditionally, like this:
+
+```jsx
+const MyComponent ({ linkText, isDiv = false }) => {
+	const someContent = (
+		<a href="#hello">{linkText}</a>
+	);
+	return (
+		<div class="wrapper">
+			{isDiv ? (
+				<div class="inner">
+					{someContent}
+				</div>
+			) : (
+				<span class="inner">
+					{someContent}
+				</span>
+			)}
+		</div>
+	);
+}
+```
+
+This example is nonsensical, but you should get an idea: we’re able to define some JSX code in the function body, and then reuse it inside various conditionals in the component’s return.
+
+This is very useful when you have some complex content, but then in different setups it could be rendered in different contexts, or in a different order.
+
+In [`.astro` components](https://docs.astro.build/en/basics/astro-components/#component-structure), if you’re coming from React or Preact, it is easy to misunderstand the component’s _Script_ part as being the function’s body, and the _Template_ as the return.
+
+But the problem: it is not possible to save snippets of HTML in the _Script_ part! So it can be pretty awkward to work with more complex HTML structures.
+
+If you were to try writing something like this:
+
+```astro
+---
+const { linkText, isDiv = false } = Astro.props;
+const someContent = (
+	<a href="#hello">{linkText}</a>
+);
+---
+<div class="wrapper">
+	{isDiv ? (
+		<div class="inner">
+			{someContent}
+		</div>
+	) : (
+		<span class="inner">
+			{someContent}
+		</span>
+	)}
+</div>
+```
+
+You would get an error:
+
+```log
+[ERROR] Unexpected ";"
+```
+
+## The Solution
+
+The solution for this that I found: good old [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE), or “Immediately Invoked Function Expressions”.
+
+Astro allows _JavaScript Expressions_ inside the _Temlpate_ part. Those are usually there for conditions, maps, and so on. And — they support HTML inside, so you could do things like `{list.map (item => <li>{item}</li>)}` that you could be used to.
+
+But that means that nothing stops us from doing this:
+
+```astro
+---
+const { linkText, isDiv = false } = Astro.props;
+---
+{(() => {
+	const someContent = (
+		<a href="#hello">{linkText}</a>
+	);
+	return (
+		<div class="wrapper">
+			{isDiv ? (
+				<div class="inner">
+					{someContent}
+				</div>
+			) : (
+				<span class="inner">
+					{someContent}
+				</span>
+			)}
+		</div>
+	);
+})()}
+```
+
+This works! The HTML is correctly parsed and assigned to the `someContent` variable, which then can be reused as you wish.
+
+A good way to think about it if you’re approaching to this from React/Preact mindset:
+
+- Treat the `Script` part as the _outside_ of your component’s function body. All the imports, helper functions, and static calculations could go there.
+
+- The function body of IIFE is now the place where you could define any reusable snippets of JSX. Nice.
+
+- Its return is what will be rendered. That means that you could also benefit from early returns, and simplify your conditions!
+
+- You could even put the `Astro.props` as the argument of that IIFE, and then destructure props as if you were authoring a React component… But why?
+
+## That’s It
+
+I love that Astro is prebuilt statically by default, so all this logic will exist only before build, and the final HTML will be clean and nice.
+
+Before writing this post, I upgraded Astro from `4.14.4` to `5.16.2` and did not encounter almost any problems (other than getting a `[WARN] [vite] [vite:css][lightningcss] Unknown at rule: @property` warning from LightningCSS, which I suppressed by passing `logLevel: 'error'` to `vite` inside `astro.config.mjs`).
+
+I also looked at my dependencies, noticed that there was Preact, which I experimented for a while years ago, and decided to remove it and its Astro integration as well — after all, I did not end up using it for anything.
+
+I hope that this post will help you if you’re working with Astro, and, like me, is unfortunate to come to it with React preconceptions. Although, even if not, I think this IIFE pattern inside Astro templates is still fun!
