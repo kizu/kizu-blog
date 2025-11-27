@@ -14,7 +14,8 @@ export async function GET(context: APIContext) {
 		const link = `/${betterSlug(post.slug)}/`;
 		const fullLink = `${context.site}${betterSlug(post.slug)}/`;
 		const { mastodonPostId, current } = post.data;
-		const text = `${post.body}\n- - -\nLet me know what you think about this [on Mastodon](${getMastodonPostLink(mastodonPostId)})!`;
+		const bodyWithProperLangs = post.body.replace(/(``` ?)([A-Z]+)/g, (_, a, b) => `${a}${b.toLowerCase()}`);
+		const text = `${bodyWithProperLangs}\n- - -\nLet me know what you think about this [on Mastodon](${getMastodonPostLink(mastodonPostId)})!`;
 		// Could be improved in the future, see
 		// > Possibly unblock .mdx compiledContent/html output
 		// https://github.com/withastro/roadmap/issues/533

@@ -126,12 +126,59 @@ A good way to think about it if you’re approaching to this from React/Pre
 
 - You could even put the `Astro.props` as the argument of that IIFE, and then destructure props as if you were authoring a React component… But why?
 
-## That’s It
+## Upgrading Astro
 
 I love that Astro is prebuilt statically by default, so all this logic will exist only before build, and the final HTML will be clean and nice.
 
-Before writing this post, I upgraded Astro from `4.14.4` to `5.16.2` and did not encounter almost any problems (other than getting a `[WARN] [vite] [vite:css][lightningcss] Unknown at rule: @property` warning from LightningCSS, which I suppressed by passing `logLevel: 'error'` to `vite` inside `astro.config.mjs`).
+Before writing this post, I upgraded Astro from `4.14.4` to `5.16.2` and did not encounter almost any problems… Or so I wrote initially, only to find out I couldn’t publish my blog, even though `npm run dev` worked perfectly.
 
-I also looked at my dependencies, noticed that there was Preact, which I experimented for a while years ago, and decided to remove it and its Astro integration as well — after all, I did not end up using it for anything.
+There were a few issues:
+
+### Random LightningCSS Warnings
+
+I noticed that when running `npm run dev` I got the following warnings from LightningCSS:
+
+```log
+[WARN] [vite] [vite:css][lightningcss] …
+```
+
+Solution: I suppressed them by passing `logLevel: 'error'` to `vite` inside `astro.config.mjs`.
+
+### Node.js Version Requirement
+
+I use Netlify, and apparently it runs an older version of Node.js by default, and Astro 5 stopped supporting it.
+
+Solution: add a supported node version via `.nvmrc`.
+
+### `highlighter.codeToHtml is not a function`
+
+Ooof, this one was a hard one! I found one post that mentioned this issue: [“Astro Code Toggle Component”](https://www.danielcorin.com/til/astro/code-toggle-component/) by [Daniel Corin](https://www.danielcorin.com/), but there the author did not debug what exactly is going on, stopping at noticing that the issue was in the Astro’s Code component, and reimplementing the highlighter on their own.
+
+Debugging it myself, and logging what’s going on, I noticed that the `highlighter` in question had a different method available, which worked. The types did complain — and this seemed like an issue of something in dependencies.
+
+Looking at my `package-lock.json` I found that the library that should provide that `highlighter` was `@astrojs/markdown-remark`, and it was not on the latest version. Trying to force the latest version in my `package.json` shown the reason why it wasn’t the latest: another package — [`@astropub/md`](https://github.com/astro-community/md) by [Jonathan Neal](https://jonneal.dev/) had an earlier `@astrojs/markdown-remark` version as its peer dependency!
+
+The solution: override the dependency specifically for `@astropub/md` in my `package.json` while adding a newer version by default:
+
+```json
+{
+	"dependencies": {
+		"@astrojs/markdown-remark": "^6.3.9",
+	},
+	"overrides": {
+		"@astropub/md": {
+			"@astrojs/markdown-remark": "5.3.0"
+		}
+	}
+}
+```
+
+Oof, this worked! Ideally, I guess, it might be time to remove the `@astropub/md` — I only use it to render markdown for RSS, and I think there is now a better way to do it through Astro, so maybe one day (when my solution stops working?) I’ll return to this.
+
+## That’s It
+
+I also looked at my other dependencies, noticed that there was Preact, which I experimented for a while years ago, and decided to remove it and its Astro integration as well — after all, I did not end up using it for anything.
 
 I hope that this post will help you if you’re working with Astro, and, like me, is unfortunate to come to it with React preconceptions. Although, even if not, I think this IIFE pattern inside Astro templates is still fun!
+
+And — debugging the build issues took much longer than I wanted, and three times as long as it took writing the rest of this post. Oh hey, it is modern front-end for you.
