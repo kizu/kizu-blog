@@ -4,7 +4,6 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkToC from 'remark-toc';
 import { Features } from 'lightningcss';
-import preact from "@astrojs/preact";
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,7 +15,7 @@ export default defineConfig({
 			heading: "table of contents",
 		} ] ]
 	},
-	integrations: [mdx(), sitemap(), preact()],
+	integrations: [mdx(), sitemap()],
 	redirects: {
 		'/weekly-boolmarks-013': '/weekly-bookmarks-013',
 		'/tags/weekly': '/tags/bookmarks'
@@ -29,5 +28,6 @@ export default defineConfig({
 				include: Features.Nesting,
 			},
 		},
+		logLevel: 'error',
 	},
 });
