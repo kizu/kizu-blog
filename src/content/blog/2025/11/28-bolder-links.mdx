@@ -1,0 +1,55 @@
+---
+title: 'Bolder Links'
+fancyTitle: true
+description: 'This is another post about a small design tweak that I made around two years ago to both my blog and main website. I never shared it, because, well, it feels very small. But I liked it a lot, and I don’t think I could ever come back, so why not write about it? I wonder if you ever, while visiting my websites, noticed this tiny aspect of it?'
+tags: ['Design', 'Typography', 'CSS']
+pubDate: '2025-11-28'
+mastodonPostId: ''
+
+current: {
+	drink: 'Thyme, rosemary & lemon infusion',
+	music: 'Steve Pardo — Wave Dancer',
+}
+
+bandcamp: {
+	track: '2562330883',
+	link: 'https://skewsound.bandcamp.com/track/wave-dancer',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+<style>{`
+h1 {
+	font-size: 3rem;
+}
+`}</style>
+
+This is another post about a small design tweak that I made around two years ago to both my blog and [main website](https://kizu.dev/). I never shared it, because, well, it feels very small. But I liked it a lot, and I don’t think I could ever come back, so why not write about it?
+
+The tweak is, you’ve guessed — make the `font-weight` of most links on my website **bolder**. That’s it, that is the crux of the change.
+
+<LiveExample shouldHideHTML caption="Links, they're good.">
+```HTML
+<ul style="margin:0">
+<li><a href="./#test2" style="font-weight: unset">This is a regular normal link</a>, alongside some text.</li>
+<li><a href="./#test" style="font-weight: 600">This is a nice, slightly bolder link</a>, alongside some text.</li>
+<li><a href="./#test2" style="font-weight: bold">Regular bold link</a>, alongside some text.</li>
+<li><a href="./#test2" style="font-weight: 900">This one maybe too bold</a>, alongside some text.</li>
+</ul>
+```
+</LiveExample>
+
+I chose the `600` weight for my blog — slightly less than the default `700` for the `bold` keyword. And, for sure, not the _boldest_ `900`.
+
+The small bump in weight gives links a tiny buff in contrast, while not making them stand out too much. One of the reasons I wanted to give them that bump in contrast is because I carefully chose the text color for both regular and visited links.
+
+I wanted to keep a more vivid hue while not making it too dull, at the same time keeping enough contrast with both the page background, and the surrounding text. Even though I have underlines on my links, I dim them slightly, and having an extra affordance feels good in addition.
+
+<aside>
+I already wrote about how I do the dotted underlines for some pseudo-links in the [“Styles For Secondary Interactive Elements”](/styles-for-secondary-interactive-elements/) post, and I already mentioned that I want to write about the way I do underlines in general… I am still planning to do so, but let me talk about weight first, haha.
+</aside>
+
+As I already mentioned, I kept this style for at least two years now, and I don’t think I would go back. I got used to it, and I like having this small barely noticeable tweak present in my blog and site’s designs.
+
+I wonder if you ever, while visiting my websites, noticed this tiny aspect of it?
