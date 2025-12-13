@@ -3,7 +3,7 @@ title: 'Named Container Presence Check'
 description: 'I was doing some styling recently, and I wanted to know if my element was inside a certain container. While I could reuse the same selector that I used to apply the container with, this did not feel right: what if I were to apply the same container via a different selector? Or have a version of that element where the container is removed via some modifier? Can we somehow use just the container’s name for this?'
 tags: ['CSS Containers', 'CSS']
 pubDate: '2025-11-11'
-updatedDate: '2025-11-12'
+updatedDate: '2025-12-13'
 mastodonPostId: '115533026440139284'
 
 current: {
@@ -157,8 +157,12 @@ I opened [a CSSWG issue about this](https://github.com/w3c/csswg-drafts/issues/
 
 And — that’s it for today’s post! As it often goes: I thought it will be a simple one, but then ended up filling a Firefox bug and a CSSWG issue. Even more: this post was actually a side effect from starting to write another post, in which I used this “technique”, so I wanted to first briefly explain it in a separate post.
 
-## Update
+## Update from 2025-11-12
 
 After I published this post, [Miriam](https://www.miriamsuzanne.com/) noted that CSSWG already [resolved on this](https://github.com/w3c/csswg-drafts/issues/9192#issuecomment-1789850349) 2 years ago, and [Rune Lillesveen](https://social.vivaldi.net/@rune) [contributed WPT tests](https://github.com/web-platform-tests/wpt/pull/49093) a year ago, which, as also tested by me, are still [not passing](https://wpt.fyi/results/css/css-conditional/container-queries/query-container-name.html?label=experimental&label=master&aligned).
 
 I closed the issue I created as a duplicate. Now, I guess, the onus is on browsers: this feels like a _very_ low-hanging fruit, as all necessary for verifying the presence of a container should be already done, this new feature is only _excluding_ some of the checks browsers do when there is a query present.
+
+## Update from 2025-12-13
+
+And now there will be a first implementation of the name-only container queries, thanks to [Anthony Frehner](https://frehner.me/) who submitted [a patch to WebKit](https://github.com/WebKit/WebKit/pull/54667) that is now merged! Looking at the code there — it really seems like a pretty simple thing, so, I hope, this will be in other browsers too sooner rather than later.
