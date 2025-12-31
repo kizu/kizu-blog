@@ -4,6 +4,7 @@ fancyTitle: 'Anchoring|to a Containing Block'
 description: 'Today I stumbled upon a CSS issue that I and some others had in the past: an inability to use an anchored element’s containing block with anchor positioning. At least — to do so easily. This post is about how we can actually do so with just a few small changes to your usual anchor positioning setup.'
 tags: ['Anchor Positioning', 'CSS']
 pubDate: '2025-11-19'
+updateDate: '2025-12-31'
 mastodonPostId: '115578454406848256'
 
 current: {
@@ -202,6 +203,10 @@ If you look at this example in Safari (even in Technology Preview) or Firef
 Sometimes it works there, sometimes it doesn’t, with the position not updating correctly from time to time.
 
 I will open bugs about this, but not today (unless someone else will beat me to it, wink wink).
+
+##### Update from 2025-12-31
+
+Good news: at least in the latest Firefox Nightly, the above example seems to work well! In Safari, it is still glitchy, mostly when there is a smooth scroll going on, but it is _tolerable_.
 
 ## Conclusion
 

@@ -1,0 +1,197 @@
+---
+title: 'My 2025 in CSS'
+fancyTitle: 'My 2025 in CSS'
+description: 'For me, 2025 was a much less productive year than 2024. A mix of industry and world frustrations, personal issues, and just certain people being mean, made me to live on borrowed spoons for most of the year. This post won’t have any of that, of course, but will contain a roundup of everything I wrote about CSS, so if you missed something — it is a good way to catch up!'
+tags: ['Year in Review', 'CSS', 'Personal']
+pubDate: '2025-12-31'
+mastodonPostId: ''
+
+current: {
+	drink: 'Yunnan tea',
+	music: 'Every Gentle Air — Under Water, Under Ice',
+}
+bandcamp: {
+	track: '1828165742',
+	link: 'https://therecordmachine.bandcamp.com/track/under-water-under-ice',
+}
+---
+
+<style>{`
+h1 {
+	font-size: 2.75rem;
+}
+`}</style>
+
+## Table of Contents
+
+## Intro
+
+For me, 2025 was a much less productive year than [2024](/my-2024-in-css/) and [2023](/my-2023-in-css/). A mix of industry and world frustrations, personal issues, and just certain people being mean, made me to live on borrowed spoons for most of the year.
+
+Oh well! I am not sure if I will recover fully in 2026, but I’ll try to do what I can. And it is not like 2025 was without its bright sides.
+
+This post is a roundup of everything I wrote about CSS, so if you missed something — it is a good way to catch up!
+
+## My Articles and Techniques
+
+<style>{`
+p.starts-with-tag:has(> a.has-left-overhang.has-right-overhang:only-child) {
+	text-wrap: balance;
+}
+`}</style>
+
+Compared to the six articles I published in 2024, I managed to get out only two new ones — both at the beginning of the year. That said, I really like how both of them ended up, and if you missed them — I recommend finding time and reading them. You will likely need a lot of time — my articles do not become shorter — but, I promise, even beyond their premise, they contain many curiosities that I did not see anyone talk about.
+
+- [“Pure CSS Mixin for Displaying Values of Custom Properties”](https://kizu.dev/preview-mixin/)
+
+	_January 27._ This was one of the most complex things I did. Even though it is not strictly practical, I still find myself using it while working on my experiments. It works! While it is based on my 2024’s [“Indirect Cyclic Conditions: Prototyping Parametrized CSS Mixins”](https://kizu.dev/indirect-cyclic-conditions/) technique, there are many other small things to learn from the way I wrote this mixin.
+
+- [“Passing Data into SVG: Linked Parameters Workaround”](https://kizu.dev/svg-linked-parameters-workaround/)
+
+	_March 24._ In some way, this article was twelve years in the making. This is a topic that is still not solved in the Web Platform, and while there is a spec for it, no browser implemented it yet. There are many moving parts and approaches that I describe in this article. While the overall experimental technique is far from being practical, some of those details can be applied wider.
+
+## Some of My Blog Posts
+
+I was unable to return to posting [bookmarks](/tags/bookmarks/), so I wrote fewer posts than in 2024. I still managed to do the whole November challenge, where I wrote one post every day for the whole month, making it the third year I completed it. I find this challenge pretty useful, as it allows getting out some of the things I could not find an opportunity to write about otherwise — especially this time, I managed to share many small but impactful things.
+
+Here are some of these posts that I recommend you to read:
+
+- [“Future-Proofing Indirect Cyclic Conditions”](/future-proofing-indirect-cyclic-conditions/)
+
+	_May 31._ This is a follow-up to my [“Indirect Cyclic Conditions”](https://kizu.dev/indirect-cyclic-conditions/) article that I already mentioned, in which I had to find a way to fix it to work with the changes in the spec and implementation that broke my technique.
+
+- [“Functional Capturing”](/functional-capturing/)
+
+	_June 3._ This is also a follow-up, now to my [“Captured Custom Properties”](/captured-custom-properties/) post, but now looking at how we could use custom functions in CSS to achieve a similar capturing behavior.
+
+- [“Inline Custom Identifiers”](/inline-custom-identifiers/)
+
+	_November 3._ A post in which I name and share a pattern I used for a few years. I continue using it, and highly recommend look at it if you’re planning to work with scroll-driven animations, anchor positioning, and other newer CSS features that require unique identifiers.
+
+- [“Renaming Outer Variables in CSS Functions”](/renaming-outer-variables-in-functions/)
+
+	_November 4._ A post about hidden mini-feature of custom functions. It might not be something very useful in practice, but as we start to experiment with custom functions and mixins more, I believe this will find its use.
+
+- [“Zombie Styles”](/zombie-styles/)
+
+	_November 5_. A post that names a problem that happens occasionally with CSS, especially when complex build steps are involved.
+
+- [“Box-Decoration-Break”](/box-decoration-break/)
+
+	_November 6_. A post reminding about a not very common CSS property which is yet to become baseline in theory, but which can be already used for many use cases alongside its `-webkit-` prefixed version.
+
+- [“Fixing Baselines”](/fixing-baselines/)
+
+	_November 7_. This one could’ve been an article on my main site, potentially. While the technique itself is not novel, I did not see many people write about it, and I find it returning to it year over year.
+
+- [“Uneven Inline Paddings”](/uneven-inline-paddings/)
+
+	_November 10_. While I can’t say I am good at design, over the years I gathered a few barely noticeable design tweaks that, I thought, are worthy to be shared. This is one of them.
+
+- [“Named Container Presence Check”](/named-container-presence-check/)
+
+	_November 11_. A post about how we can check for the presence of some named containers today, while the corresponding native CSS feature for this is not yet available in all browsers.
+
+- [“Responsive tab-size”](/responsive-tab-size/)
+
+	_November 12_. A fun way to use typed arithmetic for making the `tab-size` property be responsive to some container’s width.
+
+- [“Styles For Secondary Interactive Elements”](/styles-for-secondary-interactive-elements/)
+
+	_November 13_. Another design tweak, one that I also use for a while, and recommend you to try as well.
+
+- [“Whitespace in Code”](/whitespace-in-code/)
+
+	_November 17_. A very short post about a small tip for improving the formatting of your code.
+
+- [“Anchoring to a Containing Block”](/anchoring-to-a-containing-block/)
+
+	_November 19_. A post about one anchor positioning gotcha, where it is not possible to anchor an element to its _containing block_ with absolute positioning, and a workaround that involves fixed positioning and `anchor-scope`.
+
+- [“Scope for Examples”](/scope-for-examples/)
+
+	_November 20_. A short post about an `@scope` use case that I expect will be very popular, especially in blogs of those who write about CSS, as it simplifies creating examples for articles _a lot_!
+
+- [“Play With Inherit Function”](/play-with-inherit-function/)
+
+	_November 24_. A post about how `inherit()` function is now available for testing in Chrome Canary. I expect this function to be tremendously useful once it is in all browsers, as it unlocks some of the API designs and ways to write code that were not possible without [complex hacks](https://kizu.dev/self-modifying-variables/) before.
+
+- [“Responsive Cyclic Margins”](/responsive-cyclic-margins/)
+
+	_November 25_. A post about a few ways of making some margins or gaps collapsible to zero without compromising the `max-content` dimension of the element they’re used in.
+
+- [“Border: 2px double”](/border-2px-double/)
+
+	_November 26_. A tiny “fun fact” about how `2px double` borders are rendered. No interop in sight.
+
+- [“Bolder Links”](/bolder-links/)
+
+	_November 28_. Last design tweak I shared this year for increasing the contrast of links compared to the body text style.
+
+## CSS Working Group
+
+A big part of my involvement with CSSWG this year was thinking about potential standardisation of the “fit to width” technique.
+
+After my 2024’s article [“Fit-to-Width Text: A New Technique”](/fit-to-width/), in April of this year [it was resolved](https://github.com/w3c/csswg-drafts/issues/2528#issuecomment-2769621512) to start working on a native CSS feature for it.
+
+There was a lot of valuable feedback from the community, as well as a Google Chrome team’s explainer and experimental implementation, which were followed by more discussions and issues, some of which are still ongoing.
+
+I wrote two blog posts about some of that:
+
+- [“Fit-to-Width Discussions & Feedback”](/fit-to-width-discussions-and-feedback/)
+
+	_May 1_. A post with my critique of Google’s explainer and a proposal for fixing one of the accessibility issues.
+
+- [“Fit-to-Width Status Update: Prototype and Issues”](/text-fit-update/)
+
+	_October 2_. A post with the status update and a list of new CSSWG issues I opened that are related to “fit to width”.
+
+Aside from the above work, I opened a few new CSSWG issues about an array of topics.
+
+- [“[css-values-5] typeof() or something similar to be used inside if() conditionals to check types of custom properties”](https://github.com/w3c/csswg-drafts/issues/11741)
+
+	_February 19_. In some way, a follow-up to my [“Pure CSS Mixin for Displaying Values of Custom Properties”](https://kizu.dev/preview-mixin/) article, in which I did many hacks for trying to understand the type of some custom property.
+
+- [“[css-scoping] Scoping of functions, other name-defining at-rules and custom idents”](https://github.com/w3c/csswg-drafts/issues/11798)
+
+	_February 27_. I consider global scoping of idents in CSS to be one of the last issues that require external tooling. While this issue started from an attempt to use `@scope` for this, a more likely direction would be to use a dedicated lexical scoping at-rule, maybe even reuse the `@namespace`.
+
+- [“[css-contain-3] Container Variables”](https://github.com/w3c/csswg-drafts/issues/12604)
+
+	_August 13_. We have an ability to name containers with the `container-name` property. We have an ability to query custom properties from such named containers. But what if we had an ability to _use_ the values of such custom properties directly with something like `container-var()`?
+
+- [“[css-mixins-1] Expose environmental variables inside apply’s contents block”](https://github.com/w3c/csswg-drafts/issues/12631)
+
+	_August 20_. There is currently a lot of work dedicated to native CSS mixins. This issue is about one of their aspects for usage, with passing rules inside mixins when calling them.
+
+- [“[css-inline-3] A property to exclude an element from the baseline calculation”](https://github.com/w3c/csswg-drafts/issues/13080)
+
+	_November 7_. There are currently only indirect ways of adjusting the baseline participation of some element. As a part of writing my [“Fixing Baselines”](/fixing-baselines/) post, I opened this issue with a proposal to add a built-in way of handling this.
+
+Aside from these, I participated in some other issues and discussions, and some of my older issues were resolved in CSSWG meetings.
+
+## My Browser Bug Reports
+
+With this year not being as productive, there were not as many opportunities to stumble upon bugs. And, in the same way I had fewer spoons for actual experiments, I was unable to find them to report the issues I encountered.
+
+That said, a fun fact: with fifteen bugs reported, they were distributed equally among all browser engines.
+
+- [5 Chrome bugs][1] ([13 in 2024][2])
+- [5 Firefox bugs][3] ([8 in 2024][4])
+- [5 Safari bugs][5] ([6 in 2024][6])
+
+[1]: https://issues.chromium.org/issues?q=reporter:kizmarh@gmail.com%20created:2025-01-01..2025-12-31
+[2]: https://issues.chromium.org/issues?q=reporter:kizmarh@gmail.com%20created:2024-01-01..2024-12-31
+[3]: https://bugzilla.mozilla.org/buglist.cgi?emailreporter1=1&email1=kizmarh%40gmail.com&chfieldfrom=2025-01-01&chfieldto=2025-12-31&chfield=%5BBug%20creation%5D&emailtype1=substring
+[4]: https://bugzilla.mozilla.org/buglist.cgi?emailreporter1=1&email1=kizmarh%40gmail.com&chfieldfrom=2024-01-01&chfieldto=2024-12-31&chfield=[Bug%20creation]&emailtype1=substring&list_id=17371297
+[5]: https://bugs.webkit.org/buglist.cgi?email1=kizmarh%40ya.ru&emailassigned_to1=1&emailreporter1=1&emailtype1=exact&list_id=11875877&chfieldfrom=2025-01-01&chfieldto=2025-12-31&chfield=%5BBug%20creation%5D
+[6]: https://bugs.webkit.org/buglist.cgi?chfield=%5BBug%20creation%5D&chfieldfrom=2024-01-01&chfieldto=2024-12-31&email1=kizmarh%40ya.ru&emailassigned_to1=1&emailreporter1=1&emailtype1=exact&list_id=11875877
+
+
+## Plans for 2025
+
+Since November, I am actively working on a new proper article for my website. It takes a while, mostly due to the necessity to come up with good examples, but I hope the result will be worth it.
+
+I also have material for another big article, though it will likely need a bit more research.
+
+It becomes harder and harder to find “unsolvable” problems and hack the solutions to them, but hey, you never know what you will stumble upon.
