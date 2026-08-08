@@ -3,4 +3,20 @@
 	@supports (top: if(():)) {
 		--WHEN: initial;
 	}
+
+	--cycles-interop: broken var(--WHEN, var(--cycles-interop));
+}
+
+@property --cycles-interop {
+	syntax: "broken | ok";
+	initial-value: ok;
+	inherits: true;
+}
+
+@supports not (top: if(():)) {
+	@container style(--cycles-interop: broken) {
+		body {
+			--WHEN: initial;
+		}
+	}
 }

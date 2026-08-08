@@ -1,6 +1,7 @@
 [class*='require-']::before {
 	content:
 		"\26A0 \FE0F  Your browser does not support ‘"
+		var(--require-cycles-interop,
 		var(--require-custom-functions,
 		var(--require-anchor-name,
 		var(--require-animation-range,
@@ -10,7 +11,7 @@
 		var(--require-style-queries,
 		var(--require-inherit-function,
 		var(--require-timeline-scope
-		)))))))))
+		))))))))))
 		'’';
 	display: block;
 	border: 2px dashed #FFCA51;
@@ -90,5 +91,13 @@
 @supports not (margin: inherit(--foo)) {
 	.require-inherit-function {
 		--require-inherit-function: 'inherit()';
+	}
+}
+
+@supports not (top: if(():)) {
+	@container style(--cycles-interop: broken) {
+		.require-cycles-interop {
+			--require-cycles-interop: 'cyclic fallbacks interop with conditions';
+		}
 	}
 }

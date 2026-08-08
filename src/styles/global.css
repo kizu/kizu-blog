@@ -365,7 +365,7 @@ h1 {
 }
 
 @layer small-caps {
-	* {
+	:where(:root) * {
 		--small-caps: var(--_small-caps);
 		/* For some reason, petite-caps do not work in Safari */
 		--_small-caps: small-caps

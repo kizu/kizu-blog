@@ -4,6 +4,7 @@ title: 'Future-Proofing Indirect Cyclic Conditions'
 description: 'When working on another blog post, I noticed that my blog’s styles were broken in Chrome Canary. What happened? A change in how “short-circuiting” of custom property fallbacks works.'
 tags: ['CSS Mixins', 'CSS']
 pubDate: '2025-05-31'
+updatedDate: '2026-08-08'
 mastodonPostId: '114604599433345921'
 
 current: {
@@ -19,6 +20,14 @@ When working on another blog post, I noticed that my blog’s styles were bro
 What happened? A change in how “short-circuiting” of custom property fallbacks works.
 
 ## Table of Contents
+
+## Update from 2026-08-08
+
+Right now, in Firefox Nightly they implemented a fix for the fallback short-circuiting (where it does not check the fallbacks if it does not have to), which led to my technique breaking there. I [opened an issue about this](https://bugzilla.mozilla.org/show_bug.cgi?id=2051901), however it appears that it is likely they will ship it, as they are fine with the potential interop (only my sites).
+
+I am begrudgingly ok with this too, although it is unfortunate. I truly hope that native conditions will land as soon as possible in Firefox, as until they do, my technique is broken, and I did not yet find a good workaround for this case.
+
+For now, I am tweaking it a bit to not completely blow everything up, and adding warnings in examples that rely on it in this blog.
 
 ## The Context
 
@@ -83,7 +92,7 @@ If you look at this example today in Chrome Canary with the Experimental Web 
 
 Just adding a fallback with `@supports` works:
 
-<LiveExample class="example2" shouldHideHTML>
+<LiveExample class="example2 require-cycles-interop" shouldHideHTML>
 ```css
 .example2 { --WHEN: }
 .example2 .minimal {
@@ -118,7 +127,7 @@ We can, but we need to do two things:
 1. Define `--WHEN` conditionally.
 2. Adjust how we use it.
 
-<LiveExample class="example3" shouldHideHTML>
+<LiveExample class="example3 require-cycles-interop" shouldHideHTML>
 ```css
 .example3 {
 	--WHEN: ;
