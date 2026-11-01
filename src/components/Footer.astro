@@ -13,11 +13,11 @@ const isHomePage = '/' === Astro.url.pathname;
 		&copy;
 		{' '}
 		<a class={`u-url p-name${isHomePage ? ' is-inherited' : ''}`} rel="me author" href={Astro.site}>{AUTHOR}</a>
-		·
+		{' · '}
 		<a class="u-url" href={MAIN_URL}>Main site</a>
-		·
+		{' · '}
 		<a href="/rss.xml">RSS</a>
-		·
+		{' · '}
 		<a class="u-url" rel="me" href={MASTODON_URL}>Mastodon</a>
 		<small>
 			<a href="#debug">debug</a>

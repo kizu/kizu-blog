@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
 import BlogPost from '@layouts/BlogPost.astro';
 import { betterSlug } from '@lib/betterSlug';
 import { getSortedPosts } from '@lib/getSortedPosts';
@@ -25,14 +26,14 @@ export async function getStaticPaths() {
 	const posts = await getSortedPosts();
 
 	return posts.map((post) => ({
-		params: { slug: betterSlug(post.slug) },
+		params: { slug: betterSlug(post.id) },
 		props: post,
 	}));
 }
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content } = await post.render();
+const { Content } = await render(post);
 // console.log(`src/content/blog/${post.id}`)
 ---
 

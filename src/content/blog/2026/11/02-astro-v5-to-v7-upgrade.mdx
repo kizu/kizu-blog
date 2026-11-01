@@ -1,0 +1,150 @@
+---
+title: 'Astro v5 to v7 Upgrade'
+fancyTitle: true
+description: 'My blog runs on #AstroJS, and I did not upgrade it in a while. So, I decided to try going from `5.16.2` straight to `7.4.4`. Not for any particular reason, but just to keep things fresh. This post documents what happened. In short: upgraded successfully, but with a few issues I had to solve during it.'
+tags: ['Astro', 'Process']
+pubDate: '2026-11-02'
+mastodonPostId: ''
+
+current: {
+  drink: 'Infusion of hibiscus, apples, rosehip, and orange peels, with cherry flavor.',
+  music: 'SARI — mawaru',
+}
+
+bandcamp: {
+  track: '549921130',
+  link: 'https://sari-of-sari.bandcamp.com/track/mawaru-3',
+}
+---
+
+My blog runs on [Astro](https://astro.build/), and I did not upgrade it in a while.
+
+So, I decided to try going from `5.16.2` straight to `7.4.4`. Not for any particular reason, but just to keep things fresh. This post documents what happened. In short: upgraded successfully, but with a few issues I had to solve during it.
+
+## Table of Contents
+
+## The Issues
+
+Most of the issues that I needed to solve were documented in some way on two pages of Astro docs:
+
+- [“Upgrade to Astro v6”](https://docs.astro.build/en/guides/upgrade-to/v6/)
+- [“Upgrade to Astro v7”](https://docs.astro.build/en/guides/upgrade-to/v7/)
+
+Most things were straightforward, like those changes related to the Content Layer API, but there were a few undocummented suprizes.
+
+### Content Config Location
+
+This is one of the simpler ones. The content config changes name and location: from `src/content/config.ts` to `src/content.config.ts`.
+
+### Explicit Loader
+
+Previously, the `defineCollection` inside that config had an implicit loader inside, now you have to import it and use explicitly.
+
+```diff
+--- a/src/content/config.ts
++++ b/src/content.config.ts
+-import { defineCollection, z } from 'astro:content';
++import { defineCollection } from 'astro:content';
++import { z } from 'astro/zod';
++import { glob } from 'astro/loaders';
+
+ const blog = defineCollection({
++       loader: glob({
++               pattern: '**/*.{md,mdx}',
++               base: './src/content/blog',
++       }),
+```
+
+The `z` import change was not _required_ for now, just deprecated, but I made this fix as well to be more future-proof.
+
+### Front Matter and Indentation
+
+The biggest blocker was this cryptic issue that appeared after updating the config location and content:
+
+> Flow map in block collection must be sufficiently indented and end with a } at line 9, column 2
+
+The cause: previously, Astro seemed to be a bit more relaxed in how it parsed the YAML front matter. Well, that meant that I used _tabs_ instead of _spaces_ for indentation inside it. And, I learned, [strict YAML](https://yaml.org/spec/1.2.2/#61-indentation-spaces) does not understand tabs:
+
+> To maintain portability, tab characters must not be used in indentation, since different systems treat tabs differently.
+
+Ugh. So… I had to go and update front matter in _all my posts_ to use spaces instead of tabs. Oh well.
+
+### Updating the Slug-based IDs
+
+The data entry type changed where previously it had a `slug` field, and now it is an `id`. Maybe there were some internal changes as well, but for my cases it seemed to be enough to adjust what I access when I wanted to change the posts’ slugs:
+
+```diff
+        return posts.map((post) => ({
+-               params: { slug: betterSlug(post.slug) },
++               params: { slug: betterSlug(post.id) },
+                props: post,
+        }));
+```
+
+### Updating the Post Renderer
+
+Another thing I did not see in the migration guides is how you could render the content of some posts inside Astro components. I wrote about why I am doing this in my [“Astro MDX Components”](/astro-mdx-components/) post, but the change was pretty straightforward:
+
+```diff
+--- a/src/pages/[...slug].astro
++++ b/src/pages/[...slug].astro
+ ---
++import { render } from 'astro:content';
+
+-const { Content } = await post.render();
++const { Content } = await render(post);
+```
+
+And, if I understand correctly, this also means that it is now possible to render post content this way in many more cases, which I will try to use in the future for rewriting how I do RSS for this blog.
+
+### Markdown Processor
+
+In v7, Astro got a [new Markdown processor](https://docs.astro.build/en/guides/upgrade-to/v7/#new-default-markdown-processor-s%C3%A4tteri).
+
+As I was relying on the previous one, I had to make an adjustment:
+
+```diff
+--- a/astro.config.mjs
++++ b/astro.config.mjs
++import { unified } from '@astrojs/markdown-remark';
+
+ export default defineConfig({
+        markdown: {
++               processor: unified({
++                       remarkPlugins: [ [remarkToC, {
++                               heading: "table of contents",
++                       } ] ]
++               }),
+
+-               remarkPlugins: [ [remarkToC, {
+-                       heading: "table of contents",
+-               } ] ]
+        },
+```
+
+Basically, using an explicit `processor` with the old `unified` config, moving the `remarkPlugins` inside of it. Maybe I will need to look into if there is a ToC plugin for the new Rust-based Markdown processor, as it would be nice to get this speed buff.
+
+### Astro Component JSX and Whitespace
+
+Final and very minor issue that I noticed was in [how Astro now handles whitespace in JSX](https://docs.astro.build/en/guides/upgrade-to/v7/#new-default-whitespace-handling-compresshtml-jsx) of Astro components: it now strips it fully, so I had to insert it manually in a few places:
+
+```diff
+--- a/src/components/Footer.astro
++++ b/src/components/Footer.astro
+                <a href="/rss.xml">RSS</a>
+-               ·
++               {' · '}
+                <a …
+```
+
+Another option would be to change the option back to `compressHTML: true`, but if I can make things work with the defaults, it feels better.
+
+#### Non-Issue with Non-Standard Whitespaces
+
+A related _non-issue_ with that was that in a few places I was using non-standard spaces in code, like thinner spaces — when comparing with the live version of my blog, I found out that those were actually converted to regular spaces by Astro before, and now worked as intended. Nice!
+
+## That’s It
+
+I think I might’ve missed some minor stuff I adjusted where noticed, like some type changes, but otherwise this seems to cover everything I had to do for the upgrade.
+
+Aside from the YAML whitespace change, it was straighforward.

@@ -11,10 +11,10 @@ export async function GET(context: APIContext) {
 	const posts = await getCollection('blog');
 	const items: RSSOptions['items'] = [];
 	for (const post of posts) {
-		const link = `/${betterSlug(post.slug)}/`;
-		const fullLink = `${context.site}${betterSlug(post.slug)}/`;
+		const link = `/${betterSlug(post.id)}/`;
+		const fullLink = `${context.site}${betterSlug(post.id)}/`;
 		const { mastodonPostId, current } = post.data;
-		const bodyWithProperLangs = post.body.replace(/(``` ?)([A-Z]+)/g, (_, a, b) => `${a}${b.toLowerCase()}`);
+		const bodyWithProperLangs = post.body?.replace(/(``` ?)([A-Z]+)/g, (_, a, b) => `${a}${b.toLowerCase()}`);
 		const text = `${bodyWithProperLangs}\n- - -\nLet me know what you think about this [on Mastodon](${getMastodonPostLink(mastodonPostId)})!`;
 		// Could be improved in the future, see
 		// > Possibly unblock .mdx compiledContent/html output

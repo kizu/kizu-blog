@@ -18,7 +18,7 @@ export async function GET(context: APIContext) {
 		) {
 			continue;
 		}
-		const url = `${context.site}${betterSlug(post.slug)}/`;
+		const url = `${context.site}${betterSlug(post.id)}/`;
 		items.push({
 			...post.data,
 			url,

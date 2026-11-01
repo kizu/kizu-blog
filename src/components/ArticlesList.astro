@@ -44,7 +44,7 @@ for (const post of posts) {
 					{
 						month.map((post) => (
 							<li value={post.data.pubDate.getDate()}>
-								<Link href={`/${betterSlug(post.slug)}/`}>{post.data.title}</Link>
+								<Link href={`/${betterSlug(post.id)}/`}>{post.data.title}</Link>
 							</li>
 						))
 					}
