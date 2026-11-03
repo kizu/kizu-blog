@@ -1,0 +1,156 @@
+---
+title: 'Explicit Nesting'
+fancyTitle: true
+description: 'If you are not using `&` when you nest some selectors — what are you doing? Please, start using it. This short post explains why and how.'
+tags: ['CSS Formatting', 'CSS']
+pubDate: '2026-11-03'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'touche amore — Palm Dreams',
+}
+
+bandcamp: {
+  track: '1221538824',
+  link: 'https://toucheamore.bandcamp.com/track/palm-dreams',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table Of Contents
+
+## An Introduction
+
+Initially, I wanted to post an actual small technique (that I wanted to post for like two years), but when working on its post, I found out that it actually did not work… At least, not exactly. So, I put it back into the drawer. Only to get an idea how to do it differently when going to sleep, but rewriting the post with all the context etc. — not enough time! Well, maybe next week.
+
+So, today it will be one of the very tiny things I wanted to share as well for quite a while, and actually thought that I already shared, but did not.
+
+## Always Use Explicit Selector Nesting Notation
+
+That’s it, that’s the post. Ok, let me expand on it. Look at this:
+
+<LiveExample isScoped caption="Hovering or focusing this button makes it change its colors.">
+```CSS
+button {
+	font-size: 2em;
+	border: 0.25em solid;
+
+	color: deepPink;
+	background: pink;
+
+	&:hover,
+	&:focus-visible {
+		color: forestGreen;
+		background: lightGreen;
+	}
+}
+```
+```HTML
+<button type="button"><em>I am a button!</em></button>
+```
+</LiveExample>
+
+It is a button! You can hover it! Or focus! What are we talking about again here?
+
+Ah, yes. The `&`. My strong opinion: we should always use it when writing nested code in CSS. Why?
+
+Because oh so often I saw this issue in big codebases:
+
+<LiveExample isScoped caption="The same example, without the `&`: hovering or focusing the button does not work, and hover goes to the `<em>` inside.">
+```CSS
+button {
+	font-size: 2em;
+	border: 0.25em solid;
+
+	color: deepPink;
+	background: pink;
+
+	:hover,
+	:focus-visible {
+		color: forestGreen;
+		background: lightGreen;
+	}
+}
+```
+```HTML
+<button type="button"><em>I am a button!</em></button>
+```
+</LiveExample>
+
+Obviously, if you know what you are doing, you are unlikely to make this mistake. And this example is obviously broken.
+
+<aside>
+
+In many codebases, when using native nesting or preprocesor, I saw this issue again and again, usually with pseudo-elements and pseudo-classes — I saw it applied to things like `::selection`, `::-webkit-scrollbar`, and so on.
+
+The `:hover` was probably the most common, but I bet there were cases even with regular classes — and those are harder to spot.
+
+And, sometimes, a class modifer like this — when it was applied to the incorrect element — can be a [“Zombie Style”](https://blog.kizu.dev/zombie-styles/). Beware.
+
+</aside>
+
+The `&` is not strictly _required_ in many cases, like when using for something like
+
+```CSS
+button {
+	em { /* bad */ }
+}
+```
+
+This, of course, works. But I argue that you must _always_ use `&` even in those cases:
+
+```CSS
+button {
+	& em { /* good */ }
+}
+```
+
+I find this to have only upsides, no downsides:
+
+
+1. With explicit nesting, it is much harder to make a mistake like in the first examples.
+
+2. Sometimes, like when doing something like `.some-parent &`, you _have_ to use an explicit nesting, so using explicit `&` in some places, and omitting it in others makes things inconsistent.
+
+3. When you have large rules with many nested sub-rules or at-rules around them, you might not know, without scrolling upwards, whether some selector is nested or not. Requiring `&` makes this distinction obvious, and you will know at a glance if something is actually nested.
+
+So — please, just always use explicit nesting.
+
+- `&:hover` instead of the broken `:hover`, obviously.
+- `& .child` instead of `.child`, even though the latter works.
+- `& > .child` instead of `> .child`, just for consistency.
+
+## Stylelint Rules
+
+Stylelint has a nice [`relative-selector-nesting-notation`](https://stylelint.io/user-guide/rules/relative-selector-nesting-notation/) rule, which you could set as
+
+```JSON
+{
+	"relative-selector-nesting-notation": "explicit"
+}
+```
+
+It was added in [the `17.8.0` version of Stylelint](https://github.com/stylelint/stylelint/releases/tag/17.8.0) by [Dmitrii Gusev](https://github.com/sw1tch3roo) and published on April 15, 2026.
+
+If you’re using an older version of Stylelint, it is possible to kinda achieve it by using a [`selector-nested-pattern`](https://stylelint.io/user-guide/rules/selector-nested-pattern/) rule:
+
+```JSON
+{
+	"selector-nested-pattern": [
+		"&",
+		{ "splitList": true }
+	]
+}
+```
+
+This guarantees that any nested selector will require `&` inside, and it will make a check for every selector in a list.
+
+In our codebase, when we migrated from `selector-nested-pattern` to `relative-selector-nesting-notation`, the new rule did catch a few previously not caught issues, as it seems to cover some edge cases the `selector-nested-pattern` skipped.
+
+## That’s It
+
+Are you using explicit nesting? Or maybe you evade nesting altogether?
+
+<del>Please, let me know in the comments below, fav and boost this post.</del>

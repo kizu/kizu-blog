@@ -1148,3 +1148,7 @@ ins {
 	text-decoration: none;
 	font-weight: 800;
 }
+
+button {
+	cursor: pointer;
+}
