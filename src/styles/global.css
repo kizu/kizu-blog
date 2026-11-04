@@ -897,6 +897,10 @@ pre:has(> code) {
 	box-shadow: 0 0.1em 0.7rem -0.5rem var(--CODE-SHADOW);
 	font-size: clamp(0.5em, 3vw + 0.25em, 0.88em);
 	line-height: 1.5;
+
+	aside > & {
+		margin-inline: 0;
+	}
 }
 
 :where(:not(figure)) > :not(h2,h3,h4,h5,h6) + pre {

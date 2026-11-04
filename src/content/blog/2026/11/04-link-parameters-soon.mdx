@@ -43,6 +43,31 @@ What if there was a better way?
 
 I won’t show any live examples in _this_ post — I already provided a few in [my article](https://kizu.dev/svg-linked-parameters-workaround/) about one workaround for the absence of native linked parameters, and below I will link to many articles, explainers, and other links that could do this better than me.
 
+<aside>
+
+In short, if you have some SVG, you will be able to mark some values there as _coming from outside_ by the custom `env ()` variables somewhere in SVG’s CSS:
+
+```CSS
+rect {
+	fill: env(--color, pink);
+}
+```
+
+And then pass this variable from external CSS:
+
+```CSS
+.icon {
+	background: url('my-icon.svg');
+	link-params: param(--color: deepPink);
+}
+```
+
+Note: an earlier versions of the spec were using `param (--foo, bar)`, but in one of the recent CSSWG meetings we [resolved](https://github.com/w3c/csswg-drafts/issues/14275#issuecomment-6495222952) to use the colon syntax, similar to how we now do this in `if ()`, and how it will be in named arguments of custom functions and mixins — once they will eventually get them.
+
+If you would try this in one of the experimental implementations, those could still use the older syntax.
+
+</aside>
+
 The main three things I want to point at in this post are:
 
 1. There are currently ongoing implementations for them in all major browsers.
