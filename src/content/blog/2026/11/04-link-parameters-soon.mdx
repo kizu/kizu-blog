@@ -1,0 +1,132 @@
+---
+title: 'Groundbreaking Upgrade to SVG is Approaching: Linked Parameters Are Almost Here'
+fancyTitle: 'Groundbreaking|Upgrade to SVG|Is Approaching:|<em>Linked Parameters</em>|Are Almost Here'
+description: '“This feature will change everything” might be a bit exaggerating, but it, surely, will change a lot, both in #CSS and #SVG. In this post, I’ll report on what is happening right now with it, and why I think this is so exciting.'
+tags: ['Wishlist', 'SVG', 'CSS']
+pubDate: '2026-11-04'
+mastodonPostId: ''
+
+current: {
+  drink: 'Yunnan tea',
+  music: 'Tom Figgins — Into the Maw',
+}
+bandcamp: {
+  track: '4184612218',
+  link: 'https://earthbornegames.bandcamp.com/track/into-the-maw-stereo-mix',
+}
+---
+
+
+## Table of Contents
+
+## Introduction
+
+“This feature will change everything” might be a bit exaggerating, but it, surely, will change a lot. In this post, I’ll report on what is happening right now with it, and why I think this is so exciting.
+
+<aside>
+
+I started this post in August, but never finished it. Now is the time! This feature is still not in any stable browser for it not to fit into my plan of publishing “Wishlist Wednesday” posts. After all, I _really_ wish I had it, years and years ago. So — for a “daily challenge” post this one can be lengthy and linky — it having a past draft is why.
+
+</aside>
+
+So! 🔜™️ the [Linked Parameters spec](https://drafts.csswg.org/css-link-params/)’s implementation will land in all major browsers. Yes, in all of them!
+
+## What Are Linked Parameters?
+
+Did you ever want to style an SVG file _from outside_? Like, when it is included in an `<img>`, or in a `background-image`, or in a `border-image`… Ok, the latter one is a stretch, but if you actually did try — join my club, haha.
+
+But, really. If you are working on some design system, and you need to style some SVG, the chances are — you are using some overengineered library that embeds an SVG into your JSX, and then it is included in your React bundle or something, dynamically re-rendering whenever something needs to change in that SVG.
+
+Megabytes of non-cached SVG code that has to be parsed and applied via JS. “Fun”!
+
+What if there was a better way?
+
+I won’t show any examples in _this_ post — I already provide a few in [my article](https://kizu.dev/svg-linked-parameters-workaround/), and below I will link to many articles, explainers, and other links that could do this better than me.
+
+The main three things I want to point at in this post are:
+
+1. There are currently ongoing implementations for them in all major browsers.
+
+2. There was a lot of interest from authors for them over time.
+
+3. I have my opinion over what this can do for the web platform in general.
+
+## Ongoing Implementations
+
+### Firefox Nightly
+
+It is already in Firefox Nightly! Here is [the meta bug in bugzilla](https://bugzilla.mozilla.org/show_bug.cgi?id=1812163), opened on **January 24th, 2023** by [Sebastian Zartner](https://github.com/sebastianz).
+
+The implementation started in **March 2026** by [Tyler Thrailkill](https://tylerthrailkill.com/), who picked up this after an [open invitation](https://tylerthrailkill.com/) from [Emilio Cobos Álvarez](https://crisal.io/) to mentor someone working on this feature. How cool is that?
+
+### Blink
+
+The work for Chromium was started by [Divyansh Mangal](https://github.com/goldenboy777) and continued by [Rahul Singh](https://chromium-review.googlesource.com/q/owner:rahsin@microsoft.com), following [the corresponding Microsoft Edge Explainer](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SVG/CSSLinkedParameters/explainer.md) that was published on **June 19, 2026**, and which, in turn, followed a [Blink design plan](https://docs.google.com/document/d/1Dn0v19ljsQD8EKSxsAj2JhoG7DbK_Y3kZc7z8Fu36jg/edit?tab=t.0#heading=h.b7buxfvoh942).
+
+Here is the [The Chrome Status page](https://chromestatus.com/feature/5095153430822912) for the feature.
+
+The initial [Chromium issue](https://issues.chromium.org/issues/41482962) was opened on **December 11, 2023** by [Rune Lillesveen](https://social.vivaldi.net/@rune) (_I think_ — Chromium issues obfuscates the emails, so this is my best guess).
+
+### WebKit
+
+There were also already [many PRs](https://github.com/WebKit/WebKit/pulls?q=is%3Apr+css-link-params+state%3Aclosed+author%3Anullhook) merged from [Taher Ali](https://github.com/nullhook) for WebKit, starting from **July 28, 2026**.
+
+And — it was mentioned in the [“Release Notes for Safari Technology Preview 254”](https://webkit.org/blog/18420/release-notes-for-safari-technology-preview-254/) on **October 8, 2026**! And it is listed as “supported” in [WebKit CSS Feature Status](https://webkit.org/css-status/#property-link-parameters), although I did not yet see it anywhere in the [Safari Release Notes](https://developer.apple.com/documentation/safari-release-notes).
+
+- - -
+
+So, in a span of a few months, actual work started and is still actively ongoing in all major engines!
+
+## A Bit of History
+
+This is something authors wanted for a long time!
+
+The [oldest proposal](https://www.w3.org/TR/SVGParamPrimer/) that I found was by [Doug Schepers](https://www.w3.org/People/Schepers/) — a working draft from **June 16, 2009**!
+
+Later, there was an [unofficial proposal draft](https://tabatkins.github.io/specs/svg-params/) by [Tab Atkins-Bittner](https://xanthir.com/), [Daniel Holbert](https://github.com/dholbert), and [Jonathan Watt](https://jwatt.org/) from **September 14, 2018**.
+
+Another [notable issue](https://github.com/w3c/csswg-drafts/issues/9872) that brought it forwards was one opened by Lea Verou on **January 28, 2024**.
+
+On **March 24, 2025** I published my [“Passing Data into SVG: Linked Parameters Workaround”](https://kizu.dev/svg-linked-parameters-workaround/) article. The code inside is obnoxious, but I highly recommend reading the article itself — there are many fun _bits_ inside. Not sure how much my article contributed to this being worked on right now, but it was at least mentioned in the Microsoft’s explainer, under [“Evidence of developer demand”](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SVG/CSSLinkedParameters/explainer.md#evidence-of-developer-demand).
+
+As usual, I mentioned many other people inside my article, and two notable mentions that I want to bring from it are those that led to me writing it article, from two very different points in time:
+
+- The spark in form of a [Mastodon thread](https://mastodon.social/@spiralganglion/113921387566692673) by [Ivy Reese](https://ivy.boo/) on **January 31, 2025**.
+
+- And the seed for my old draft in form of [an article](https://www.smashingmagazine.com/2013/06/clown-car-technique-solving-for-adaptive-images-in-responsive-web-design/) from **June 3, 2023** by [Estelle Weyl](https://estelle.github.io/).
+
+Another push was from a [potential Interop topic issue](https://github.com/web-platform-tests/interop/issues/996) opened by [Ollie Williams](https://olliewilliams.xyz/) on **September 4, 2025**. It was not accepted, which was kinda expected without any engines committing to it, but already mentioned above [Divyansh Mangal](https://github.com/goldenboy777) submitted initial [WPT tests](https://github.com/web-platform-tests/wpt/pull/55617) on **October 23, 2025**.
+
+[Patrick Brosset](https://patrickbrosset.com/) mentioned linked parameters in the first point of his [“What’s missing from SVG”](https://patrickbrosset.com/articles/2026-06-22-whats-missing-from-svg/) article from **June 22, 2026**.
+
+[Dave Letorey](https://letorey.co.uk/) [contributed](https://github.com/mdn/content/pull/44852) a [`link-parameters` CSS property MDN reference](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/link-parameters) in **July 2026**.
+
+[Vadim Makeev](https://pepelsbey.dev/) published [“One SVG, nine posters: CSS linked parameters”](https://pepelsbey.dev/articles/svg-link-params/) article on **September 23, 2026**.
+
+There was a [“Linked parameters = arbitrary customizations!”](https://lea.verou.me/blog/2026/icons/#linked-parameters-%3D-arbitrary-customizations!) section in the recent article by [Lea Verou](https://lea.verou.me/) from **October 11, 2026**.
+
+Finally, this year we got [an Interop submission](https://github.com/web-platform-tests/interop/issues/1346) from Ollie as well, and while we don’t know if it will be accepted, given _all browsers_ are working on this feature, I don’t think anyone will veto it.
+
+It still might not get into Interop, as there were still plenty of spec questions, but hey, the chances are now much higher! And — I am pretty sure — if it will not be in the interop for the next year, then it **will** be in 2028.
+
+---
+
+So… **27 years** after the initial proposal, we are finally getting it! And there is plenty of interest in them!
+
+## Why It Matters So Much
+
+If it was not apparent, I am very excited about this thing. If you met me this year, there was a big chance I mentioned linked parameters to you once or twice. Why?
+
+I think SVG is very underrated and underutilized. While CSS improved so much over the last few years, there are still things SVG can do better, or _differently enough_ that it is still needed.
+
+My big hope is that linked parameters will _connect_ the success of the modern CSS with SVG, and unlock SVG as a tool to be used on a much bigger scale than it was used before. Not just for icons.
+
+Being able to include SVG _anywhere_, without bundling, and make it fully styleable from outside… You could URL-encode it into your CSS (like with [this awsome tool](https://yoksel.github.io/url-encoder/) by [Yoksel](https://github.com/yoksel)), and then adjust many things inside just by passing various CSS variables through.
+
+Forget CSS functions and mixins (ok, don’t — they’re awesome), you could encapsulate some pretty nifty decorative logic inside such SVG file, and then share it in a fully configurable plain `.svg` file…
+
+Of course, SVG has many problems (performance, anyone? I will always recommend you to learn from [Ana Tudor](https://thebabydino.github.io/) from her work with SVG filters, like from her [“SVG Filters Guide: Getting Started with the Basics”](https://blog.master.dev/svg-filters-guide-getting-started-with-the-basics/) article, but the performance of them is pretty abysmal in _all_ browsers), and I also hope that heightened interest to it could bring more attention from both authors and browser engineers, motivating everyone to pay much more attention to SVG and encourage finding ways to improve it for everyone.
+
+---
+
+This is not the last time you hear about linked parameters from me, so — keep an eye on my future posts and maybe even articles, and keep an eye on browser changelogs. They’re _almost here_, and it was never so exciting if you care about both CSS and SVG. Honestly.
