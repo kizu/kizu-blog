@@ -1,0 +1,164 @@
+---
+title: 'Throwback to Space Toggles Boolean Algebra'
+fancyTitle: 'Throwback to|Space Toggles|Boolean Algebra'
+description: 'Today I point out at one section of my old #CSS Cyclic Toggles article that people could’ve missed behind the technique itself — ability to use values not just directly, but alongside some boolean logic.'
+tags: ['Throwback Thursday', 'CSS Conditions', 'CSS Variables', 'CSS']
+pubDate: '2026-11-05'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Mice Parade — Distant',
+}
+bandcamp: {
+  track: '2380503159',
+  link: 'https://miceparade.bandcamp.com/track/distant',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+<style>{`
+h1 {
+	font-size: 2.75rem;
+}
+
+button + button {
+	margin-block-start: 1rem;
+}
+`}</style>
+
+Remember my [“Cyclic Toggles”](https://kizu.dev/cyclic-toggles/)? If not, go read the first half of that article. Space toggles are cool, and I still use them more often than cyclic toggles, but _occasionally_, when I need more than a boolean value, I still reach out to the cyclic version of them.
+
+Of course, soon we will have proper conditions — [`if()` function](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/if) in CSS! It is already in Chromium-based browsers, just recently was mentioned in [Safari 27.3 Beta Release Notes](https://developer.apple.com/documentation/safari-release-notes/safari-27_3-release-notes), and we are only [waiting on Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=1981485) to get to it.
+
+But — that’s in the future. For now, we have IACVT and friends! You can read [“CSS Foundations: What is IACVT?”](https://www.bram.us/2024/02/26/css-what-is-iacvt/) article by [Bramus](https://www.bram.us/) if you want to learn more about this concept.
+
+And even though we have other hacky ways to get conditionals in CSS — Lea Verou’s [“Inline conditionals in CSS, now?”](https://lea.verou.me/blog/2024/css-conditionals-now/) outlines most of the currently available techniques — I think space and cyclic toggles can be the best.
+
+---
+
+They’re a bit verbose, but surprizingly readable!
+
+<LiveExample isScoped="button">
+```CSS
+button {
+	font-size: 2em;
+	border: 0.25em solid;
+	border-radius: 2lh;
+
+	/* Cyclic Toggles init! */
+	--state: var(--state--default);
+	--state--default:  var(--state,);
+	--state--hocus:    var(--state,);
+	--state--disabled: var(--state,);
+
+	/* Cyclic Toggles usage! */
+	color:
+		var(--state--default,  deepPink)
+		var(--state--hocus,    forestGreen)
+		var(--state--disabled, slateGray)
+	;
+
+	background:
+		var(--state--default,  pink)
+		var(--state--hocus,    lightGreen)
+		var(--state--disabled, whiteSmoke)
+	;
+
+	border-style:
+		var(--state--default,  solid)
+		var(--state--hocus,    double)
+		var(--state--disabled, dashed)
+	;
+
+	cursor:
+		var(--state--default,  pointer)
+		var(--state--hocus,    pointer)
+		var(--state--disabled, not-allowed)
+	;
+
+	/* Switching Cyclic Toggles values! */
+	&:hover,
+	&:focus-visible {
+		--state: var(--state--hocus);
+	}
+
+	&[disabled] {
+		--state: var(--state--disabled);
+	}
+}
+```
+```HTML
+<button type="button">I am a button!</button>
+
+<button type="button" disabled>Disabled button!</button>
+```
+</LiveExample>
+
+Neat, right? The parts that I especially like:
+
+- All the possible values are in one place, self-formatting as a small table of sorts.
+
+- When you want to switch the state, you only toggle _one single custom property_, and it just works.
+
+However, if you strive for useless perfection, you might notice that for the cursor we repeated the _obviously correct_ value of `pointer` twice.
+
+Can we somehow define this without repeating ourselves — or separating this value into a reusable variable… which then will need to be repeated? For just three states this is not the worst, but if we had like six or seven of those…
+
+This is what the today’s _throwback_ is to: the [“Space Toggles Logic”](https://kizu.dev/cyclic-toggles/#space-toggles-logic) — a section of my large article on Cyclic Toggles that, I think, many people might’ve missed. Totally because they were so fascinated by the technique itself and not because I cram too much info in my articles. For sure.
+
+I won’t repeat most of the info that I had in the article here, but I want to focus on probably the most common logical use case for boolean algebra related to cyclic toggles — the NOT thingy.
+
+If we return to how we defined the `cursor` above:
+
+```CSS
+button {
+	cursor:
+		var(--state--default,  pointer)
+		var(--state--hocus,    pointer)
+		var(--state--disabled, not-allowed)
+	;
+}
+```
+
+Then what we actually wanted to say is “if the state is disabled, use the `not-allowed` value, and otherwise use `pointer`”. How can we do it with cyclic toggles?
+
+This is how:
+
+<LiveExample isScoped="button" shouldHideHTML caption="This overrides the `cursor` from the previous example, but still works!">
+```CSS
+button {
+	--not-disabled: pointer var(--state--disabled);
+	cursor:
+		var(--state--disabled, not-allowed)
+		var(--not-disabled,)
+	;
+}
+```
+```HTML
+<button type="button">I am a button!</button>
+
+<button type="button" disabled>Disabled button!</button>
+```
+</LiveExample>
+
+The two limitations of doing this kind of boolean algebra are:
+
+1. We need an extra custom property — we can’t cram both values into the same declaration.
+
+2. We can’t define values of other space or cyclic toggles this way — the value should be directly used by a regular property.
+
+The gist of this technique is that `var(--state--disabled, not-allowed)` stays unchanged to regular usage of cyclic toggles, and all the magic goes into how the `--not-disabled` is defined and applied:
+
+- When the state is **disabled**, the `--state--disabled` is IACVT or `initial`, which makes the `not-allowed` to be returned. But what happens with the other part? When browser tries to apply `--not-disabled`, it looks inside and sees `pointer` alongside an IACVT value, and decides that the whole value is IACVT, thus going to the fallback of `var(--not-disabled,)` — emptiness, keeping only the `not-allowed` in the end.
+
+- When the state is **anything but disabled**, the `--state--disabled` is emptiness due to how cyclic toggles work, and thus the `var(--state--disabled, not-allowed)` also evaluates into it. And when we go inside `--not-disabled`, the `var(--state--disabled)` inside is also empty, thus `--not-disabled` returns just the other value that was defined alongside it — `pointer` in our case!
+
+That’s it. That’s the throwback.
+
+It is possible to do almost any logic with cyclic toggles this way — I recommend going through [the corresponding section](https://kizu.dev/cyclic-toggles/#space-toggles-logic) of my old article for the details on that. Although, that article is more than four years now already, wow! So if I were to write it today, I would likely explain/structure it differently. But also, at the time, I was just too excited to share the technique, so maybe in similar circumstances it would still end up in the same form… Who knows!
+
+---
+
+Did you know about cyclic toggles? Did you use them? On their own, or alongside logic gates? Do you still not understand something that’s going on? Feel free to ask me any questions, I will be happy to reply.
