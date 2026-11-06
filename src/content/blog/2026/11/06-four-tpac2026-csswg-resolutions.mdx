@@ -1,0 +1,147 @@
+---
+title: 'Four Resolutions From TPAC 2026 CSSWG Meetings'
+fancyTitle: 'Four Resolutions|From TPAC 2026|CSSWG Meetings'
+description: 'Last week TPAC 2026 happened. I attended it remotely, and participated in a bunch of #CSS Working Group meetings. There were many discussions and resolutions, but I want to focus on four of them. They’re pretty nice! But also I am biased, as they’re all something I wrote about before or will benefit from.'
+tags: ['CSSWG', 'CSS']
+pubDate: '2026-11-06'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'SHINPIN — OOMORI SEIKO',
+}
+bandcamp: {
+  track: '3829889097',
+  link: 'https://specific.bandcamp.com/track/shinpin',
+}
+---
+
+Last week [TPAC 2026](https://www.w3.org/news-events/tpac/2026/) happened. I attended it remotely, and participated in a bunch of CSS Working Group meetings.
+
+There were many discussions and resolutions, but I want to focus on four of them. They’re pretty nice! But also I am biased, as they’re all something I wrote about before or will benefit from.
+
+## Table of Contents
+
+## “Shrink to Fit” or “Shrinkwrap”
+
+If you missed it, at the beginning of this year, I published my [“Solving Shrinkwrap: New Experimental Technique”](https://kizu.dev/shrinkwrap-solution/) article, in which I presented a CSS-only solution for one of the oldest unsolved CSS problems — an ability to shrink some container that contains wrapped text to fit the lines of that text _exactly_.
+
+If you developed for web for a while, you’ve likely stumbled upon this problem.
+
+My technique is very hacky and requires content duplication, although it is based on [my older simpler technique](https://kizu.dev/shrinkwrap-problem/) which can be applied for a smaller number of use cases.
+
+I never know how much my weird experiments impact what happens behind the scene in how browsers prioritize what to work on, but I hope that this was one of the cases where my article gave this small push for Google to [write an explainer](https://github.com/explainers-by-googlers/css-shrink-to-fit/) and [start prototyping](https://groups.google.com/a/chromium.org/g/blink-dev/c/H8iIAHDHijc/m/M_3FnVA0FwAJ) this as a native feature in CSS — thanks to [Kent Tamura](https://github.com/tkent-google) and [Ian Kilpatrick](https://github.com/bfgeek)!
+
+The [corresponding CSS issue](https://github.com/w3c/csswg-drafts/issues/191) was opened by [yisibl](https://github.com/yisibl) in 2016 and now, ten years later, we got a [CSSWG resolution to work on solving this](https://github.com/w3c/csswg-drafts/issues/14551#issuecomment-6525809870):
+
+> RESOLVED: Work on solving this as either a new keyword or a modification of `fit-content` and automatic sizes.
+
+The details will still need to be ironed out, but this is very exciting!
+
+
+## Aligning to the Middle of a Font’s Cap-Height
+
+This is another issue I have a technique about! Not on my main site, but here in this blog, from almost three years ago: [“Cap-Height Vertical Align”](https://blog.kizu.dev/cap-height-align/).
+
+This is also something that everyone stumbles once in a while when trying to align some icons to some text.
+
+Usually, those icons come before Capitalized text, and when on the left of the big capital letters, the default `vertical-align: middle` just does not look right — all because the `middle` is defined as the middle of the font’s _x-height_ metric!
+
+But, in many cases, what you actually want is the middle of the cap-height. For many years, this was one place where people tended to use magical numbers like `margin-top: -0.25em` and so on.
+
+The [corresponding CSSWG issue](https://github.com/w3c/csswg-drafts/issues/4707) was opened by [Tyler Sticka](https://tylersticka.com/) in 2020, and now we have [an official resolution](https://github.com/w3c/csswg-drafts/issues/4707#issuecomment-6499925783) to add it to CSS’s `vertical-align`:
+
+> RESOLVED: add a `cap-middle` value
+
+Hooray!
+
+
+## Passing Current Color Through Linked Parameters
+
+There were a few issues related to linked parameters — a feature I am very very very excited about — see [“Groundbreaking Upgrade to SVG Is Approaching: Linked Parameters Are Almost Here”](https://blog.kizu.dev/link-parameters-soon/) from two days ago on why.
+
+[One of the issues](https://github.com/w3c/csswg-drafts/issues/14447), opened by [Lea Verou](https://lea.verou.me/) two months ago, could feel obvious, but it is not as easy as you might think it is.
+
+The problem itself is something I glanced over in my [“Passing Data into SVG: Linked Parameters Workaround”](https://kizu.dev/svg-linked-parameters-workaround/) article, in the section [“Problem of the Current Color”](https://kizu.dev/svg-linked-parameters-workaround/#problem-of-the-current-color) — the `currentColor` inside any color values or functions is not evaluated until pretty late in CSS — further than the “computed style” step.
+
+And the definition of linked parameters needs to be pretty precise about when and how this happend for different types. The [other issue](https://github.com/w3c/csswg-drafts/issues/14495), opened by [Elika J. Etemad](https://fantasai.inkedblade.net/), about a more general question about timings was not yet fully resolved, but we got this resolution for the Lea’s issue:
+
+> RESOLVED: `param(color)` allows passing color to embedded content, and is implemented on the recieving side via `:root { color: env(color, CanvasText) }` in the UA stylesheet
+
+This confirms that yes, this one of the most common future use cases for linked parameters — ability to style some icon with the color of the text it is used in — will be handled. Which is great!
+
+And we got a hint at the possible future expansions of the `param()` — aside from the ability to pass custom functions into custom environmental variables, there will be a set of predefined named values that could be passed this way, with the `color` being the first of them.
+
+## Shorthand Custom Property Registration
+
+While I don’t have a _dedicated_ article or post about registered custom properties, I use them — and write about them — a lot. For one example, see my [“Captured Custom Properties”](https://blog.kizu.dev/captured-custom-properties/) article, or almost any of my recent articles on [my main site](https://kizu.dev/).
+
+For a fun example, you can look at the already mentioned article about linked parameters… In its [“Querrying the Actual Color”](https://kizu.dev/svg-linked-parameters-workaround/#querrying-the-actual-color) section, I use a few clusters of registered custom properties like
+
+```CSS
+@property --_r1 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+@property --_r2 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+@property --_r3 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+@property --_r4 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+@property --_r5 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+@property --_r6 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+@property --_r7 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+@property --_r8 {
+  syntax: "<color>"; initial-value: red; inherits: false }
+```
+
+Historically, `@property` syntax was always pretty verbose. I even [made an attempt](https://github.com/w3c/css-houdini-drafts/issues/994) to propose to make some of its descriptors optional in 2020, but not successfully at the time.
+
+But! Years passed, people started using `@property` more and more, and inside CSSWG views over that changed.
+
+Since then, a few issues were resolved, all of which simplify how we could do those registrations:
+
+- Around a year ago, [CSSWG resolved to be able to use commas to list multiple properties that share all their details](https://github.com/w3c/csswg-drafts/issues/7523#issuecomment-3683970305) as a part of a shorthand issue opened by [korenevskiy](https://github.com/korenevskiy).
+
+- This March, [an issue about making the descriptors optional](https://github.com/w3c/csswg-drafts/issues/13211) by [Christoph Päper](https://github.com/Crissov) [was resolved](https://github.com/w3c/csswg-drafts/issues/13211#issuecomment-4040028009).
+
+And now, as a part of [another issue](https://github.com/w3c/csswg-drafts/issues/14442) from [Tab Atkins-Bittner](https://xanthir.com/), [the original ask about shorthand declarations](https://github.com/w3c/csswg-drafts/issues/7523) [was resolved](https://github.com/w3c/csswg-drafts/issues/14442#issuecomment-6521078852)!
+
+One thing that is not 100% clear is if the shorthand definition could a) also contain comma-separated lists of properties, and b) have the initial value as optional. This [will need to be clarified](https://github.com/w3c/csswg-drafts/issues/14442#issuecomment-6697219819)!
+
+Given one of the ideas with the shorthands was to make them consistent with the lists of arguments of functions and mixins, I suspect that lists in shorthands would not be allowed, or won’t work the same as with the list shorthands for regular `@property` definitions, so, if we were to combine all the current resolutions, the above cluster of custom properties could be defined in one of two ways. As a list:
+
+
+```CSS
+@property --_r1, --_r2, --_r3, --_r4,
+          --_r5, --_r6, --_r7, --_r8
+          	{
+          		syntax: "<color>";
+          		inherits: false;
+          	}
+```
+
+or, as a few separate shorthands:
+
+```CSS
+@property --_r1<color>;
+@property --_r2<color>;
+@property --_r3<color>;
+@property --_r4<color>;
+@property --_r5<color>;
+@property --_r6<color>;
+@property --_r7<color>;
+@property --_r8<color>;
+```
+
+Although, there is also one unclear moment about `inherits: false` — when omitted, its value is `true`, and the shorthand notation was, for now, defined without a way to override this part of the definition. So, another thing to resolve!
+
+So, I guess in the end this is not _fully resolved_, and I don’t know if any browsers did implement any of those resolutions I mentioned yet, but all of this combined is pretty crucial for CSS mixins, so I expect the kinks to be smoothed over the future CSSWG meetings.
+
+I can’t wait to stop writing those lengthy clusters of `@property` registrations!
+
+## That’s Not All!
+
+There were more things discussed, but those were the issues that were closest to me. You can look at the full [agenda from CSSWG TPAC 2026 meetings](https://github.com/orgs/w3c/projects/252) and see if you will spot anything closer to you. But note that many things there are pretty technical and edge casey.
