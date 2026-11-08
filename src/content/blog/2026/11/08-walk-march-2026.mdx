@@ -1,0 +1,151 @@
+---
+title: 'Photo Walk, March'
+fancyTitle: true
+description: 'As usual, with a big delay, blogging about a walk I took this March, with the photos I published earlier this year on Pixelfed already.'
+tags: ['Photos', 'Pixelfed', 'Personal']
+pubDate: '2026-11-08'
+eventDate: '2026-03-21'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Envy — Awaken Eyes',
+}
+bandcamp: {
+  track: '1500973076',
+  link: 'https://envy.bandcamp.com/track/awaken-eyes',
+}
+---
+
+After Pixey.org seemed to disable the Pixelfed API, it stayed this way, so I still don’t have a good way of retrieving the info I need for reposting photos easily from it here. But! My Firefox’s console history kept the quickly written script that I did for getting this info from the opened photo page there, and it still works!
+
+<details>
+<summary><u>My messy script, so I could reuse it from here the next time lol</u></summary>
+
+```js
+(() => {
+	const photo = document.querySelector('.card-img-top');
+	const data = {
+		url: document.URL,
+		"content": document.querySelector('.status-text')?.textContent,
+		"created_at": document.querySelector('.media-body .timestamp')?.title,
+		"reblogs_count": Number(document.querySelector('button:has(.fa-retweet)')?.textContent.trim() || 0),
+		"favourites_count": parseInt(document.querySelector('button:has(.fa-heart)')?.textContent.trim(), 10),
+		"edited_at": null,
+		"replies_count": parseInt(document.querySelector('button:has(.fa-comment)')?.textContent.trim(), 10),
+		"location": document.querySelector('.location')?.textContent.trim(),
+		"photos": [
+			{
+				"url": document.querySelector('.card-img-top')?.src,
+				"preview_url": photo?.src.replace('.jpg', '_thumb.jpg'),
+				"width": Number(photo?.getAttribute('width')),
+				"height": Number(photo?.getAttribute('height')),
+				"alt": photo?.alt,
+			},
+		]
+	};
+	const fileName = `${document.URL.match(/\d+$/g)[0]}.json`;
+	const blob = new Blob([JSON.stringify(data, null, 4)], {
+		type: 'application/json'
+	});
+
+	const pseudoLink = document.createElement("a");
+	pseudoLink.href = URL.createObjectURL(blob);
+	pseudoLink.download = fileName;
+	pseudoLink.click();
+
+	return blob;
+})();
+```
+
+</details>
+
+## Table of Contents
+
+## Trees
+
+It was late March, and leaves started appearing on the trees. Although, for the bigger oaks it was harder to see the leaves on their big branches at the top sometimes.
+
+![That’s a lot of branches.](pixelfed:941477030338784270)
+
+Deeper in the forest, I encountered a few nicely-looking glades full of small flowers. I thought this one specifically was nice, with the hollow at the ground level. You could imagine some animal using it as their home:
+
+![](pixelfed:941477902061096057)
+
+Some of the older oaks in the forest are pretty tall! In the later [People](#people) section it will be easier to understand how tall they can be, but yeah, they can get tall.
+
+![](pixelfed:941478665449807048)
+
+There were occasional overgrown stumps, sometimes with something resembling inventory tags.
+
+![](pixelfed:941479329500835074)
+
+## Flowers
+
+I don’t have a proper macro lens, but I like to make photos of small flowers like these.
+
+![](pixelfed:941675490614478902)
+
+Maybe I need to get something more dedicated to macro, although I wonder if you really need a proper flash setup for that? I enjoy not having to think about flashes or tripods, but maybe the way I shoot will be fine for those flowers, after all, they’re not quick insects that will run away from me.
+
+![Lost a bit of detail in the petals here.](pixelfed:941675711621920890)
+
+For the flowers on the trees and bushes, a macro lens is not as required, of course.
+
+![](pixelfed:941675831594113170)
+
+But going closer to the ground, yeah, I’d love a bigger magnification. First time noticed these weird green flowers.
+
+![](pixelfed:941675966728292527)
+
+## Cherry Blossoms
+
+And, of course, there were many cherry flowers.
+
+![](pixelfed:942000492859664056)
+
+![](pixelfed:942000654105417418)
+
+![](pixelfed:942000779927779035)
+
+![](pixelfed:942000902374635235)
+
+The above photo could also benefit from a macro lens — some of the branches that were closer to the ground had some nice details.
+
+## Birds
+
+Where there are tree, there are birds.
+
+![Birb.](pixelfed:942399308419245152)
+
+I guess, for those, I’d need the opposite of a macro lens, haha. But my 75mm (150mm equivalent for the full frame from my m43) was good enough for some of them.
+
+![](pixelfed:942399433427698814)
+
+Pidgeons!
+
+![](pixelfed:942399545739195538)
+
+Magpie!
+
+![](pixelfed:942399654643102890)
+
+## People
+
+When the forest got closer to the terrace, you could see more people.
+
+![](pixelfed:942774368115796758)
+
+I like how trees form arcs on top with their branches. Although those oaks were younger than some other that I saw, it was still fun to think about the scale differences between people and the trees.
+
+![](pixelfed:942774477845850922)
+
+As usual for my walks, a photo of [La Défense](https://en.wikipedia.org/wiki/La_D%C3%A9fense) from the terrace.
+
+![](pixelfed:942774568940038976)
+
+That was a Saturday, a nice spring day, so plenty of people walking along the terrace.
+
+![Some dogs, some bycicles.](pixelfed:942774709907618644)
+
+I need to get out more often, take my camera more often, and publish stuff here more often as well!

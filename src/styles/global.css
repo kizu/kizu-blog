@@ -921,6 +921,10 @@ figure > pre {
 	border-radius: 0;
 }
 
+details > pre {
+	max-inline-size: 100%;
+}
+
 figure > *:nth-last-child(1 of :not(style, figcaption, fieldset)) {
 	margin-block-end: 0;
 }
