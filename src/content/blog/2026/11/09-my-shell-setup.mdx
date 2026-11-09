@@ -1,0 +1,60 @@
+---
+title: 'My Shell Setup'
+fancyTitle: true
+description: 'A very quick post about my zsh setup. Might update over time if anything changes!'
+tags: ['Process']
+pubDate: '2026-11-09'
+mastodonPostId: ''
+
+current: {
+  drink: 'Infusion of hibiscus, apples, rosehip, and orange peels, with cherry flavor.',
+  music: 'Mammal Hands — Sleeping Bear',
+}
+
+bandcamp: {
+  track: '2193570082',
+  link: 'https://mammalhands.bandcamp.com/track/sleeping-bear',
+}
+---
+
+Occasionally, I set up new devices/environments, and there I want to use the same shell setup that I use elsewhere. This post is so I could just copy things from it instead of looking into the `./zshrc` on my other devices.
+
+---
+
+Long time ago, for quite some time, my setup was using forked [Mathias Bynens](https://mathiasbynens.be/)’ [dotfiles](https://github.com/mathiasbynens/dotfiles) with a bunch of stuff.
+
+But it felt like _a lot_, and at some point I moved to [Oh My Zsh](https://ohmyz.sh/) (created by [Robby Russell](https://www.planetargon.com/about/robby-russell), maintained by [Marc Cornellà](https://github.com/mcornella) and [Carlo Sala](https://github.com/carlosala)).
+
+For a few months, I used the default theme there, but at some point wanted to find something better.
+
+What I did is set `ZSH_THEME="random"` in my `~/.zshrc`, then restarted the terminal a few times until I got to one that felt nice, stayed on it for a bit, then when I found something I did not like, switched to random again, and so on. Here is [omyzsh wiki entry on Themes](https://github.com/ohmyzsh/ohmyzsh/wiki/themes) from which I got the info on how to use the random theme.
+
+In the end, I stopped my search when trying the [`refined`](https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/refined.zsh-theme) theme by [Kasper Isager Dalsgarð](https://github.com/kasperisager) that is based on the [“Pure”](https://github.com/sindresorhus/pure) zsh prompt by [Sindre Sorhus](https://sindresorhus.com/) and which also credits [Julien Nicoulaud](https://github.com/nicoulaj)’s [`nicoulaj`](https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/nicoulaj.zsh-theme) theme for some inspirations.
+
+The reasons why I decided to choose it:
+
+- I wanted to have the prompt itself on a separate line from the current location and all the metadata, so visually it always starts in the same place and creates pseudo-“headers” in a way.
+
+- It should reflect git status, but not take too long — I struggled with performance of some other themes, especially on bigger monorepo setups.
+
+- After you run a command, it should output how long it took. The `refined` omits the output for when commands run quickly, but for anything longer it outputs the total time, which can be very helpful in debugging CLI perf.
+
+So, `ZSH_THEME="refined"` it is.
+
+Here is how it looks like when I am in my blog repo on the main branch:
+
+```sh
+kizu-blog main*
+❯
+```
+
+The one config adjustment in the `~/.zshrc` that I did to this theme is this:
+
+```sh
+# Override the refined theme to remove “git:” prefix
+zstyle ':vcs_info:*:*' formats "$FX[bold]%r$FX[no-bold]/%S" "%b" "%%u%c"
+```
+
+That’s basically overriding [the same line that is defined in this theme](https://github.com/ohmyzsh/ohmyzsh/blob/9f2bbebdf78322ab11a4cc57e2932fcbf6fb3fa8/themes/refined.zsh-theme#L36) and removing the `%s: ` part (which stands for version control — I am only using git, I have no need to mentioning anything else here).
+
+That’s it! That’s the setup! I think I might have some git aliases and stuff, but I will save them for the future… Or maybe just update this post once I have time.
