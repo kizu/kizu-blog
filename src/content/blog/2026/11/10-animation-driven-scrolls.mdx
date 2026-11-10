@@ -1,0 +1,177 @@
+---
+title: 'Animation-Driven Scrolls'
+fancyTitle: 'Animation-Driven Scrolls'
+description: 'A quick observation about a not practical exprimental technique I was playing from time to time for around three years.'
+tags: ['scroll-snap', 'CSS', 'Observation']
+pubDate: '2026-11-10'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'James Primate — RW_48 - Wind Chimes',
+}
+
+bandcamp: {
+  track: '628859740',
+  link: 'https://jamesprimate.bandcamp.com/track/rw-48-wind-chimes',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table Of Contents
+
+## Past Experiments
+
+Three years ago, I posted my [“Observation: Snappy Scroll-Start”](/snappy-scroll-start/) post on this blog. There, I talked about how we can use `scroll-snap` and a one-time animation to emulate the `scroll-start`. Since then, [that property’s proposal](https://github.com/w3c/csswg-drafts/issues/6986) from [Adam Argyle](https://nerdy.dev/) (I first properly learned about scroll-snap from his [“Oh Snap!”](https://www.youtube.com/watch?v=34zcWFLCDIc) talk at [CSS Day 2022](https://cssday.nl/2022/)) did not go anywhere yet, but we at least got [`scroll-initial-target`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-initial-target) which works kinda like what I did in my experiment from 2023, but only in Chrome for now.
+
+Since then, I did experiment a bit more with this combo — animations & scroll-snap, and there was one idea [I experimented in 2024 with](https://codepen.io/kizu/details/ZEPbwEY) that I never fully finished.
+
+Yesterday, [I was reminded](https://infosec.exchange/@rebane2001/117585746768324448) about these experiments by [Lyra Rebane](https://lyra.horse/) in Mastodon (I stole the name for this post from her), and decided to at least publish something quick, more fitting into my [“observation”](/tags/observation) tag rather than a fully fledged technique.
+
+## The Idea
+
+The idea is pretty simple: what if we had an overflowing container, inside which we would have an element with scroll-snap, and then we animated the position of this element?
+
+Toggle this below to start the animation:
+
+<LiveExample isScoped="example" shouldHideCSS shouldHideHTML caption="In Firefox, it could be a bit buggy after it starts, like if you click somewhere else or scroll inside. Or just wait — it can randomly stop snapping.">
+```CSS
+:scope {
+	--is-running: ;
+}
+:scope:has( > label > :checked) {
+	--is-running: initial;
+}
+
+.container {
+	width: 200px;
+	height: 200px;
+	border: 1px solid;
+	overflow: auto;
+	scroll-snap-type: both mandatory;
+	container-type: size;
+
+	/* Hack to make it work in Firefox */
+	:scope:active & {
+		scroll-snap-type: none;
+	}
+}
+
+.content {
+	position: relative;
+	width: 700px;
+	height: 700px;
+	background: radial-gradient(hotPink 33%, 0, pink 66%, 0, deepPink)
+}
+
+.anchor {
+	position: absolute;
+	scroll-snap-align: center;
+
+	animation:
+		--move-x 3.1s linear infinite alternate,
+		--move-y 1.1s linear infinite alternate
+	;
+	--is-not-running: paused var(--is-running);
+	animation-play-state:
+		var(--is-running, running)
+		var(--is-not-running,)
+	;
+	&::before {
+		content: "⚓️";
+	}
+}
+
+@keyframes --move-x {
+	from { left: calc(50cqw + 1em); }
+	to   { left: calc(100% - 50cqw - 1em); }
+}
+@keyframes --move-y {
+	from { top: calc(50cqh + 1em); }
+	to   { top: calc(100% - 50cqh - 1em); }
+}
+```
+```HTML
+<label>
+	<input type="checkbox" switch />
+	<u>Run the animation</u>
+</label>
+
+<div class="container">
+	<div class="content">
+		<div class="anchor"></div>
+	</div>
+</div>
+```
+</LiveExample>
+
+I won’t post the full CSS for this example, it is messy and a lot of it is not related to the effect itself, but the crucial parts are:
+
+```CSS
+.container {
+	overflow: auto;
+	scroll-snap-type: both mandatory;
+}
+
+.anchor {
+	position: absolute;
+	scroll-snap-align: center;
+	animation:
+		--move-x 3.1s linear infinite alternate,
+		--move-y 1.1s linear infinite alternate
+	;
+}
+
+@keyframes --move-x {
+	from { left: calc(50cqw + 1em);        }
+	to   { left: calc(100% - 50cqw - 1em); }
+}
+@keyframes --move-y {
+	from { top: calc(50cqh + 1em);        }
+	to   { top: calc(100% - 50cqh - 1em); }
+}
+```
+
+Interestingly, if we were to replace this with a transform, it will still work, but will be much more choppy in Firefox and Chrome, and won’t work at all in Safari (even the anchor will disappear) — I guess that’s the difference between timings of scroll/snap/transform:
+
+<LiveExample class="example2" isScoped="example" shouldHideCSS shouldHideHTML>
+```CSS
+:scope.example2 .anchor {
+	top: 0;
+	left: 0;
+	animation-name: --move-x-tf, --move-y-tf;
+}
+
+@keyframes --move-x-tf {
+	from { transform: translateX(calc(50px + 1em)); }
+	to   { transform: translateX(calc(700px - 50cqw - 1em)); }
+}
+@keyframes --move-y-tf {
+	from { translate: 0 calc(50cqh + 1em); }
+	to   { translate: 0 calc(700px - 50cqh - 1em); }
+}
+```
+```HTML
+<label>
+	<input type="checkbox" switch />
+	<u>Run the animation</u>
+</label>
+
+<div class="container">
+	<div class="content">
+		<div class="anchor"></div>
+	</div>
+</div>
+```
+</LiveExample>
+
+## What Can We Do With This?
+
+Not sure! In production, likely not much. It feels like scroll-snap is pretty buggy all around when animations are involved — I will need to find spoons to reproduce some of the things I saw.
+
+But I have a few ideas of further experiments, and if you want, you can join me, and do some of them before me — less work for me!
+
+For example, instead of animations, we could use transitions. Or we could maybe even add scroll-driven animations, like use this for “delegating” scroll from one container into another… Or use it for something like a guided tour over something like a map. But I imagine without proper and smooth transforms support, the offset-path won’t work well too, and it might be painful trying to reproduce it with just animations of inset properties… Unless we add anchor positioning maybe, as it can be transitioned? And — with anchor positioning soon being able to follow transforms, could we anchor something to an element with an animated transform, and then snap our scroll to that anchor…
+
+Anyways. The above is the thoughts I usually get when I look at some CSS feature, and I wish I could explore this full-time, and not just in a few hours after work.

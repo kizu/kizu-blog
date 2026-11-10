@@ -18,6 +18,7 @@ const {
 	caption,
 	isScoped = false,
 	require: requireProp,
+	class: originalClass,
 	...props
 } = Astro.props;
 
@@ -57,7 +58,7 @@ const require = requireProp
 
 <figure
 	{...props}
-	class:list={[props.class, require, optionalScopeClass, isScoped ? 'require-at-scope' : undefined]}
+	class:list={[originalClass, require, optionalScopeClass, isScoped ? 'require-at-scope' : undefined]}
 >
 	<Fragment set:html={foundHTML} />
 	<Fragment set:html={html} />
