@@ -1,0 +1,104 @@
+---
+title: 'My HTML Wishlist: Partial HTML Includes'
+fancyTitle: 'My HTML Wishlist:|Partial HTML Includes'
+description: 'In which I point to the possible future of #HTML, and dream about the impossible one.'
+tags: ['Fragment Includes', 'Wishlist', 'HTML']
+pubDate: '2026-11-11'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Dirty Three — Hope (Live Radio)',
+}
+
+bandcamp: {
+  track: '500771298',
+  link: 'https://dirtythree.bandcamp.com/track/hope-live-radio',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table Of Contents
+
+## Fragment Includes
+
+Over the last few years, some progress is happening in the land of HTML includes.
+
+Two weeks ago, I remotely participated in a [TPAC](https://www.w3.org/news-events/tpac/2026/)’s [“It’s time for client side includes”](https://github.com/w3c/tpac2026-breakouts/issues/41) breakout session.
+
+There, [Noam Rosenthal](https://github.com/noamr) presented the latest proposal & prototype that follows the work on [declarative partial updates](https://github.com/WICG/declarative-partial-updates) — [Fragment Includes](https://github.com/WICG/declarative-partial-updates/blob/main/fragment-include-explainer.md).
+
+This is very cool, and a great step towards not requiring build tools for simple HTML websites, among other things.
+
+Even outside this discussion, the need for something like that is obvious: there is now even a W3C [“No Build Community Group”](https://www.w3.org/groups/cg/nobuild/) organized by [Ollie Williams](https://olliewilliams.xyz/), and during the same TPAC the group had a meeting where this need was mentioned.
+
+I won’t go in detail about what the Fragment Includes are — I invite you to read [the explainer](https://github.com/WICG/declarative-partial-updates/blob/main/fragment-include-explainer.md), but, in short, in introduces a way to include files that are served with a `text/fragment` MIME type with a canonical `.fragment` extension, and stream their content right into HTML like this (syntax might change in the future):
+
+```HTML
+<div id="profile"><?start name="profile">Loading...<?end></div>
+<template for="profile" src="user-profile.fragment"></template>
+```
+
+However! While I would love to see Fragment Includes in all browsers yesterday, I still think we need more. You know, I always want more, haha.
+
+## Naively, I Want More
+
+What do I want? Or — why I think Fragment Includes are not enough?
+
+The main limitation is that _this requires its own MIME type_. You can’t just take some HTML file and — whoop — insert its content into another HTML file.
+
+And that is what I really want.
+
+Imagine if instead of including a `user-profile.fragment`, which is just a headless snippet of HTML that you can’t open on its own, you could do
+
+```HTML
+<div id="profile"><?start name="profile">Loading...<?end></div>
+<template for="profile" src="user-profile.html#content"></template>
+```
+
+Note the `user-profile.fragment` → `user-profile.html#content`.
+
+Of course, the file in question needs to _opt-in_ into being includable, and for that something like a new `<meta>` tag that would advertise a list of `id`s that can be included would be enough (or maybe some other mechanism, like, extension to a `<!doctype>`? Oh, heresy!).
+
+Then, when the browser will need to include this content, it will know that it needs to start parsing the `user-profile.html`, check for the `<meta>` that allows `content`, and once encountering the element with the `id="content"`, take its contents and include (only inner contents).
+
+Any HTML page could then be its own stand-alone page with all the content, navigation, and extras, but any external page could take important snippets of it and put them inside them.
+
+## Other Includes
+
+When I look around, I see this pattern in many other places.
+
+SVG has fragment includes, with [`<view>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/view), or with other ways. [Vadim Makeev](https://pepelsbey.dev/) wrote a [nice article about SVG Sprites](https://pepelsbey.dev/articles/svg-sprites/) in 2022.
+
+[Obsidian](https://obsidian.md/) has `.md` includes!
+
+You can do `[[Some Document#fragment]]` or `![](some-document.md#fragment)` — use the image syntax — and it will include the corresponding section right in place!
+
+I think I remember some other similar cases where you could include things in this way, but they escape me for now.
+
+## Why We Can’t Have This?
+
+Why can’t we have _this_? Alongside the Fragment Includes?
+
+I think most arguments that I saw:
+
+1. HTML parser, and the fear of buffering too much.
+
+2. Not being able to understand that document explicitly opts-in, all the CORS stuff, etc.
+
+3. Performance issues, like the fear of including too much, downloading the content of 404 pages etc.
+
+TBH, from my point of view, megabytes of JS bundles that we get today are much worse in every regard.
+
+And nothing is impossible — HTML parser could have a mode that only turns on when the content is accessed through the include, it could be limited to same-origin, and if everyone would already use includes inside the included files, we could skip any of them outside our fragment, as we know that we don’t include anything from there.
+
+When I am thinking about possibilities — and workarounds that people will do like still having the content in `.fragment` only, and then including it both on the inner page and outer, leading to an extra request where it is not necessary — I really want us to solve this.
+
+Maybe not today, or in this decade, but eventually?
+
+Again — I am really happy there is progress at least on something, but I always want more.
+
+Like, you can dream, right? It is nice to have things in your wishlists that are achievable — and are on the horizon, like my last week’s post about [SVG Linked Parameters](https://blog.kizu.dev/link-parameters-soon/), but I think it is important to re-iterate your wishes for the things you know were already discarded.
+
+There were many things that were considered impossible in the past, and we have them in our browsers today. Maybe one day, someone will go and come up with a way to achieve this in an elegant and tolerable way, and we could include HTML inside our HTML happily ever after.
