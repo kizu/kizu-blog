@@ -1,0 +1,338 @@
+---
+title: 'Extracting Color Channels'
+fancyTitle: true
+description: 'Throwback to my weird #CSS technique for bitwise deconstruction of some color via relative color syntax and some math, and then reassembling its bits via container style queries, all while we don’t have native `color-extract()` function.'
+tags: ['Throwback Thursday', 'Colors', 'Style Queries', 'CSS Variables', 'CSS']
+pubDate: '2026-11-12'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'fox capture plan — Unlock the Future',
+}
+bandcamp: {
+  track: '591613358',
+  link: 'https://foxcaptureplan.bandcamp.com/track/unlock-the-future',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+Today’s throwback is to a [“Querrying the Actual Color”](https://kizu.dev/svg-linked-parameters-workaround/#querrying-the-actual-color) section from my last year’s [“Passing Data into SVG: Linked Parameters Workaround”](https://kizu.dev/svg-linked-parameters-workaround/) article.
+
+There, I show how we can extract separate channels from some known (non-`currentColor`) color.
+
+Like, if you had a design-token like `--my-nice-color`, with this technique you could split it into R, G, B, and A and _put them into separate custom properties_.
+
+You could also do that in other color spaces, I guess, but I only did it for sRGB — feel free to do the same for others, if you want!
+
+Here is an example — if you will open devtools and adjust the `--color`, you will see how the `<output>` elements get that color’s extracted channels!
+
+The code for it, if you don’t remember from the original article… Just scroll down.
+
+<LiveExample isScoped>
+```HTML
+<div class="encoded" style="--color: deepPink">
+	<div class="swatch"></div>
+	<output class="r"></output>
+	<output class="g"></output>
+	<output class="b"></output>
+	<output class="a"></output>
+</div>
+```
+```CSS
+.swatch {
+	width: 100px;
+	height: 100px;
+	background: var(--color);
+}
+
+output::before {
+	counter-reset: --value var(--value);
+	content: attr(class) ': ' counter(--value);
+}
+
+.r { --value: var(--r) } .g { --value: var(--g) }
+.b { --value: var(--b) } .a { --value: var(--a) }
+
+.encoded {
+	--_0: color(srgb 0 0 0);
+	--p: from var(--color) 0 0 0 /;
+	--_a: down, 255 * alpha /;
+
+	--_r1: rgba(var(--p) rem(            r,        2));
+	--_r2: rgba(var(--p) rem(round(down, r / 2),   2));
+	--_r3: rgba(var(--p) rem(round(down, r / 4),   2));
+	--_r4: rgba(var(--p) rem(round(down, r / 8),   2));
+	--_r5: rgba(var(--p) rem(round(down, r / 16),  2));
+	--_r6: rgba(var(--p) rem(round(down, r / 32),  2));
+	--_r7: rgba(var(--p) rem(round(down, r / 64),  2));
+	--_r8: rgba(var(--p) rem(round(down, r / 128), 2));
+
+	--_g1: rgba(var(--p) rem(            g,        2));
+	--_g2: rgba(var(--p) rem(round(down, g / 2),   2));
+	--_g3: rgba(var(--p) rem(round(down, g / 4),   2));
+	--_g4: rgba(var(--p) rem(round(down, g / 8),   2));
+	--_g5: rgba(var(--p) rem(round(down, g / 16),  2));
+	--_g6: rgba(var(--p) rem(round(down, g / 32),  2));
+	--_g7: rgba(var(--p) rem(round(down, g / 64),  2));
+	--_g8: rgba(var(--p) rem(round(down, g / 128), 2));
+
+	--_b1: rgba(var(--p) rem(            b,        2));
+	--_b2: rgba(var(--p) rem(round(down, b / 2),   2));
+	--_b3: rgba(var(--p) rem(round(down, b / 4),   2));
+	--_b4: rgba(var(--p) rem(round(down, b / 8),   2));
+	--_b5: rgba(var(--p) rem(round(down, b / 16),  2));
+	--_b6: rgba(var(--p) rem(round(down, b / 32),  2));
+	--_b7: rgba(var(--p) rem(round(down, b / 64),  2));
+	--_b8: rgba(var(--p) rem(round(down, b / 128), 2));
+
+	--_a1: rgba(var(--p) rem(255 * alpha,          2));
+	--_a2: rgba(var(--p) rem(round(var(--_a) 2),   2));
+	--_a3: rgba(var(--p) rem(round(var(--_a) 4),   2));
+	--_a4: rgba(var(--p) rem(round(var(--_a) 8),   2));
+	--_a5: rgba(var(--p) rem(round(var(--_a) 16),  2));
+	--_a6: rgba(var(--p) rem(round(var(--_a) 32),  2));
+	--_a7: rgba(var(--p) rem(round(var(--_a) 64),  2));
+	--_a8: rgba(var(--p) rem(round(var(--_a) 128), 2));
+
+	& > output {
+		@container style(--_r1: var(--_0)) { --r1: 1 }
+		@container style(--_r2: var(--_0)) { --r2: 1 }
+		@container style(--_r3: var(--_0)) { --r3: 1 }
+		@container style(--_r4: var(--_0)) { --r4: 1 }
+		@container style(--_r5: var(--_0)) { --r5: 1 }
+		@container style(--_r6: var(--_0)) { --r6: 1 }
+		@container style(--_r7: var(--_0)) { --r7: 1 }
+		@container style(--_r8: var(--_0)) { --r8: 1 }
+
+		@container style(--_g1: var(--_0)) { --g1: 1 }
+		@container style(--_g2: var(--_0)) { --g2: 1 }
+		@container style(--_g3: var(--_0)) { --g3: 1 }
+		@container style(--_g4: var(--_0)) { --g4: 1 }
+		@container style(--_g5: var(--_0)) { --g5: 1 }
+		@container style(--_g6: var(--_0)) { --g6: 1 }
+		@container style(--_g7: var(--_0)) { --g7: 1 }
+		@container style(--_g8: var(--_0)) { --g8: 1 }
+
+		@container style(--_b1: var(--_0)) { --b1: 1 }
+		@container style(--_b2: var(--_0)) { --b2: 1 }
+		@container style(--_b3: var(--_0)) { --b3: 1 }
+		@container style(--_b4: var(--_0)) { --b4: 1 }
+		@container style(--_b5: var(--_0)) { --b5: 1 }
+		@container style(--_b6: var(--_0)) { --b6: 1 }
+		@container style(--_b7: var(--_0)) { --b7: 1 }
+		@container style(--_b8: var(--_0)) { --b8: 1 }
+
+		@container style(--_a1: var(--_0)) { --a1: 1 }
+		@container style(--_a2: var(--_0)) { --a2: 1 }
+		@container style(--_a3: var(--_0)) { --a3: 1 }
+		@container style(--_a4: var(--_0)) { --a4: 1 }
+		@container style(--_a5: var(--_0)) { --a5: 1 }
+		@container style(--_a6: var(--_0)) { --a6: 1 }
+		@container style(--_a7: var(--_0)) { --a7: 1 }
+		@container style(--_a8: var(--_0)) { --a8: 1 }
+
+		--r: calc(
+			var(--r1, 0)      + var(--r2, 0) *   2
+			+
+			var(--r3, 0) *  4 + var(--r4, 0) *   8
+			+
+			var(--r5, 0) * 16 + var(--r6, 0) *  32
+			+
+			var(--r7, 0) * 64 + var(--r8, 0) * 128
+		);
+
+		--g: calc(
+			var(--g1, 0)      + var(--g2, 0) *   2
+			+
+			var(--g3, 0) *  4 + var(--g4, 0) *   8
+			+
+			var(--g5, 0) * 16 + var(--g6, 0) *  32
+			+
+			var(--g7, 0) * 64 + var(--g8, 0) * 128
+		);
+
+		--b: calc(
+			var(--b1, 0)      + var(--b2, 0) *   2
+			+
+			var(--b3, 0) *  4 + var(--b4, 0) *   8
+			+
+			var(--b5, 0) * 16 + var(--b6, 0) *  32
+			+
+			var(--b7, 0) * 64 + var(--b8, 0) * 128
+		);
+
+		--a: calc(
+			var(--a1, 0)      + var(--a2, 0) *   2
+			+
+			var(--a3, 0) *  4 + var(--a4, 0) *   8
+			+
+			var(--a5, 0) * 16 + var(--a6, 0) *  32
+			+
+			var(--a7, 0) * 64 + var(--a8, 0) * 128
+		);
+	}
+}
+
+@property --_r1
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_r2
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_r3
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_r4
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_r5
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_r6
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_r7
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_r8
+	{syntax:"<color>";initial-value:red;inherits:false}
+
+@property --_g1
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_g2
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_g3
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_g4
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_g5
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_g6
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_g7
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_g8
+	{syntax:"<color>";initial-value:red;inherits:false}
+
+@property --_b1
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_b2
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_b3
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_b4
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_b5
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_b6
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_b7
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_b8
+	{syntax:"<color>";initial-value:red;inherits:false}
+
+@property --_a1
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_a2
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_a3
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_a4
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_a5
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_a6
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_a7
+	{syntax:"<color>";initial-value:red;inherits:false}
+@property --_a8
+	{syntax:"<color>";initial-value:red;inherits:false}
+
+```
+</LiveExample>
+
+Not the most compact technique!
+
+But most of the parts are just repetetive parts of the same thing. Let’s go through it step by step:
+
+```CSS
+.encoded {
+	--_0: color(srgb 0 0 0);
+	--p: from var(--color) 0 0 0 /;
+	--_a: down, 255 * alpha /;
+	/*…*/
+}
+```
+
+This is just separating the repeated tokens into custom properties, so the final code is slightly shorter and does not wrap as much when my blog post is the widest.
+
+If you’re observant, you could notice that we are using [relative color syntax](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Colors/Using_relative_colors) and the [`round()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/round) CSS Function.
+
+What happens next, repeated per channel:
+
+```CSS
+.encoded {
+	/*…*/
+	--_r1: rgba(var(--p) rem(            r,        2));
+	--_r2: rgba(var(--p) rem(round(down, r / 2),   2));
+	--_r3: rgba(var(--p) rem(round(down, r / 4),   2));
+	--_r4: rgba(var(--p) rem(round(down, r / 8),   2));
+	--_r5: rgba(var(--p) rem(round(down, r / 16),  2));
+	--_r6: rgba(var(--p) rem(round(down, r / 32),  2));
+	--_r7: rgba(var(--p) rem(round(down, r / 64),  2));
+	--_r8: rgba(var(--p) rem(round(down, r / 128), 2));
+	/*…*/
+}
+```
+
+Here we are “disassembling” our `r` channel inside our relative color syntax, outputting the result into the alpha channel of one of eight variables. The result of each calculation is either 1 or 0, with the remaining channels being just mapped to `0 0 0` (see `--p`).
+
+There is some math with the [remainder](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/rem), and I am bad at explaining math, sorry. Something something [Bitwise operations](https://en.wikipedia.org/wiki/Bitwise_operation), I think? Splitting a number into bits by division etc.
+
+Anyways, in the end, we have our channel encoded as bits, each either fully black or fully transparent.
+
+Next, again, for each channel, starting from `r`:
+
+```CSS
+.encoded {
+	/*…*/
+	& > output {
+		@container style(--_r1: var(--_0)) { --r1: 1 }
+		@container style(--_r2: var(--_0)) { --r2: 1 }
+		@container style(--_r3: var(--_0)) { --r3: 1 }
+		@container style(--_r4: var(--_0)) { --r4: 1 }
+		@container style(--_r5: var(--_0)) { --r5: 1 }
+		@container style(--_r6: var(--_0)) { --r6: 1 }
+		@container style(--_r7: var(--_0)) { --r7: 1 }
+		@container style(--_r8: var(--_0)) { --r8: 1 }
+	/*…*/
+}
+```
+
+Here, we have our [Container Style Queries](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Container_size_and_style_queries#container_style_queries) which check if one of our bits is fully black — or not. When it is black, we set the corresponding bit on our `<output>`.
+
+Finally,
+
+```CSS
+.encoded {
+	/*…*/
+	& > output {
+		/*…*/
+		--r: calc(
+			var(--r1, 0)      + var(--r2, 0) *   2
+			+
+			var(--r3, 0) *  4 + var(--r4, 0) *   8
+			+
+			var(--r5, 0) * 16 + var(--r6, 0) *  32
+			+
+			var(--r7, 0) * 64 + var(--r8, 0) * 128
+		);
+		/*…*/
+	}
+}
+```
+
+We re-assemble our channel from bits, combining each of them into a single number.
+
+And so — we can take any color for which we can get the computed value (so no `currentColor`), and extract components to be used for… something!
+
+Eventually, we might get this natively — in 2022, CSS Working Group [resolved](https://github.com/w3c/csswg-drafts/issues/6937) an issue created by [Lea Verou](https://lea.verou.me/) to add a native `color-extract()` function to CSS. Although, nothing seemingly moved anywhere since then.
+
+Additionally, during TPAC two weeks ago, we discussed [an issue](https://github.com/w3c/csswg-drafts/issues/14495) related to Linked Parameters from [Elika J. Etemad](https://fantasai.inkedblade.net/) about how to resolve “used value” for them, as passing `currentColor` could be one of the most common use cases for linked parameters, and during this discussion I mentioned the idea to have a general-purpose function to compute some currentColor during computed time (or — more generally, any value, like `%` etc.).
+
+Nothing was resolved, but maybe one day this will be possible as well!
