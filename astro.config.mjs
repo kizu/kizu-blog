@@ -21,7 +21,8 @@ export default defineConfig({
 	integrations: [mdx(), sitemap()],
 	redirects: {
 		'/weekly-boolmarks-013': '/weekly-bookmarks-013',
-		'/tags/weekly': '/tags/bookmarks'
+		'/tags/weekly': '/tags/bookmarks',
+		'/a-coruna-part-1': '/a-coruña-part-1'
 	},
 	vite: {
 		css: {

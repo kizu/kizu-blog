@@ -122,6 +122,22 @@ export const rawPhotoData: PhotoData = [
 			{ url: 'https://pixey.org/p/kizu/942774709907618644' },
 		],
 	},
+	{
+		name: 'A walk in A Coruña, 2024',
+		date: '2024-06-15',
+		camera: 'e-m5',
+		lens: '45mm',
+		photos: [
+			{ url: 'https://pixey.org/p/kizu/868210158927501335' },
+			{ url: 'https://pixey.org/p/kizu/868215901265800129' },
+			{ url: 'https://pixey.org/p/kizu/868219372568358469' },
+			{ url: 'https://pixey.org/p/kizu/868600340018395829' },
+			{ url: 'https://pixey.org/p/kizu/868602127525477371' },
+			{ url: 'https://pixey.org/p/kizu/868603779147464017' },
+			{ url: 'https://pixey.org/p/kizu/868830116688475225' },
+			{ url: 'https://pixey.org/p/kizu/868932986524441679' },
+		],
+	}
 ];
 
 export const photoData = await expandPhotoData(rawPhotoData);
