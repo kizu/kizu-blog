@@ -1,0 +1,67 @@
+---
+title: 'Custom Elements As Islands'
+fancyTitle: 'Custom Elements|As Islands'
+titleSize: '3.75rem'
+description: 'I was implementing a tiny feature for my blog, and remembered an unrelated wish I had for my ideal blog setup. I would love to use custom elements inside my blog posts. But I have an issue: we don’t yet have declarative custom elements. And I just don’t want to add JS for expanding something into more HTML.'
+tags: ['Process', 'Wishlist', 'Astro']
+pubDate: '2026-11-16'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Kinoko Teikoku — Moon Walk',
+}
+---
+
+I was implementing a tiny feature for my blog (following the [“manual until it hurts”](https://indieweb.org/manual_until_it_hurts) method, I got tired of adding style tags into posts for adjusting my fancy headers’ minimum font-size, so I added a frontmatter field for that), and remembered an unrelated wish I had for my ideal blog setup.
+
+I would love to use custom elements inside my blog posts. You know, almost like in [Dave Rupert](https://daverupert.com/)’s [“MDX with Web Components”](https://daverupert.com/2023/10/mdx-with-web-components/) post.
+
+But I have an issue: we don’t yet have declarative custom elements. And I just don’t want to add JS for expanding something into more HTML.
+
+Currently, for my blog, I am using Astro. I am pretty happy with it! And for my posts I am using [MDX](https://mdxjs.com/), but without any runtime, just with Astro Components (see my [“Astro MDX Components”](/astro-mdx-components/)), which, in my case, just expand into static HTML & CSS, without any runtime JS.
+
+This is thanks to the approach that Astro calls [“Islands architectur”](https://docs.astro.build/en/concepts/islands/) — rendering things static until ~~it hurts~~ you need something dynamic, in which case you get some JS.
+
+This is what I want to have, but with custom elements. Like, right now, for live examples I do this in my MDX:
+
+````JSX
+import LiveExample from '@components/LiveExample.astro';
+
+<LiveExample>
+```CSS
+.some-example {/*…*/}
+```
+```HTML
+<div class="some-example"></div>
+```
+</LiveExample>
+````
+
+And that, through some hacky Astro components, expands into static HTML with the live-rendered content of this HTML & CSS alongside the highlighted code snippets.
+
+But what I would really love to have is just
+
+
+````HTML
+<live-example>
+```CSS
+.some-example {/*…*/}
+```
+```HTML
+<div class="some-example"></div>
+```
+</live-example>
+````
+
+And get the same exact effect — get not _actual_ web components, but final HTML that is statically rendered for me. _Maybe_ in the future I could want to augment it with some dynamic stuff where I will need runtime, but — as with the islands architecture — in the majority of cases I want to abstract something into reusable components _statically_.
+
+Custom elements, unless we will eventually (I believe!) get declarative custom elements, do not allow us to do this.
+
+What I am thinking to do right now is… to write more hacky Astro code? Where it could pre-render the custom elements _somehow_?
+
+And, ideally, without relying on some additional framework. Or shortcodes or any templating solutions.
+
+Will I ever achieve this? Who knows, but I already have a few ideas over how to approach this. Maybe it will work out.
+
+Or… Maybe you know something that already does this?

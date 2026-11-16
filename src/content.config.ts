@@ -11,6 +11,7 @@ const blog = defineCollection({
 	// Type-check frontmatter using a schema
 	schema: z.object({
 		title: z.string(),
+		titleSize: z.string().optional(),
 		fancyTitle: z.union(
 			[
 				z.string().optional(),

@@ -14,6 +14,7 @@ type Props = Partial<CollectionEntry<'blog'>['data']>;
 
 const {
 	title = SITE_TITLE,
+	titleSize,
 	fancyTitle: fancyTitleProp,
 	pubDate,
 	eventDate,
@@ -33,12 +34,17 @@ const fancyTitle =
 		? title
 		: fancyTitleProp;
 
+const titleStyle =
+	titleSize
+		? `font-size: ${titleSize}`
+		: undefined;
+
 ---
 <Base bodyClass="h-entry" {...Astro.props}>
 	<article class="e-content scroll-markers-content">
 		{heroImage && <img width={720} height={360} src={heroImage} alt="" />}
 		{pathname !== '/' ? <>
-			<h1 class="p-name">{fancyTitle ? fancyTitle.split('|').map(part => <><FitToWidth set:html={part} /> </>) : title}</h1>
+			<h1 class="p-name" style={titleStyle}>{fancyTitle ? fancyTitle.split('|').map(part => <><FitToWidth set:html={part} /> </>) : title}</h1>
 			<dl>
 				{eventDate ? (<>
 					<dt>Happened on:</dt><dd><FormattedDate date={eventDate} /></dd>
