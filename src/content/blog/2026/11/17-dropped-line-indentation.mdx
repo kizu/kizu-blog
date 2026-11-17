@@ -5,7 +5,7 @@ fancyTitle: 'Dropped Line|Indentation'
 description: 'About a bit hacky technique for reproducing an effect I saw long time in Bringhurst’s “The Elements of Typographic Style” for formatting a specific poetic device.'
 tags: ['Typography', 'CSS']
 pubDate: '2026-11-17'
-mastodonPostId: ''
+mastodonPostId: '117634456624340621'
 
 current: {
   drink: 'Infusion of hibiscus, apples, rosehip, and orange peels, with cherry flavor.',
@@ -223,7 +223,7 @@ And this still works with the longer sentences, here is our first example, but 
 
 ### And How This Works?
 
-Well, it is pretty simple, and is in line with both how Richard was trying to do it, and how I experimented with it long time ago — using `position: relative`, but where previously we did not have a `lh` unit, as well as `sibling-index()` and `sibling-count()` functions, now we can use those to achieve what we need:
+Well, it is pretty simple, and is in line with both how Richard was trying to do it, and how I experimented with it a long time ago — using `position: relative`, but where previously we did not have a `lh` unit, as well as `sibling-index()` and `sibling-count()` functions, now we can use those to achieve what we need:
 
 1. [`lh` unit](https://www.w3.org/TR/css-values-4/#lh) is great to get the value of our line-height (although, we need to note that this is only a _metric_, and not the actual rendered height of the line box, as it can be modified by various things — I recommend [“Deep dive CSS: font metrics, line-height and vertical-align”](https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align) article by [Vincent De Oliveira](https://iamvdo.me/) about this).
 
