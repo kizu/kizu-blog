@@ -1,0 +1,249 @@
+---
+title: 'Dropped Line Indentation'
+titleSize: '3.25rem'
+fancyTitle: 'Dropped Line|Indentation'
+description: 'About a bit hacky technique for reproducing an effect I saw long time in Bringhurst’s “The Elements of Typographic Style” for formatting a specific poetic device.'
+tags: ['Typography', 'CSS']
+pubDate: '2026-11-17'
+mastodonPostId: ''
+
+current: {
+  drink: 'Infusion of hibiscus, apples, rosehip, and orange peels, with cherry flavor.',
+  music: 'The Album Leaf — Cycles',
+}
+
+bandcamp: {
+  track: '3139625943',
+  link: 'https://thealbumleaf.bandcamp.com/track/cycles',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+## Table of Contents
+
+## Introduction
+
+I originally drafted this post two years ago, after publishing an observation about the [“forced wrapping”](/forced-wrapping/). In August of that year, I stumbled upon a solution (or so I thought) for one particular problem. A problem that I, among others, tried to solve in CSS for quite a while.
+
+The problem is: how to do a _dropped line_ in CSS? What is it? Let me quote from [Wikipedia](https://en.wikipedia.org/wiki/Dropped_line):
+
+<div class="aside-wrapper" style="grid-row-end: span 3">
+<aside class="Sidenote">
+
+If you wonder how Wikipedia solved this for their example’s implementation… I would not dare to reproduce it here, and will invite you to explore that on your own. Be warned: it is not pretty!
+
+</aside>
+</div>
+
+> In poetry, a dropped line is a line which is broken into two lines, but where the second part is indented to the horizontal position it would have had as an unbroken line.
+
+Here is an example from that page that uses the technique that I came up with in 2024:
+
+<LiveExample shouldHideHTML caption=" Charles Wright, _The Other Side of the River_.">
+```html
+<div class="drop-lined">
+	<p><span>It's linkage I'm talking about,</span> <span>and harmonies and structures,</span></p>
+
+	<p>And all the various things that lock our wrists to the past.</p>
+
+	<p><span>Something infinite behind everything appears,</span> <span>and then disappears.</span></p>
+</div>
+```
+</LiveExample>
+
+
+I remember thinking about how to achieve this effect when I first read [“The Elements of Typographic Style”](https://en.wikipedia.org/wiki/The_Elements_of_Typographic_Style) by [Robert Bringhurst](https://en.wikipedia.org/wiki/Robert_Bringhurst) around twelve years ago, but at the time I did not come up with anything clever to solve that.
+
+<div class="aside-wrapper" style="grid-row-end: span 2;">
+<aside class="Sidenote" style="position: static">
+
+I never published those experiments, and while I think I stumbled upon them in my archives at some point, I could not find them for this article; if I ever do — will update it
+
+</aside>
+</div>
+
+At some point later, I read about this in [Richard Rutter](https://clagnut.com/)’s [“The Elements of Typographic Style Applied to the Web”](https://webtypography.net/2.3.2#:~:text=text%2E-,Droplines). It did not propose a good solution as well, coming up with a very similar result as my experiments — using incremental relative positioning, and claimed that
+
+> Unlike other styles mentioned, dropline paragraphs for long pieces of text are impossible to achieve consistently in CSS without exorbitantly long CSS files or (preferably) the aid of JavaScript.
+
+If you don’t know me, you might not know how I like to go into “impossible” problems.
+
+But, it did turn out, the solution that I found ended up being relatively simple… But not really working.
+
+## The Faux “Dropped Line” Technique
+
+To repeat the above example, alongside the corresponding HTML and CSS code:
+
+<style>{`
+.drop-lined p,
+p.dropped-line {
+	font-size: var(--FONT-SIZE--SMALL);
+	margin: 0;
+}
+`}</style>
+
+<LiveExample>
+```html
+<div class="drop-lined">
+	<p><span>It’s linkage I’m talking about,</span> <span>and harmonies and structures,</span></p>
+
+	<p>And all the various things that lock our wrists to the past.</p>
+
+	<p><span>Something infinite behind everything appears,</span> <span>and then disappears.</span></p>
+</div>
+```
+```css
+.drop-lined span {
+	vertical-align: top;
+
+	&:not(:first-of-type)::before {
+		content: "\A\2060";
+		white-space: pre;
+		display: inline-block;
+	}
+}
+```
+</LiveExample>
+
+### How Does It “Work”?
+
+The important parts:
+
+1. Each part of the paragraph, on both sides of the “break”, needs to be wrapped in an inline element, in our case — `<span>`.
+
+2. This inline element needs to have `vertical-align: top`.
+
+3. For each non-first span, we add an inline-block `::before` pseudo-element with some very specific `content` and `white-space: pre`.
+
+4. That `content` consists of an escaped newline symbol followed by an escaped [“word joiner”](https://en.wikipedia.org/wiki/Word_joiner) symbol.
+
+This is how this works. But _why_? Let me quote [the spec](https://drafts.csswg.org/css-inline/#valdef-baseline-shift-top) for the `top` value of `vertical-align`:
+
+> Align the [line-over](https://drafts.csswg.org/css-writing-modes-4/#line-over) edge of the [aligned subtree](https://drafts.csswg.org/css-inline/#aligned-subtree) with the line-over edge of the [line box](https://drafts.csswg.org/css-inline/#line-box).
+
+Ok, maybe this is not very clear… I don’t know if there is a good explanation of how exactly read this…
+
+---
+
+And that’s where I stopped writing this post when I last tried to finish it, as by trying to understand and explain what exactly was happening, I realised _it does not work_.
+
+### Why This Is Not It?
+
+While the above example _did_ work, to see where it won’t work let’s look at this example — three lines from Audre Lorde’s poem “Memorial III — From a Phone Booth On Broadway”
+
+
+<LiveExample shouldHideHTML caption="Excerpt from “Memorial III: from a telephone booth on the avenue Broadway” by Audre Lorde, from _Undersong_, collected in _Zami; Sister Outsider; Undersong_ (New York: Quality Paperback Book Club, 1993), p. 163.">
+```html
+<div class="drop-lined">
+	<p>
+		that works<br/>
+		<span>quick</span>
+		<span>quick</span>
+		<span>I must call you</span><br/>
+		now
+	</p>
+</div>
+```
+</LiveExample>
+
+import Image from '@components/mdx/Image.astro';
+import Screenshot from "./17-dropped-line-indentation.jpg";
+
+
+Well, this does not work! Here is how it was in print:
+
+<figure style="--width: 558; float: right">
+<Image width="558" src={Screenshot} alt="A screenshot from a book scan showing five lines of text: “that works”, “quick”, “quick”, “I must call you”, and “now”, with the “quick, quick, I must call you” being typeset with the dropped indentation along three lines." />
+<figcaption>Screenshot of the print reference from [archive.org](https://archive.org/details/zamisisteroutsid00lord) (borrowed in 2024).</figcaption>
+</figure>
+
+The technique in the above example worked, but _only once_ — there is a drop after the first “quick”, but not after the second.
+
+When the sentences were long, that semi-working technique worked because there was only one drop per line box. And the way technique worked is that it aligned the first part at the _top_, then inserted a dropped line, and this whole “block” that included the line drop was still aligned to the top — but not relative to the _preceding text_, but to the whole line box.
+
+And because in each of the two spans with the inserted pseudo on one line the _newline_ was inserted only once, that’s how far from the top of the line box they were aligned.
+
+---
+
+Oh well! A good part about this technique — it has good browser support, and for longer lines it can be used pretty effectively.
+
+## Proper “Dropped Line” Technique
+
+After putting the draft of this post back into the drawer, and finishing a [replacement post](/explicit-nesting/) I published on that day, I went to sleep.
+
+And, of course, in bed, I came up with a way to solve this _properly_. Well, “properly” — the technique is a bit hacky and requires very modern CSS features — `sibling-index()` and `sibling-count()`.
+
+Look:
+
+
+<LiveExample class="require-sibling-count" shouldHideHTML caption="Now that works, indeed. Not 100% as in print — I did not remove the horizontal spaces, but that is not a part of the technique, and is not that interesting.">
+```html
+<div>
+	<p class="dropped-line">
+		that works
+		<span><br/>quick</span>
+		<span>quick</span>
+		<span>I must call you</span>
+		now
+	</p>
+</div>
+```
+```CSS
+.dropped-line {
+	display: block;
+
+	& > span {
+		position: relative;
+		top: calc((sibling-index() - 1) * 1lh);
+
+		&:last-child::after {
+			content: "";
+			display: block;
+			height: calc((sibling-count() - 1) * 1lh);
+		}
+	}
+}
+```
+</LiveExample>
+
+And this still works with the longer sentences, here is our first example, but using the new technique:
+
+<LiveExample class="require-sibling-count" shouldHideHTML>
+```html
+<div>
+	<p class="dropped-line"><span>It's linkage I'm talking about,</span> <span>and harmonies and structures,</span></p>
+
+	<p class="dropped-line">And all the various things that lock our wrists to the past.</p>
+
+	<p class="dropped-line"><span>Something infinite behind everything appears,</span> <span>and then disappears.</span></p>
+</div>
+```
+</LiveExample>
+
+### And How This Works?
+
+Well, it is pretty simple, and is in line with both how Richard was trying to do it, and how I experimented with it long time ago — using `position: relative`, but where previously we did not have a `lh` unit, as well as `sibling-index()` and `sibling-count()` functions, now we can use those to achieve what we need:
+
+1. [`lh` unit](https://www.w3.org/TR/css-values-4/#lh) is great to get the value of our line-height (although, we need to note that this is only a _metric_, and not the actual rendered height of the line box, as it can be modified by various things — I recommend [“Deep dive CSS: font metrics, line-height and vertical-align”](https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align) article by [Vincent De Oliveira](https://iamvdo.me/) about this).
+
+2. [`sibling-index()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/sibling-index) allows us to incrementally shift each consequtive fragment as a whole — be it a single word or a sentence, we just need to wrap each full fragment with a span.
+
+3. Because we’re using `position: relative`, our layout _around_ the shifted lines does not know that it needs to adjust to this. But what we can do is insert a pseudo-element after our last inline fragment, make it block, and give it the height equal to the accumulated shift, which we can know due to [`sibling-count()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/sibling-count) and how it evaluates on pseudo-elements — it uses the value from the originating element. And a block element “drops” from the inline one, giving the vertical space between our fragment and anything that follows it.
+
+### Browser Support and Fallbacks
+
+Above examples work only in browsers that support `sibling-index()` and `sibling-count()` — and those are “baseline available” since August 2026 — but, of course, older browsers won’t get anything. It won’t break, and the text will just go in one line.
+
+I did not add any workarounds for that in this post, but if you really want those, I wrote an article about this: [“Possible Future CSS: Tree-Counting Functions and Random Values”](https://kizu.dev/tree-counting-and-random/) in 2024.
+
+
+## That’s It!
+
+I think that CSS for typesetting poetry can be really interesting. When you look at the old books, or how people used typewriters to format stuff, not everything can be moved to CSS in any straightforward way.
+
+When I was doing research for the examples in this article, I stumbled upon so many places where in modern editions or reprints of various poetry that relied on indentation, the final indentation did not look good, was fully absent, or looked not as intended. I wish more people explored how to reproduce those previously print-only techniques on the web, so we could preserve the original visual intent.
+
+---
+
+And, on a completely unrelated note, I cannot not link to [“Poetic CSS”](https://courses.oddbird.net/poetic-css/) — course from [Miriam Suzanne](https://www.miriamsuzanne.com/) about CSS. I did not go through it, but when thinking about poetry and CSS I could not remember that Miriam has it! And her stuff is always great.

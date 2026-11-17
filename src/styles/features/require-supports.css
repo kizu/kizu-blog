@@ -101,3 +101,11 @@
 		}
 	}
 }
+
+
+
+@supports not (z-index: sibling-count()) {
+	.require-sibling-count {
+		--require-sibling-count: 'sibling-count() and sibling-index()';
+	}
+}
