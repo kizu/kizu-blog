@@ -1,0 +1,44 @@
+---
+title: 'Contents Pseudo-Element'
+titleSize: '4.25rem'
+fancyTitle: 'Contents|Pseudo-Element'
+description: 'I want a `::contents` #CSS pseudo-element. I know I am not alone — and if you want it too, I invite you to upvote the corresonding CSSWG issue and provide your use cases there.'
+tags: ['Wishlist', 'CSS']
+pubDate: '2026-11-18'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'THE MOLICE — HOLE!!',
+}
+bandcamp: {
+  track: '550510599',
+  link: 'https://molice.bandcamp.com/track/hole',
+}
+---
+
+This is more of an express last-minute post: I want a `::contents` pseudo-element.
+
+I am not alone! In 2018 [Oriol Brufau](https://github.com/Loirooriol) opened a [“Add a ::contents pseudo-element”](https://github.com/w3c/csswg-drafts/issues/2406) CSS Working Group issue, and it has plenty of upvotes, being in the top 50 of open CSSWG issues (we have many of them).
+
+The idea is pretty simple: an ability, for any element, to create an inner wrapper just through CSS.
+
+This is something I always wanted — there is a myriad of use cases. I don’t have time to make them into proper examples, but if you’ve been writing CSS for a long time, you’ve likely stumbled upon use cases for this.
+
+Here is a short list of things that come to my mind right away:
+
+- Flex and Grid create anonymous boxes — if you want to do something with them, you can’t, and you start adding extra divs.
+
+- Elements with `overflow: auto` often behave not very well when you want to make them flex or grids too. Or — often you want all the content of such a scroller to be wrapped into one big element.
+
+- Often, you want to style your `::before` and `::after` differently from your content, and for some things in CSS you can’t achieve it without wild hacks right now, like when you want to override `text-decoration`.
+
+- Container size or style queries — you can’t use them for the element itself, so often you have to add extra wrappers.
+
+And just think about all the cases where you added an extra nested div or span just for styling. Having such wrapper being available only through CSS could simplify so many things!
+
+We even already got [`: details-content`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::details-content), which is very similar.
+
+Anyway! This CSSWG issue was open for a very long time. And while there were no progess, just recently, [Florian Rivoal](https://florian.rivoal.net/) added it to the CSSWG’s Future Agenda. So, eventually, we will discuss it in our meetings.
+
+I hope this will come sooner rather than later — and if you want this pseudo-element to appear in CSS too — upvote [this issue](https://github.com/w3c/csswg-drafts/issues/2406), and add your own use cases there.
