@@ -1,0 +1,37 @@
+---
+title: 'Square-ish Layouts'
+fancyTitle: true
+description: 'A quick throwback to my square-ish #CSS layout from my older article.'
+tags: ['Throwback Thursday', 'CSS']
+pubDate: '2026-11-19'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'kinoue64 — 才能',
+}
+bandcamp: {
+  track: '3975077348',
+  link: 'https://kinoue64.bandcamp.com/track/--207',
+}
+---
+
+Originally, I wanted to write a bit bigger post about an alternative way of doing this technique, but I am kinda very tired today!
+
+<aside>
+
+Homework for you: use flexbox, where one of the items will determine the width of the shrinkfitted container, and the rest of the items will adapt to its width without contributing to it, creating a square-ish layout.
+
+Maybe there is even a way to do this with grid?… Or maybe not? Hmm.
+
+</aside>
+
+So! I just refer you to three places:
+
+1. The [“Square-ish Layout”](https://kizu.dev/tree-counting-and-random/#square-ish-layout) section of my [“Possible Future CSS: Tree-Counting Functions and Random Values”](https://kizu.dev/tree-counting-and-random/) article from 2024, in which I show how if we had `children-count()` we could easily make a layout that adapts to the number of children through its number of columns being essentually a square root of their count. Also, how exciting — everything I wrote about in this article is now in browsers in one way or another — [`sibling-count()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/sibling-count) and [`sibling-index()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/sibling-index) are baseline available, and [`random()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/random) is _almost there_, with only Firefox not having it in the stable version (but — already in Nightly).
+
+2. A recent article from [Temani Afif](https://css-articles.com/) — [“Transferring `sibling-count()` to a Parent Element”](https://blog.master.dev/transferring-sibling-count-to-a-parent-element/), where he links to my above article and re-implements that square-ish layout with his technique!
+
+3. [My CSS Working Group issue with a `children-count()` proposal](https://github.com/w3c/csswg-drafts/issues/11068) — I think we really need it! There are many use cases! This one is pretty mild, but I found it be pretty fun. If this is something that you also want — please, vote in this issue, and provide your use cases!
+
+That’s it. That’s the post. I need to learn to do more small posts like these, maybe even not in November.
