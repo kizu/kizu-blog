@@ -1020,6 +1020,10 @@ aside {
 		&:is([open] > *) {
 			border-bottom: 1px solid var(--aside-color);
 		}
+
+		&::marker {
+			font-size: 1.1em;
+		}
 	}
 }
 

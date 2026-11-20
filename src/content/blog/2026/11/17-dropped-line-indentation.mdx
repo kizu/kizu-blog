@@ -5,6 +5,7 @@ fancyTitle: 'Dropped Line|Indentation'
 description: 'About a bit hacky technique for reproducing an effect I saw long time in Bringhurst’s “The Elements of Typographic Style” for formatting a specific poetic device.'
 tags: ['Typography', 'CSS']
 pubDate: '2026-11-17'
+updatedDate: '2026-11-20'
 mastodonPostId: '117634456624340621'
 
 current: {
@@ -77,7 +78,8 @@ To repeat the above example, alongside the corresponding HTML and CSS code:
 
 <style>{`
 .drop-lined p,
-p.dropped-line {
+p.dropped-line,
+.dropped-line > p {
 	font-size: var(--FONT-SIZE--SMALL);
 	margin: 0;
 }
@@ -192,7 +194,8 @@ Look:
 .dropped-line {
 	display: block;
 
-	& > span {
+	& > :is(span, p) {
+		display: inline;
 		position: relative;
 		top: calc((sibling-index() - 1) * 1lh);
 
@@ -200,6 +203,7 @@ Look:
 			content: "";
 			display: block;
 			height: calc((sibling-count() - 1) * 1lh);
+			pointer-events: none;
 		}
 	}
 }
@@ -229,6 +233,33 @@ Well, it is pretty simple, and is in line with both how Richard was trying t
 2. [`sibling-index()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/sibling-index) allows us to incrementally shift each consequtive fragment as a whole — be it a single word or a sentence, we just need to wrap each full fragment with a span.
 
 3. Because we’re using `position: relative`, our layout _around_ the shifted lines does not know that it needs to adjust to this. But what we can do is insert a pseudo-element after our last inline fragment, make it block, and give it the height equal to the accumulated shift, which we can know due to [`sibling-count()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/sibling-count) and how it evaluates on pseudo-elements — it uses the value from the originating element. And a block element “drops” from the inline one, giving the vertical space between our fragment and anything that follows it.
+
+### Update from 2026-11-20
+
+After I published this post, [Miriam Suzanne](https://www.miriamsuzanne.com/) [pointed out one bug](https://front-end.social/@mia/117641046125708911) in my solution that I now fixed (the pseudo-element was overlapping the remaining text, making it unselectable, oof), and also that it can be possible to implement this with a [flex](https://codepen.io/editor/miriamsuzanne/pen/01a1f1d8-bf8e-7e0b-bd18-444a78dd634f) or [grid](https://codepen.io/editor/miriamsuzanne/pen/01a1f1ea-983b-74a6-b01d-cd5d6afd60a1) for a similar effect.
+
+I think those are valid solutions, and, actually, for the examples that I used in this post, might be the better ones! When I was looking for my solution, I was trying to approach it directly, and solve the problem for cases where the before and after part before the break wraps, like this:
+
+
+<LiveExample class="require-sibling-count" shouldHideHTML>
+```html
+<div class="dropped-line">
+	<p>One paragraph can be pretty lengthy, and then wrap at some point.</p>
+	<p>The next paragraph starts directly from the place where the last ends.</p>
+	<p>And so on — each consequtive paragraph continues from where the last one ended.</p>
+	<p>Like this.</p>
+	<p>Or this.</p>
+</div>
+```
+</LiveExample>
+
+For shorter paragraphs as above, this is likely not the best solution, but for the lengthier ones it makes it possible for the text to be _responsive_, and have this gap before two long wrapped paragraphs. When I was doing the research for the examples, I think I for sure saw examples like that, probably also from Audre Lorde, but in other places too.
+
+Interestingly, in the comments to my mastodon post about this technique, [Roel Nieskens](https://pixelambacht.nl/) pointed out the potential issue with the technique on small viewports, where the wrap could look weird, and you could _want_ to do what Miriam did, and wrap things as inside a grid for certain use cases.
+
+There is a [semi-related CSS Working Group issue](https://github.com/w3c/csswg-drafts/issues/8733) from [Jake Archibald](https://jakearchibald.com/) that talks about indent-preserving wrapping. Although it is likely not something that could be applied here (we’re not using indent… unless we were to implement this technique with scroll-driven animations? lol), but there is a discussion in the comments of that issue about having some way to _mark_ visually when the wrap happens, like with a `↵` symbol (or any custom one). That’s probably should be a separate issue, but for sure something I also want (and commented there three years ago).
+
+As usual, CSS gives many ways to implement the same thing — and all of them are valid, just have their use cases where they shine, and where something else could work better.
 
 ### Browser Support and Fallbacks
 

@@ -4,6 +4,7 @@ fancyTitle: true
 description: 'A quick throwback to my square-ish #CSS layout from my older article.'
 tags: ['Throwback Thursday', 'CSS']
 pubDate: '2026-11-19'
+updatedDate: '2026-11-20'
 mastodonPostId: ''
 
 current: {
@@ -24,6 +25,15 @@ Homework for you: use flexbox, where one of the items will determine the width 
 
 Maybe there is even a way to do this with grid?… Or maybe not? Hmm.
 
+<details>
+<summary><u>Solution from Temani Afif (spoilers!) (update from 2026-11-20)</u></summary>
+
+After I published this post, of course, Temani was nerd-sniped into doing this homework — and he [delivered](https://front-end.social/@css/117645347414221399)!
+
+- [Flex version](https://codepen.io/t_afif/pen/yybepbB) — is using the method I proposed with `width: min-content` on the container, and a single element that defines that intrinsic width.
+- [Grid version](https://codepen.io/t_afif/pen/YPVwoyz) — using something I thought should be possible, but was too tired to try — and which actually works pretty neatly! Just span the first item to define the columns implicitly, and that’s it.
+
+</details>
 </aside>
 
 So! I just refer you to three places:
