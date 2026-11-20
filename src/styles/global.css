@@ -636,6 +636,10 @@ details.inline > summary {
 	}
 }
 
+details > p > span[id] {
+	scroll-margin: 3em;
+}
+
 summary:focus:not(:focus-visible),
 :root:not(:active) label:hover,
 label:active {
