@@ -11,6 +11,9 @@ export async function GET(context: APIContext) {
 	const posts = await getCollection('blog');
 	const items: RSSOptions['items'] = [];
 	for (const post of posts) {
+		if (post.data.isQuiet) {
+			continue;
+		}
 		const link = `/${betterSlug(post.id)}/`;
 		const fullLink = `${context.site}${betterSlug(post.id)}/`;
 		const { mastodonPostId, current } = post.data;

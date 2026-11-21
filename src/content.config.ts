@@ -34,6 +34,7 @@ const blog = defineCollection({
 			.transform((str) => (str ? new Date(str) : undefined)),
 		heroImage: z.string().optional(),
 		mastodonPostId: z.string().optional(),
+		isQuiet: z.boolean().optional(),
 		current: z.object({
 			mood: z.string().optional(),
 			music: z.string().optional(),
