@@ -1,0 +1,81 @@
+---
+title: 'Three Stalled Resolved Proposals'
+fancyTitle: 'Three Stalled|Resolved Proposals'
+titleSize: '3.125rem'
+description: 'In which I point at three already resolved new feature proposals of different complexity that CSSWG did already resolve to add to CSS years ago, but which we can’t yet use. But I want to!'
+tags: ['CSS Multicol', 'Container Queries', 'CSS Layers', 'CSS Overrides', 'CSSWG', 'CSS']
+pubDate: '2026-11-20'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Tom Figgins — A Shimmer From The Past',
+}
+bandcamp: {
+  link: 'https://earthbornegames.bandcamp.com/track/a-shimmer-from-the-past-stereo-mix',
+}
+---
+
+## Table of Contents
+
+## Introduction
+
+Ok, maybe two and a half, as one of them has an implementation, but without interop it is pretty useless, and while I know and understand the reasons for _why_ it is stalled, _I would really want to have it_.
+
+But let’s start from the beginning! Although, again, this will be a shorter post, without many examples or many use cases.
+
+Yesterday, [Brian Kardell](https://bkardell.com/) [asked in Mastodon](https://toot.cafe/@bkardell/117644494595548089):
+
+> Is there a developing proposal for the web that you are excited about/watching for that isn't getting enough love or seems stalled? Just curious what people are really wanting out there that isn't already moving.
+
+I have maybe too many of those, and periodically mention them in this blog. But when thinking specifically about “stalled” three things came to mind.
+
+## Overflow in the Block Direction
+
+That’s the [“Overflow in the block direction for continuous media”](https://github.com/w3c/csswg-drafts/issues/2923) issue by [Rachel Andrew](https://rachelandrew.co.uk/) from back in 2018!
+
+It was [resolved](https://github.com/w3c/csswg-drafts/issues/2923#issuecomment-2625930018) in January 2025, so almost two years ago.
+
+Good news: the corresponding [`column-height` property](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/column-height) is shipped in Blink for quite some time — from February of this year!
+
+However, it is nowhere close in other browsers. As I understand it, in Chromium it was possible due to the LayoutNG, and in WebKit there is still a lot of work to do with fragmentation, to bring it up to date and fix all the issues. And without proper fragmentation, we can’t get closer to `column-height`. Not sure how hard would it be to implement in Firefox, but I guess while WebKit is so far, there is no reason for them to hurry.
+
+Without getting closer to it, we can’t get closer to regions or exclusions. And, generally, use multicol in any nice way in the web today. Fallbacks to `column-height` are possible, but very awkward.
+
+## Strong Cascade Layers
+
+The corresponding [“Allow authors to explicitly place unlayered styles in the cascade layer order”](https://github.com/w3c/csswg-drafts/issues/6323) issue was opened by [Miriam Suzanne](https://www.miriamsuzanne.com/) in 2021.
+
+In 2023, I wrote a few post about it, including [“Layer Overrides Update”](/layer-overrides-update/), where I shared some of the use cases. Later, I shared the workaround that we have to use instead — [“Extra Nesting Specificity”](/extra-nesting-specificity/) today, but which is cumbersome and is not bulletproof.
+
+The issue itself was finally [resolved](https://github.com/w3c/csswg-drafts/issues/6323#issuecomment-2654364266) in 2025:
+
+> RESOLVED: we use a caret approach. It's part of the syntax and not part of the name. Weak/strong with the same name is ok
+> RESOLVED: strength is exposed in CSSOM, details tbd.
+
+I _think_ aside from the editorial stuff, the main blocker is for the browsers to actually be interested in implementing it. Technically, I don’t think there should be any barriers.
+
+This feels like such an important addition to the cascade layers that is oh so painful without it, still. Maybe, one day… Although, I have at least one other proposal for the custom cascade layers which I need to get out of my system, I hope there will be at least some movement on this issue before that.
+
+## Named Container Query Length Units
+
+[Una Kravets](https://una.im/) opened the [“Reference named containers for cq units”](https://github.com/w3c/csswg-drafts/issues/7858) in 2022.
+
+And it was [resolved](https://github.com/w3c/csswg-drafts/issues/7858#issuecomment-1479851431) less than a year after — in 2023:
+
+> RESOLVED: add a function for every container query unit that allow to reference a named container
+
+With no progress since.
+
+Yes, it is possible to work around their absence, as I wrote in [“Named Container Query Length Units Workaround”](/captured-custom-properties/#named-container-query-length-units-workaround) section of my [Captured Custom Properties](/captured-custom-properties/) blog post.
+
+But how nice would it be to have this natively? This feels like a very low-hanging fruit. Would love to nom on it.
+
+
+## Final Words
+
+Standardisation process can be slow. But, usually certain. Eventually, we will get the features we want! And this post only talks about a few issues in which I participated, and wrote about, so it was easy for me to remember about them. There are plenty of things that were _resolved_, but did not move far. Often, it could be some minor edge cases, but a lot of features are burried in the backlog somewhere.
+
+If you’re an author, and you encounter anything that can be improved in CSS — and especially if there was already a discussion, and it was resolved — it is not the time to move on. Please, still write about your use cases in your blogs and post them to those issues. Give “developer signals” to the browser vendors, increasing the pressure to pick something up.
+
+Whenever I see someone mention that Web Platform is done (or soon to be), I can’t understand that feeling. As long as we design things for the web, there will be things to improve.
