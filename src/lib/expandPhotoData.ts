@@ -9,6 +9,7 @@ export const MAIN_LENS = '45mm';
 export const CAMERAS = {
 	'e-m5': 'Olympus OM-D E-M5',
 	'om-3': 'OM System OM-3',
+	'iPhone': 'iPhone',
 }
 
 export const LENSES = {

@@ -137,7 +137,15 @@ export const rawPhotoData: PhotoData = [
 			{ url: 'https://pixey.org/p/kizu/868830116688475225' },
 			{ url: 'https://pixey.org/p/kizu/868932986524441679' },
 		],
-	}
+	},
+	{
+		name: 'Oldest Instagram Photo',
+		date: '2011-03-15',
+		camera: 'iPhone',
+		photos: [
+			{ url: 'https://pixey.org/p/kizu/1002737110315023' }
+		]
+	},
 ];
 
 export const photoData = await expandPhotoData(rawPhotoData);
