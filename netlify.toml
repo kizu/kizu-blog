@@ -4,3 +4,8 @@
 
 
   ## more info on configuring this file: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[[redirects]]
+from = "/unlisted/*"
+to = "/unlisted/404"
+status = 404
