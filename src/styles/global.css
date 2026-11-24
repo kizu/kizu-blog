@@ -491,7 +491,7 @@ blockquote {
 	}
 }
 
-:is(blockquote, figcaption) :is(code, em) {
+:is(blockquote, figcaption) :is(code, em, dfn) {
 	font-style: normal;
 	letter-spacing: 0;
 }

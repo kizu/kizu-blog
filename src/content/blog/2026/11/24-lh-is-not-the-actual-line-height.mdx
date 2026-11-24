@@ -1,0 +1,125 @@
+---
+title: 'lh is not the Actual Line Height'
+fancyTitle: '<code>lh</code> is Not|The Actual|Line Height'
+titleSize: '4.6125rem'
+description: 'A short post about a common mistake I see people do in #CSS when aligning things… Yeah, aligning can be hard!'
+tags: ['Cap unit', 'CSS', 'Typography']
+pubDate: '2026-11-24'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Mice Parade — Gulliver’s Travels',
+}
+bandcamp: {
+  track: '3065046839',
+  link: 'https://miceparade.bandcamp.com/track/gullivers-travels',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+A week ago, in my [“Dropped Line Indentation”](/dropped-line-indentation/) post, I mentioned a 2017 article [“Deep dive CSS: font metrics, line-height and vertical-align”](https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align) by [Vincent De Oliveira](https://iamvdo.me/).
+
+There, he goes into many details over how `line-height` and related concepts work, but also he describes the “line-box” concept, which I want to quote:
+
+> Each line is made up of one or many inline elements (HTML tags or anonymous inline elements for text content) and is called a <dfn>line-box</dfn>. **The height of a _line-box_ is based on its children’s height.** The browser therefore computes the height for each inline elements, and thus the height of the _line-box_ (from its child’s highest point to its child’s lowest point). As a result, a _line-box_ is always tall enough to contain all its children (by default).
+
+One place Vincent does not mention there is the [`lh` unit](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length#lh) — and if we quote this MDN description of it:
+
+> [lh is] Equal to the computed value of the line-height property of the element on which it is used, converted to an absolute length. This unit enables length calculations based on the theoretical size of an ideal empty line. However, the size of actual line boxes may differ based on their content.
+
+What all of this means? We can’t use `lh` anywhere where we want to adjust something to the _line-box_. We might think that we are adjusting things to the _line-height_, but the `line-height` is just one of the things that can impact the _line-box_.
+
+While this might be an edge-case that might not appear in practice, _there is always a chance_. And I often see people mentioning using `lh` as a way to align things to a _line_ without acknowledging the _line-box_ problem.
+
+For example, in his recent [“Better Icon and Label Alignment”](https://ishadeed.com/article/aligning-list-icons/#the-solution-using-the-lh-unit) article, [Ahmad Shadeed](https://ishadeed.com/) proposed a way to align an icon to the first line of some wrapped text by offsetting it from the top based on the `lh` unit. That works for his cases, but as soon as something will appear that will increase the _line-box_, that method will break.
+
+This example looks fine, right?
+
+<LiveExample isScoped="example">
+```CSS
+.flex {
+	display: flex;
+	align-items: start;
+	width: 15em;
+	max-width: 100%;
+	gap: 0.5rem;
+}
+
+.icon {
+	--icon-size: 1rem;
+	width: var(--icon-size);
+	height: var(--icon-size);
+	background: var(--PINK);
+	flex-shrink: 0;
+
+  	--offset: calc((1lh - var(--icon-size)) / 2);
+  	transform: translateY(var(--offset));
+}
+```
+```HTML
+<p class="flex">
+	<span class="icon"></span>
+	<span>
+		Some text that could wrap on several lines.
+	</span>
+</p>
+```
+</LiveExample>
+
+But let’s add an element to the first line that increases the _line-box_!
+
+<LiveExample isScoped="example" shouldHideHTML>
+```CSS
+.padded {
+	display: inline-block;
+	padding: 0.5em;
+	border-radius: 50%;
+	border: 1px solid var(--PINK);
+}
+```
+```HTML
+<p class="flex">
+	<span class="icon"></span>
+	<span>
+		Some
+		<span class="padded">text</span>
+		that could wrap on several lines.
+	</span>
+</p>
+```
+</LiveExample>
+
+Oh no!
+
+A fix would be to use `align-items: baseline`, and the `cap` unit, if we want to align things to the cap-height — all as I described in my old [“Cap-Height Vertical Align”](/cap-height-align/) post:
+
+<LiveExample isScoped="example" shouldHideHTML>
+```CSS
+.fixed {
+	align-items: baseline;
+
+	& .icon {
+		transform: none;
+		margin-block-start: calc(1ex - 1cap);
+	}
+}
+```
+```HTML
+<p class="flex fixed">
+	<span class="icon"></span>
+	<span>
+		Some
+		<span class="padded">text</span>
+		that could wrap on several lines.
+	</span>
+</p>
+```
+</LiveExample>
+
+Now, regardless if the line-box is increased, we are actually aligning the _baselines_ of our elements first, and then shifting the position of our icon **relative to that baseline**!
+
+Just in case: this is not just on Ahmad (sorry I used your article as an example) — I saw others making the same mistake — trying to align things to the wrong place in the wrong way.
+
+In many cases, this is fine, but occasionally, an incorrect technique could backfire.
