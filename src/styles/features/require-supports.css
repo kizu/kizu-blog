@@ -109,3 +109,11 @@
 		--require-sibling-count: 'sibling-count() and sibling-index()';
 	}
 }
+
+
+
+@supports not (clip-path: shape(nonzero from 0 0, line to 10px 10px)) {
+	.require-shape {
+		--require-shape: 'shape()';
+	}
+}

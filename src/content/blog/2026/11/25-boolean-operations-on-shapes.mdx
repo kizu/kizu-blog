@@ -1,0 +1,197 @@
+---
+title: 'Boolean Operations On Shapes'
+titleSize: '4rem'
+fancyTitle: 'Boolean Operations|On Shapes'
+description: 'In which I propose to add boolean operations for CSS shapes because why should we suffer?'
+tags: ['Wishlist', 'CSS']
+pubDate: '2026-11-25'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Haru Nemuri — Take Back The World',
+}
+bandcamp: {
+  track: '2844490601',
+  link: 'https://specific.bandcamp.com/track/take-back-the-world',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+
+<style>{`
+h1 > span:first-child {
+	font-size: 3rem;
+}
+`}</style>
+
+When it comes to SVG or CSS shapes, mask, and so on, I have no idea what I am doing. Their syntax is often so convoluted!
+
+Like, take one of the many articles that [Temani Afif](https://css-articles.com/) wrote, for example [“Better CSS Shapes Using `shape()` — Part 2: More on Arcs”](https://css-tricks.com/better-css-shapes-using-shape-part-2-more-on-arcs/) — like… why? I understand that the shape syntax comes from SVG, and there it was made to be _consise_, but if we were to think about the [priority of constituencies](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies)…
+
+Anyways. I am a simple person. But I still want to use shapes. The [`shape()`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/basic-shape/shape) syntax is great, and is already more accessible than the SVG path shorthands.
+
+But what if we could do it _much easier_?
+
+Ok, CSS some other [_basic shapes_](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/basic-shape) like `rect()`, `circle()`, `xywh()` (that one is fun).
+
+When you open any graphical editor that has _shapes_, you know what you will find there?
+
+Boolean operations on those shapes.
+
+Unions, subtractions, exclusions, intersections… All that.
+
+Let’s say we had two simple shapes: square, and a circle. We can use them as basic shapes to clip a certain part of some element:
+
+<LiveExample>
+```HTML
+<div>
+	<div class="shape square"></div>
+	<div class="shape circle"></div>
+</div>
+```
+```CSS
+.shape {
+	display: inline-block;
+	width: 150px;
+	height: 150px;
+	margin: 0.5rem;
+
+	background: linear-gradient(deepPink, lightGreen);
+}
+.shape.square {
+	clip-path: rect(0 100px 100px 0);
+}
+.shape.circle {
+    clip-path: circle(50px at 100px 100px);
+}
+```
+</LiveExample>
+
+And now… what if wanted to achieve this:
+
+<LiveExample shouldHideHTML class="require-shape">
+```HTML
+<div>
+	<div class="shape boolean" style="--type: var(--add)"></div>
+	<div class="shape boolean" style="--type: var(--exclude)"></div>
+	<div class="shape boolean" style="--type: var(--subtract)"></div>
+	<div class="shape boolean" style="--type: var(--intersect)"></div>
+</div>
+```
+</LiveExample>
+
+And do it only inside the `shape()` syntax — so it could be used anywhere it could be applied?
+
+Here is how I did it — involving some [Cyclic Toggles](https://kizu.dev/cyclic-toggles/) with some [space toggles boolean algebra](/space-toggles-boolean-algebra/) (it felt particularly thematic here):
+
+<LiveExample>
+```CSS
+.boolean {
+	--type: var(--add);
+	--circle: var(--type,);
+	--square: var(--type,);
+	--add: var(--type,);
+	--subtract: var(--type,);
+	--intersect: var(--type,);
+	--exclude: var(--type,);
+
+	--full-circle:
+		arc by 100px 0 of 50px var(--add, cw),
+		arc by -100px 0 of 50px var(--add, cw),
+		var(--subtract)
+		var(--intersect)
+	;
+
+	--quarter-circle:
+		arc to 100px 50px of 50px cw,
+		line to 100px 100px,
+		var(--add)
+		var(--exclude)
+	;
+
+	--not-intersect:
+		0 0,
+		hline to 100px,
+		vline to 100px,
+		hline to 0,
+		close,
+		move to
+		var(--intersect)
+	;
+
+	--boolean:
+		shape(
+			var(--subtract, evenodd)
+
+			from var(--not-intersect,) 50px 100px,
+			var(--full-circle,)
+			var(--quarter-circle,)
+			close
+		)
+		var(--circle)
+		var(--square)
+	;
+
+	clip-path:
+		var(--square,
+			rect(0 100px 100px 0)
+		)
+		var(--circle,
+			circle(50px at 100px 100px)
+		)
+		var(--boolean,)
+	;
+}
+```
+</LiveExample>
+
+Don’t ask me how this works — a lot of trial & error. Although, closer to the end of it, I started to understand _something_.
+
+But… what if it could be just something like
+
+<LiveExample caption="Not real syntax.">
+```CSS
+.shape.add {
+	clip-path: add(
+		rect(0 100px 100px 0),
+		circle(50px at 100px 100px)
+	);
+}
+.shape.subtract {
+	clip-path: subtract(
+		rect(0 100px 100px 0),
+		circle(50px at 100px 100px)
+	);
+}
+.shape.exclude {
+	clip-path: exclude(
+		rect(0 100px 100px 0),
+		circle(50px at 100px 100px)
+	);
+}
+.shape.intersect {
+	clip-path: intersect(
+		rect(0 100px 100px 0),
+		circle(50px at 100px 100px)
+	);
+}
+```
+</LiveExample>
+
+We could take any other shapes (including other results of boolean operations) and just — whoosh — combine them? Pen, pineapple, apple, pen, all that.
+
+As an author, I would _love_ to be able to use shapes this way. It could open so many doors where the existing syntax requires purchasing a set of lockpicks from Temani.
+
+I tried looking for a CSS Working Group issue about this, and the closest I could find was [this one](https://github.com/w3c/csswg-drafts/issues/10445) from [Bramus](https://www.bram.us/), but it was not exactly it.
+
+Although, in its comments, [Simon Fraser](https://github.com/smfr) proposed something closer to what I want: `compound-path()`. Although, it was still using the `windRule`, which is that weird `evenodd`/`nonzero` thingy I don’t understand.
+
+Boolean operations? Those I _do_ understand.
+
+So, I will open a new issue about them (and update this post once I do).
+
+Once it is open — feel free to provide your own examples there. I remember, for example, [Yuan Chuan](https://yuanchuan.dev/) was [playing with adding those boolean operations](https://vis.social/@yuanchuan/117427576123492650) to the [CSS Doodle](https://css-doodle.com/)’s `@shape`.
+
+But we really need this in native CSS.
