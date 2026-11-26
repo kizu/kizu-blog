@@ -1,0 +1,43 @@
+---
+title: 'Conditions Soon'
+fancyTitle: true
+description: 'A quick throwback to my first article about conditional CSS from more than ten years ago.'
+tags: ['Throwback Thursday', 'CSS Conditions', 'CSS Variables', 'CSS']
+pubDate: '2026-11-26'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: 'Balmorhea — Greyish Tapering Ash',
+}
+bandcamp: {
+  track: '3154480990',
+  link: 'https://balmorhea.bandcamp.com/track/greyish-tapering-ash',
+}
+---
+
+Native CSS conditions — [the `if()` function](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/if) — are almost here…
+
+Today will be a throwback to my article from October 21, 2016 — [“Conditions for CSS Variables”](https://kizu.dev/conditions-for-css-variables/).
+
+More than ten years passed since then! If function is in stable Chrome, in [Safari 27.3 Beta](https://developer.apple.com/documentation/safari-release-notes/safari-27_3-release-notes), and it seems that the work might begin soon in Firefox — [Sajid Anwar](https://sajidanwar.com/) already did a bunch of work with the substitution functions there, and [wrote about his intent](https://bugzilla.mozilla.org/show_bug.cgi?id=1981485#c4) to continue with the `if()`. Exciting!
+
+Today I know that what I did in 2016 is called “Binary Linear Interpolation” — thanks to [Lea Verou](https://lea.verou.me/) for mentioning it in her [“Inline conditionals in CSS, now?”](https://lea.verou.me/blog/2024/css-conditionals-now/) article from 2024. She is well-educated, not like a twice-dropout self-taught me. Since then, I returned to the topic of conditionals multiple times — and she documents them all in the same article! — but that 2016 article was the first.
+
+And, technically, I wrote about it before CSS variables (or custom properties — [either is fine](https://blog.kizu.dev/css-variables/)) even became newly baseline available. Well, baseline as a term did not exist then, but CSS variables only appeared in Edge [in 2017](https://caniuse.com/?search=var%28%29)…
+
+When I wrote this article, I was deep in CSS preprocessing. Funny coincidence (or not?!) — up until CSS variables appeared in Chrome & Safari in March 2016, I was a maintainer of the [Stylus](https://stylus-lang.com/) preprocessor. I guess, as I saw CSS variables and what you can do with it, I was like “nah, let’s focus on the web platform”. Or maybe not — I have no recollection of what I was thinking at the time. Maybe about this:
+
+<style>{`
+pre>code>span:first-child {display: none}
+`}</style>
+
+```CSS
+{color: hsla(calc(120 * var(--bar) * (var(--bar) - 2) * (var(--bar) - 3) * 0.5 + 270 * var(--bar) * (1 - var(--bar)) * (var(--bar) - 3) * 0.5 + 38.82352941176471 * var(--bar) * (1 - var(--bar)) * (var(--bar) - 2) * -0.16666666666666666), calc(100% * (1 - var(--bar)) * (var(--bar) - 2) * (var(--bar) - 3) * 0.16666666666666666 + 100% * var(--bar) * (var(--bar) - 2) * (var(--bar) - 3) * 0.5 + 49.99999999999999% * var(--bar) * (1 - var(--bar)) * (var(--bar) - 3) * 0.5 + 100% * var(--bar) * (1 - var(--bar)) * (var(--bar) - 2) * -0.16666666666666666), calc(50% * (1 - var(--bar)) * (var(--bar) - 2) * (var(--bar) - 3) * 0.16666666666666666 + 50% * var(--bar) * (var(--bar) - 2) * (var(--bar) - 3) * 0.5 + 40% * var(--bar) * (1 - var(--bar)) * (var(--bar) - 3) * 0.5 + 50% * var(--bar) * (1 - var(--bar)) * (var(--bar) - 2) * -0.16666666666666666), 1);
+```
+
+That’s one snippet from my old article — a conditional to switch between four different colors. Of course, generated via Stylus from just `color: conditional(var(--bar), red, lime, rebeccapurple, orange)`.
+
+---
+
+What fun times. Maybe Interop 2028 will include `if()` inside!
