@@ -1,0 +1,118 @@
+---
+title: 'Scoped Mixin Calls'
+fancyTitle: true
+description: 'A quick post about one interesting future use case for `@scope` with native #CSS Mixins.'
+tags: ['CSS Mixins', 'CSS Scopes', 'CSS']
+pubDate: '2026-11-27'
+mastodonPostId: ''
+
+current: {
+  drink: 'Peppermint Tea',
+  music: '夢中夢 — 反復する世界の果てで白夜は散る repetitional existence',
+}
+bandcamp: {
+  track: '2613359760',
+  link: 'https://virginbabylonrecords.bandcamp.com/track/repetitional-existence',
+}
+---
+
+import LiveExample from '@components/LiveExample.astro';
+
+Two days, ago [Patrick Brosset](https://patrickbrosset.com/) published a nice overview of CSS Mixins — [“The beauty of CSS mixins”](https://patrickbrosset.com/articles/2026-11-25-the-beauty-of-css-mixins/).
+
+Among many other use cases, Patrick showcases a pretty fun one: using mixins as styleable slots, where a website could call `@apply` in various places for theming purposes, and then just by providing the mixin _definitions_ you could deliver your styles precisely into predefined places, without needing to know which selectors are used, or needing to maintain those. Pretty nifty!
+
+One downside that he mentioned was this:
+
+> Nested selectors can reach into your markup again.
+
+Meaning that you could define your mixin like
+
+```CSS
+@mixin --my-styled-section {
+	& button {
+		/* but we don’t want mixins to touch buttons! */
+	}
+
+	body:not(&) {
+		/* Wait, the whole body is now pink?! */
+		background: pink;
+	}
+}
+```
+
+Yesterday in Mastodon [I pointed out](https://front-end.social/@kizu/117682308351415710) a potential solution for that, and today I decided to share it here, as I think this is actually a pretty cool use case for scopes, which separates them pretty nicely from other “scoping” alternative that we have like container style queries.
+
+To demonstrate the problem and the solution, I will copy the CSS I shared in that Mastodon thread. Of course, only Chromium with experimental web platform feature flag is needed, but you might get what is going on from the code alone.
+
+First, the mixin that we will be trying, and which intends to escape the boundaries of what the mixin was intended to style:
+
+<LiveExample>
+```CSS
+@mixin --my-mixin {
+	/* Testing that the mixin works */
+	padding: 1em;
+	border: 1rem solid var(--GREEN);
+	border-radius: 2rem;
+
+	/* Trying to target inside */
+	& .something-inside,
+	/* Trying to target outside, escaping nesting */
+	.outer:not(&) {
+		border: 1rem solid var(--PINK);
+	}
+}
+```
+</LiveExample>
+
+Now, a “broken” example, where we naively call the mixin, and it can escape the containment:
+
+<LiveExample isScoped class="require-mixins">
+```CSS
+.mixin-context {
+    @apply --my-mixin;
+}
+```
+```HTML
+<div class="outer">Pink borders without scoping</div>
+<div class="mixin-context">
+	<div class="something-inside">
+		Pink borders without scoping
+	</div>
+</div>
+<div class="outer">Pink borders without scoping</div>
+```
+</LiveExample>
+
+And here is how we can fix it by defining a proper donut scope (same HTML as above):
+
+<LiveExample isScoped shouldHideHTML class="require-mixins">
+```CSS
+@scope (.mixin-context) to (:scope > *) {
+	& {
+		@apply --my-mixin;
+	}
+}
+```
+```HTML
+<div class="outer">Pink borders without scoping</div>
+<div class="mixin-context">
+	<div class="something-inside">
+		Pink borders without scoping
+	</div>
+</div>
+<div class="outer">Pink borders without scoping</div>
+```
+</LiveExample>
+
+In this example, we stop the scope right on any first child, in reality we could allow more, based on what we want out of the scope.
+
+Of course, even in those boundaries, you could do something nasty if you wanted, but this heavily reduces the styleable area.
+
+---
+
+I remember pretty often people were wondering: do we need `@scope` if we have, like, container style queries, as with them, we could also achieve donut scoping, in a way?
+
+This technique, I think, is what makes the `@scope` stand out: anything that would rely on _custom properties_ would not work, as you could override them from inside the mixin body.
+
+But the `@scope` defines things pretty strictly, and is not overridable this way! Although, there is always a chance something could allow you to step aside… But I can’t think of anything, right now? If you have ideas — I am all ears.

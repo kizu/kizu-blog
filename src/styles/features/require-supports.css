@@ -10,8 +10,9 @@
 		var(--require-cap,
 		var(--require-style-queries,
 		var(--require-inherit-function,
-		var(--require-timeline-scope
-		))))))))))
+		var(--require-timeline-scope,
+		var(--require-mixins
+		)))))))))))
 		'’';
 	display: block;
 	border: 2px dashed #FFCA51;
@@ -115,5 +116,13 @@
 @supports not (clip-path: shape(nonzero from 0 0, line to 10px 10px)) {
 	.require-shape {
 		--require-shape: 'shape()';
+	}
+}
+
+.require-mixins {
+	--require-mixins: '@mixin';
+
+	@supports at-rule(@mixin) {
+		--require-mixins: initial;
 	}
 }
